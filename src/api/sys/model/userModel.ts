@@ -7,16 +7,16 @@ export interface LoginParams {
 }
 
 export interface RoleInfo {
-  roleName: string
-  value: string
+  name: string
+  authority: string
 }
 
 /**
  * @description: Login interface return value
  */
 export interface LoginResultModel {
-  userId: string | number
-  token: string
+  id: string | number
+  accessToken: string
   role: RoleInfo
 }
 

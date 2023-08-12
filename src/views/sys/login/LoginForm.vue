@@ -1,11 +1,10 @@
 <template>
-  <LoginFormTitle v-show="getShow" class="enter-x" />
+  <LoginFormTitle class="enter-x" />
   <Form
     class="p-4 enter-x"
     :model="formData"
     :rules="getFormRules"
     ref="formRef"
-    v-show="getShow"
     @keypress.enter="handleLogin"
   >
     <FormItem name="account" class="enter-x">
@@ -34,14 +33,6 @@
           </Checkbox>
         </FormItem>
       </ACol>
-      <ACol :span="12">
-        <FormItem :style="{ 'text-align': 'right' }">
-          <!-- No logic, you need to deal with it yourself -->
-          <Button type="link" size="small" @click="setLoginState(LoginStateEnum.RESET_PASSWORD)">
-            {{ t('sys.login.forgetPassword') }}
-          </Button>
-        </FormItem>
-      </ACol>
     </ARow>
 
     <FormItem class="enter-x">
@@ -52,22 +43,11 @@
         {{ t('sys.login.registerButton') }}
       </Button> -->
     </FormItem>
-    <ARow class="enter-x">
-      <ACol :md="8" :xs="24">
-        <Button block @click="setLoginState(LoginStateEnum.MOBILE)">
-          {{ t('sys.login.mobileSignInFormTitle') }}
-        </Button>
-      </ACol>
-      <ACol :md="6" :xs="24">
-        <Button block @click="setLoginState(LoginStateEnum.REGISTER)">
-          {{ t('sys.login.registerButton') }}
-        </Button>
-      </ACol>
-    </ARow>
   </Form>
 </template>
 <script lang="ts" setup>
-  import { reactive, ref, unref, computed } from 'vue'
+  import { reactive, ref } from 'vue'
+  import md5 from 'js-md5'
 
   import { Checkbox, Form, Input, Row, Col, Button } from 'ant-design-vue'
   import LoginFormTitle from './LoginFormTitle.vue'
@@ -76,7 +56,7 @@
   import { useMessage } from '/@/hooks/web/useMessage'
 
   import { useUserStore } from '/@/store/modules/user'
-  import { LoginStateEnum, useLoginState, useFormRules, useFormValid } from './useLogin'
+  import { useFormRules, useFormValid } from './useLogin'
   import { useDesign } from '/@/hooks/web/useDesign'
   //import { onKeyStroke } from '@vueuse/core';
 
@@ -89,7 +69,6 @@
   const { prefixCls } = useDesign('login')
   const userStore = useUserStore()
 
-  const { setLoginState, getLoginState } = useLoginState()
   const { getFormRules } = useFormRules()
 
   const formRef = ref()
@@ -97,15 +76,13 @@
   const rememberMe = ref(false)
 
   const formData = reactive({
-    account: 'vben',
-    password: '123456',
+    account: 'admin',
+    password: 'admin',
   })
 
   const { validForm } = useFormValid(formRef)
 
   //onKeyStroke('Enter', handleLogin);
-
-  const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN)
 
   async function handleLogin() {
     const data = await validForm()
@@ -113,7 +90,7 @@
     try {
       loading.value = true
       const userInfo = await userStore.login({
-        password: data.password,
+        password: md5(data.password),
         username: data.account,
         mode: 'none', //不要默认的错误提示
       })

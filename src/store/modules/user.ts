@@ -91,10 +91,10 @@ export const useUserStore = defineStore({
       try {
         const { goHome = true, mode, ...loginParams } = params
         const data = await loginApi(loginParams, mode)
-        const { token } = data
+        const { accessToken } = data
 
         // save token
-        this.setToken(token)
+        this.setToken(accessToken)
         return this.afterLoginAction(goHome)
       } catch (error) {
         return Promise.reject(error)
@@ -103,6 +103,7 @@ export const useUserStore = defineStore({
     async afterLoginAction(goHome?: boolean): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null
       // get user info
+      console.log(222)
       const userInfo = await this.getUserInfoAction()
 
       const sessionTimeout = this.sessionTimeout
@@ -127,7 +128,7 @@ export const useUserStore = defineStore({
       const userInfo = await getUserInfo()
       const { roles = [] } = userInfo
       if (isArray(roles)) {
-        const roleList = roles.map((item) => item.value) as RoleEnum[]
+        const roleList = roles.map((item) => item.authority) as RoleEnum[]
         this.setRoleList(roleList)
       } else {
         userInfo.roles = []
