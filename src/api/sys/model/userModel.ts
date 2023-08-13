@@ -17,6 +17,7 @@ export interface RoleInfo {
 export interface LoginResultModel {
   id: string | number
   accessToken: string
+  username: string
   role: RoleInfo
 }
 
