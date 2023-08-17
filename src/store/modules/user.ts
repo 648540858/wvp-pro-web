@@ -92,11 +92,16 @@ export const useUserStore = defineStore({
         // save token
         this.setToken(accessToken)
         goHome && (await router.replace(PageEnum.BASE_HOME))
-        this.setRoleList([])
+        this.setRoleList([RoleEnum.SUPER])
         const userInfo = {
           avatar: '',
           realName: '',
-          roles: [],
+          roles: [
+            {
+              name: RoleEnum.SUPER,
+              authority: '',
+            },
+          ],
           userId: id,
           username: username,
         }
