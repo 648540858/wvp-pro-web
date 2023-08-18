@@ -10,7 +10,7 @@ const dashboard: AppRouteModule = {
   redirect: '/alarm/content',
   meta: {
     orderNo: 10,
-    icon: 'ri:alarm-warning-fill',
+    icon: 'streamline:interface-alert-alarm-bell-1-notification-vibrate-ring-sound-alarm-alert-bell-noise',
     title: t('routes.alarm.alarm'),
   },
   children: [

@@ -10,7 +10,7 @@ const dashboard: AppRouteModule = {
   redirect: '/log/content',
   meta: {
     orderNo: 10,
-    icon: 'icon-park-solid:log',
+    icon: 'material-symbols:event-note-outline',
     title: t('routes.log.log'),
   },
   children: [
