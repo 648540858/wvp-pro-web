@@ -3,7 +3,7 @@ import { t } from '/@/hooks/web/useI18n'
 const menu: MenuModule = {
   orderNo: 1,
   menu: {
-    name: t('routes.controlBoard.overview'),
+    name: t('routes.controlBoard.controlBoard'),
     path: '/controlBoard',
     children: [
       {
