@@ -1,12 +1,15 @@
 import type { MenuModule } from '/@/router/types'
 import { t } from '/@/hooks/web/useI18n'
 const menu: MenuModule = {
-  orderNo: 10,
+  orderNo: 1,
   menu: {
-    name: t('routes.controlBoard.operationControl'),
+    name: t('routes.controlBoard.overview'),
     path: '/controlBoard',
-
     children: [
+      {
+        path: 'overview',
+        name: t('routes.controlBoard.overview'),
+      },
       {
         path: 'operationControl',
         name: t('routes.controlBoard.operationControl'),

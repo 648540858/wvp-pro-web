@@ -7,20 +7,20 @@ const about: AppRouteModule = {
   path: '/about',
   name: 'About',
   component: LAYOUT,
-  redirect: '/about/index',
+  redirect: '/about/content',
   meta: {
     hideChildrenInMenu: true,
-    icon: 'simple-icons:about-dot-me',
-    title: t('routes.dashboard.about'),
+    icon: 'simple-icons:aboutdotme',
+    title: t('routes.about.about'),
     orderNo: 100000,
   },
   children: [
     {
-      path: 'index',
-      name: 'AboutPage',
-      component: () => import('/@/views/sys/about/index.vue'),
+      path: 'content',
+      name: 'AboutContent',
+      component: () => import('/@/views/about/index.vue'),
       meta: {
-        title: t('routes.dashboard.about'),
+        title: t('routes.about.about'),
         icon: 'simple-icons:about-dot-me',
         hideMenu: true,
       },

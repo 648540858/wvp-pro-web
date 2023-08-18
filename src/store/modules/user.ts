@@ -104,7 +104,7 @@ export const useUserStore = defineStore({
               authority: RoleEnum.SUPER,
             },
           ],
-          homePath: '/dashboard/analysis',
+          homePath: '/controlBoard/overview',
           userId: id,
           username: username,
         }

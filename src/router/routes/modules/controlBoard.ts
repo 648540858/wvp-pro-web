@@ -7,13 +7,22 @@ const dashboard: AppRouteModule = {
   path: '/controlBoard',
   name: 'ControlBoard',
   component: LAYOUT,
-  redirect: '/controlBoard/operationControl',
+  redirect: '/controlBoard/overview',
   meta: {
-    orderNo: 10,
+    orderNo: 1,
     icon: 'ion:grid-outline',
     title: t('routes.controlBoard.operationControl'),
   },
   children: [
+    {
+      path: 'overview',
+      name: 'Overview',
+      component: () => import('/@/views/controlBoard/overview/index.vue'),
+      meta: {
+        // affix: true,
+        title: t('routes.controlBoard.overview'),
+      },
+    },
     {
       path: 'operationControl',
       name: 'OperationControl',

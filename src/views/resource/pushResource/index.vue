@@ -1,7 +1,7 @@
 <template>
   <PageWrapper>
     <div class="lg:flex">
-      <div class="lg:w-7/10 w-full !mr-4 enter-y"> 访问统计 </div>
+      <div class="lg:w-7/10 w-full !mr-4 enter-y"> 设备推流 </div>
       <div class="lg:w-3/10 w-full enter-y"> 2 </div>
     </div>
   </PageWrapper>
