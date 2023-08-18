@@ -94,14 +94,17 @@ export const useUserStore = defineStore({
         goHome && (await router.replace(PageEnum.BASE_HOME))
         this.setRoleList([RoleEnum.SUPER])
         const userInfo = {
-          avatar: '',
-          realName: '',
+          // 头像
+          avatar: 'https://avatars.githubusercontent.com/u/18274453?s=48&v=4',
+          // 昵称
+          realName: username,
           roles: [
             {
               name: RoleEnum.SUPER,
-              authority: '',
+              authority: RoleEnum.SUPER,
             },
           ],
+          homePath: '/dashboard/analysis',
           userId: id,
           username: username,
         }
