@@ -19,7 +19,7 @@ const dashboard: AppRouteModule = {
       name: 'Overview',
       component: () => import('/@/views/controlBoard/overview/index.vue'),
       meta: {
-        // affix: true,
+        affix: true,
         title: t('routes.controlBoard.overview'),
       },
     },
