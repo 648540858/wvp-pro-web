@@ -7,20 +7,29 @@ const dashboard: AppRouteModule = {
   path: '/resource',
   name: 'Resource',
   component: LAYOUT,
-  redirect: '/resource/integration',
+  redirect: '/resource/businessGroup',
   meta: {
     orderNo: 10,
     icon: 'carbon:software-resource-cluster',
-    title: t('routes.resource.resource'),
+    title: t('routes.resource.businessGroup'),
   },
   children: [
     {
-      path: 'integration',
-      name: 'Integration',
-      component: () => import('/@/views/resource/integration/index.vue'),
+      path: 'businessGroup',
+      name: 'BusinessGroup',
+      component: () => import('/src/views/resource/businessGroup/index.vue'),
       meta: {
         // affix: true,
-        title: t('routes.resource.integration'),
+        title: t('routes.resource.businessGroup'),
+      },
+    },
+    {
+      path: 'region',
+      name: 'Region',
+      component: () => import('/src/views/resource/region/index.vue'),
+      meta: {
+        // affix: true,
+        title: t('routes.resource.region'),
       },
     },
     {

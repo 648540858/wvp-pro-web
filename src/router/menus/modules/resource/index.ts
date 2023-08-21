@@ -8,8 +8,12 @@ const menu: MenuModule = {
 
     children: [
       {
-        path: 'integration',
-        name: t('routes.resource.integration'),
+        path: 'businessGroup',
+        name: t('routes.resource.businessGroup'),
+      },
+      {
+        path: 'region',
+        name: t('routes.resource.region'),
       },
       {
         path: 'gbResource',
