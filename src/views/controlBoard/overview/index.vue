@@ -60,6 +60,7 @@
         </template>
         <div class="py-4 px-4 flex justify-between items-center">
           <span>$100</span>
+          <Icon icon="mdi:file" />
         </div>
         <div class="p-2 px-4 flex justify-between">
           <span>总 1000</span>
@@ -75,6 +76,7 @@
   import { ref } from 'vue'
   import { Tag, Card } from 'ant-design-vue'
   import { PageWrapper } from '/@/components/Page'
+  import { Icon } from '/@/components/Icon'
   const loading = ref(true)
 
   setTimeout(() => {

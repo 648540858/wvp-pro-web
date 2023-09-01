@@ -1,9 +1,9 @@
 export interface BasicPageParams {
   page: number
-  pageSize: number
+  count: number
 }
 
 export interface BasicFetchResult<T> {
-  items: T[]
+  list: T[]
   total: number
 }
