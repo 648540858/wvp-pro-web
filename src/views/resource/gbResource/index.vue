@@ -11,7 +11,7 @@
           <Tag style="color: #000000">{{ record.hostAddress }}</Tag>
         </template>
         <template v-if="column.dataIndex === 'onLine'">
-          <Tag color="cyan" v-if="record.onLine === true">在线</Tag>
+          <Tag color="success" v-if="record.onLine === true">在线</Tag>
           <Tag style="color: #7c8087" v-if="record.onLine === false">离线</Tag>
         </template>
         <template v-if="column.dataIndex === 'streamMode'">
