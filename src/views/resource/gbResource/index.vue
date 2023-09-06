@@ -1,18 +1,38 @@
 <template>
-  <PageWrapper>
-    <a-table :dataSource="dataSource" :columns="columns" :pagination="pagination">
+  <PageWrapper id="DeviceList">
+    <Table
+      :dataSource="dataSource"
+      :columns="columns"
+      :loading="loading"
+      @change="handleTableChange"
+    >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'hostAddress'">
-          <a-tag color="cyan">{{ record.hostAddress }}</a-tag>
+          <Tag style="color: #000000">{{ record.hostAddress }}</Tag>
+        </template>
+        <template v-if="column.dataIndex === 'onLine'">
+          <Tag color="cyan" v-if="record.onLine === true">在线</Tag>
+          <Tag style="color: #7c8087" v-if="record.onLine === false">离线</Tag>
+        </template>
+        <template v-if="column.dataIndex === 'streamMode'">
+          <Select
+            size="mini"
+            @change="transportChange(record, record.streamMode)"
+            v-model:value="record.streamMode"
+            placeholder="请选择"
+            style="width: 120px"
+          >
+            <SelectOption key="UDP" title="UDP" value="UDP" />
+            <SelectOption key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE" />
+            <SelectOption key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE" />
+          </Select>
         </template>
         <template v-if="column.dataIndex === 'operation'">
-          <a-button type="link" preIcon="ant-design:reload-outlined" size="small">刷新</a-button>
-          <a-button type="link" preIcon="ant-design:video-camera-outlined" size="small"
-            >通道</a-button
-          >
-          <a-button type="link" preIcon="ant-design:edit-outlined" size="small">编辑</a-button>
-          <a-button type="link" color="error" preIcon="ant-design:delete-outlined" size="small"
-            >删除</a-button
+          <Button type="link" preIcon="ant-design:reload-outlined" size="small">刷新</Button>
+          <Button type="link" preIcon="ant-design:video-camera-outlined" size="small">通道</Button>
+          <Button type="link" preIcon="ant-design:edit-outlined" size="small">编辑</Button>
+          <Button type="link" color="error" preIcon="ant-design:delete-outlined" size="small"
+            >删除</Button
           >
         </template>
       </template>
@@ -20,478 +40,70 @@
         <div style="width: 100%; display: flex">
           <BasicTitle>国标设备</BasicTitle>
           <div style="margin-left: auto">
-            <a-button type="primary" preIcon="ant-design:reload-outlined" size="small"
-              >添加</a-button
-            >
+            <Button type="primary" preIcon="ant-design:reload-outlined" size="small">添加</Button>
           </div>
         </div>
       </template>
-    </a-table>
+    </Table>
   </PageWrapper>
 </template>
 <script lang="ts">
-  import { computed, defineComponent, h } from 'vue'
   import { deviceColumns } from '/@/views/resource/gbResource/columns'
-  import { Table, Tag } from 'ant-design-vue'
-  import { SearchOutlined } from '@ant-design/icons-vue'
-  import BasicTitle from '/@/components/Basic/src/BasicTitle.vue'
+  import { changeDeviceStreamTransportApi, deviceListApi } from '/@/api/resource/gbResource'
+  import { Device, DeviceListParams } from '/@/api/resource/model/gbResourceModel'
+  import { defineComponent } from 'vue'
   import { PageWrapper } from '/@/components/Page'
+  import { BasicTitle } from '/@/components/Basic'
+  import { Table, Tag, Button, Select, SelectOption, message } from 'ant-design-vue'
 
   export default defineComponent({
-    components: { PageWrapper, BasicTitle, ATable: Table, ATag: Tag },
-    setup() {
-      const dataSource = [
-        {
-          asMessageChannel: false,
-          channelCount: 1,
-          charset: 'GB2312',
-          createTime: '2023-02-07 14:31:59',
-          deviceId: '34020000001320000010',
-          expires: 60,
-          firmware: '2.622.0000000.31.R,2017-12-14',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.251:15060',
-          ip: '192.168.1.251',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:52:00',
-          localIp: '192.168.1.242',
-          manufacturer: 'Dahua',
-          mobilePositionSubmissionInterval: 5,
-          model: 'IPC-HFW4433M-I2',
-          name: 'IPC-HFW4433M-I2',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:51:18',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 0,
-          subscribeCycleForMobilePosition: 0,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:52:00',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 80002,
-          charset: 'GB2312',
-          createTime: '2023-02-07 14:41:53',
-          deviceId: '24420000013000000001',
-          expires: 300,
-          firmware: '2.0.202107',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.244:15060',
-          ip: '192.168.1.244',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-05-04 11:38:00',
-          localIp: '192.168.1.242',
-          manufacturer: 'wvp',
-          mobilePositionSubmissionInterval: 5,
-          model: 'wvp-28181-2.0',
-          name: '244-242wvp',
-          online: 0,
-          port: 15060,
-          registerTime: '2023-05-04 11:39:10',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 0,
-          subscribeCycleForMobilePosition: 0,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-05-04 11:39:12',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 8,
-          charset: 'GB2312',
-          createTime: '2023-03-01 15:33:54',
-          deviceId: '19190000001190000001',
-          expires: 3600,
-          firmware: '4.002.0000000.3.R,2022-11-22',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.19:5060',
-          ip: '192.168.1.19',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:35',
-          localIp: '192.168.1.242',
-          manufacturer: 'Dahua',
-          mediaServerId: 'auto',
-          mobilePositionSubmissionInterval: 5,
-          model: 'DH-NVR5864-I',
-          name: 'NVR',
-          online: 1,
-          port: 5060,
-          registerTime: '2023-09-01 14:11:17',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 0,
-          subscribeCycleForMobilePosition: 0,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:35',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 1,
-          charset: 'GB2312',
-          createTime: '2023-04-05 15:35:16',
-          deviceId: '88880000013200000888',
-          expires: 3600,
-          firmware: '1.0.1 Build 210304 Rel.60784n',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.17:5060',
-          ip: '192.168.1.17',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:30',
-          localIp: '192.168.1.242',
-          manufacturer: 'Mercury',
-          mobilePositionSubmissionInterval: 5,
-          model: 'MIPC368(P)W-4',
-          online: 1,
-          port: 5060,
-          registerTime: '2023-09-01 14:39:25',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 0,
-          subscribeCycleForMobilePosition: 0,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:30',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 1,
-          charset: 'GB2312',
-          createTime: '2023-06-14 15:16:54',
-          deviceId: '66620000001320000002',
-          expires: 3600,
-          firmware: 'V5.5.11',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.252:5060',
-          ip: '192.168.1.252',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:54',
-          localIp: '192.168.1.242',
-          manufacturer: 'Hikvision',
-          mobilePositionSubmissionInterval: 5,
-          model: 'DS-2CD3T56DWD-I3',
-          online: 1,
-          port: 5060,
-          registerTime: '2023-09-01 14:40:23',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 0,
-          subscribeCycleForMobilePosition: 0,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:54',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 2,
-          charset: 'GB2312',
-          createTime: '2023-08-08 14:36:00',
-          deviceId: '34020000013000000009',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.3:35060',
-          ip: '192.168.1.3',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-08-08 16:19:36',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '34020000013000000001',
-          online: 0,
-          port: 35060,
-          registerTime: '2023-08-08 16:04:36',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 0,
-          subscribeCycleForMobilePosition: 0,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-08-08 16:19:36',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-        {
-          asMessageChannel: false,
-          channelCount: 0,
-          charset: 'GB2312',
-          createTime: '2023-08-22 14:13:54',
-          deviceId: '33320000013000000001',
-          expires: 3600,
-          firmware: '2.6.8',
-          geoCoordSys: 'WGS84',
-          hostAddress: '192.168.1.21:15060',
-          ip: '192.168.1.21',
-          keepaliveIntervalTime: 0,
-          keepaliveTime: '2023-09-01 14:51:55',
-          localIp: '192.168.1.242',
-          manufacturer: 'WVP-28181-PRO',
-          mobilePositionSubmissionInterval: 5,
-          model: 'platform',
-          name: '21-242',
-          online: 1,
-          port: 15060,
-          registerTime: '2023-09-01 14:13:55',
-          ssrcCheck: true,
-          streamMode: 'UDP',
-          streamModeForParam: 0,
-          subscribeCycleForAlarm: 0,
-          subscribeCycleForCatalog: 60,
-          subscribeCycleForMobilePosition: 60,
-          transport: 'UDP',
-          treeType: 'CivilCode',
-          updateTime: '2023-09-01 14:51:55',
-        },
-      ]
-      const columns = deviceColumns()
-      const pagination = computed(() => ({
-        total: dataSource.length,
-        current: 1,
-        pageSize: 10,
-        showTotal: (total) => `共 ${total} 项`,
-        defaultPageSize: 10,
-        // pageSizeOptions: ['5', '10', '15', '20'], // 可不设置使用默认
-        showSizeChanger: true, // 是否显示pagesize选择
-        showQuickJumper: true, // 是否显示跳转窗
-      }))
+    name: 'DeviceListTable',
+    components: { PageWrapper, BasicTitle, Table, Tag, Button, Select, SelectOption },
+    data() {
       return {
-        dataSource,
-        columns,
-        pagination,
+        loading: false,
+        columns: deviceColumns(),
+        dataSource: [] as Device[],
+        pagination: {
+          current: 0,
+          total: 0,
+          pageSize: 10,
+        },
       }
     },
-    methods: { SearchOutlined, h },
+    created() {
+      const param = {
+        page: 1,
+        count: 10,
+      }
+      this.getDeviceList(param)
+    },
+    methods: {
+      handleTableChange: function (pagination: any, filters: any, sorter: any): void {
+        console.log(pagination)
+        console.log(filters)
+        console.log(sorter)
+      },
+      getDeviceList: function (params: DeviceListParams): void {
+        deviceListApi(params)
+          .then((result) => {
+            console.log(result)
+            this.dataSource = result.list
+          })
+          .catch((exception) => {
+            console.error(exception)
+          })
+          .finally(() => {
+            this.loading = false
+          })
+      },
+      transportChange: function (_device: Device, mode: string): void {
+        console.log(mode)
+        console.log(`修改传输方式为 ${_device.streamMode}：${_device.deviceId} `)
+        changeDeviceStreamTransportApi(_device.deviceId, mode).catch((e) => {
+          message.info('流传输模式修改失败： ' + e.message)
+        })
+      },
+    },
   })
 </script>

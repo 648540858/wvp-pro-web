@@ -1,10 +1,11 @@
 import { BasicPageParams, BasicFetchResult } from '/@/api/model/baseModel'
+import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 /**
  * @description: 查询Device列表的参数
  */
 export type DeviceListParams = BasicPageParams
 
-export interface Device {
+export interface Device extends RcTableProps {
   deviceId: string
   name: string
   manufacturer: string

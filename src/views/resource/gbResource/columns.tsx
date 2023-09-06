@@ -1,4 +1,6 @@
-export function deviceColumns() {
+import { ColumnsType } from 'ant-design-vue/lib/table/interface'
+
+export function deviceColumns(): ColumnsType {
   return [
     {
       title: '设备编号',
@@ -7,40 +9,44 @@ export function deviceColumns() {
       width: 200,
     },
     {
-      title: '名称',
+      title: '设备名称',
       dataIndex: 'name',
-      width: 150,
+      width: 200,
     },
     {
       title: '生产厂商',
       dataIndex: 'manufacturer',
+      width: 200,
     },
     {
       title: '信令传输',
       dataIndex: 'transport',
-      width: 100,
+      width: 150,
     },
     {
       title: '流传输',
       dataIndex: 'streamMode',
-      width: 100,
+      width: 150,
     },
     {
       title: '网络地址',
       dataIndex: 'hostAddress',
+      width: 200,
     },
     {
       title: '状态',
-      dataIndex: 'online',
-      width: 60,
+      dataIndex: 'onLine',
+      width: 100,
     },
     {
       title: '注册时间',
       dataIndex: 'registerTime',
+      width: 200,
     },
     {
-      title: '通道数',
+      title: '通道数量',
       dataIndex: 'channelCount',
+      width: 200,
     },
     {
       title: '操作',
