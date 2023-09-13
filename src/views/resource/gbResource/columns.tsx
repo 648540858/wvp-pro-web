@@ -47,6 +47,7 @@ export function deviceColumns(): ColumnsType {
       title: '通道',
       dataIndex: 'channelCount',
       width: 200,
+      align: 'center',
     },
     {
       title: '操作',

@@ -7,7 +7,7 @@
 </template>
 <script lang="ts" setup>
   import { refreshChanelApi, refreshStatusChanelApi } from '/@/api/resource/gbResource'
-  import { computed, ref } from 'vue'
+  import { computed, onUnmounted, ref } from 'vue'
   import { Progress, Modal } from 'ant-design-vue'
 
   let open = ref(false)
@@ -69,13 +69,20 @@
             }
           }
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e)
           if (timer) {
             window.clearInterval(timer)
           }
         })
     }, 1000)
   }
+  onUnmounted(() => {
+    if (timer) {
+      window.clearInterval(timer)
+    }
+  })
+
   defineExpose({
     show,
   })

@@ -1,17 +1,21 @@
 import { defHttp } from '/@/utils/http/axios'
 import {
-    DeviceListParams,
-    DeviceListResultModel,
-    DeviceChannelListParams,
-    DeviceChannelListResultModel, SyncStatusResultModel,
+  DeviceListParams,
+  DeviceListResultModel,
+  DeviceChannelListParams,
+  DeviceChannelListResultModel,
+  SyncStatusResultModel,
+  DeviceChannel,
 } from '/@/api/resource/model/gbResourceModel'
 
 enum Api {
   DEVICE_LIST = '/api/device/query/devices',
+  DEVICE_DELETE = '/api/device/query/devices/{deviceId}/delete',
   DEVICE_CHANNEL_LIST = '/api/device/query/devices/{deviceId}/channels',
   DEVICE_CHANGE_TRANSPORT = '/api/device/query/transport/{deviceId}/{transport}',
   DEVICE_CHANGE_SYNC = '/api/device/query/devices/{deviceId}/sync/',
   DEVICE_CHANGE_SYNC_STATUS = '/api/device/query/{deviceId}/sync_status/',
+  DEVICE_CHANGE_UPDATE = '/api/device/query/channel/update/{deviceId}',
 }
 
 /**
@@ -65,4 +69,23 @@ export const refreshStatusChanelApi = (deviceId: string) =>
       // @ts-ignore
       ignoreCancelToken: true,
     },
+  })
+
+export const deleteDeviceApi = (deviceId: string) =>
+  defHttp.delete<void>({
+    url: Api.DEVICE_DELETE.replace('{deviceId}', deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const updateDeviceChannel = (channel: DeviceChannel) =>
+  defHttp.post<void>({
+    url: Api.DEVICE_CHANGE_UPDATE.replace('{deviceId}', channel.deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: channel,
   })

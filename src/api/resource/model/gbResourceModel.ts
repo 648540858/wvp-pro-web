@@ -43,9 +43,9 @@ export type DeviceListResultModel = BasicFetchResult<Device>
  */
 export interface DeviceChannelListParams extends BasicPageParams {
   query: string | null | undefined
-  online: boolean | null | undefined
-  channelType: boolean | null | undefined
-  catalogUnderDevice: boolean | null | undefined
+  online: string | null | undefined
+  channelType: string | null | undefined
+  catalogUnderDevice: string | null | undefined
 }
 
 export interface DeviceChannel {

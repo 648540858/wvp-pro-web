@@ -1,58 +1,74 @@
 <template>
-  <PageWrapper id="DeviceList">
-    <Table :dataSource="dataSource" :columns="columns" :loading="loading" :pagination="pagination">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'hostAddress'">
-          <Tag>{{ record.hostAddress }}</Tag>
+  <div id="DeviceList">
+    <PageWrapper>
+      <Table
+        :dataSource="dataSource"
+        :columns="columns"
+        :loading="loading"
+        :pagination="pagination"
+      >
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'hostAddress'">
+            <Tag>{{ record.hostAddress }}</Tag>
+          </template>
+          <template v-if="column.dataIndex === 'onLine'">
+            <Tag color="processing" v-if="record.onLine === true">在线</Tag>
+            <Tag v-if="record.onLine === false">离线</Tag>
+          </template>
+          <template v-if="column.dataIndex === 'streamMode'">
+            <Select
+              size="mini"
+              @change="transportChange(record, record.streamMode)"
+              v-model:value="record.streamMode"
+              placeholder="请选择"
+              style="width: 120px"
+            >
+              <SelectOption key="UDP" title="UDP" value="UDP" />
+              <SelectOption key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE" />
+              <SelectOption key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE" />
+            </Select>
+          </template>
+          <template v-if="column.dataIndex === 'channelCount'">
+            <b style="font-size: 1.1rem">{{ record.channelCount }}</b>
+          </template>
+          <template v-if="column.dataIndex === 'operation'">
+            <AButton type="link" size="small" @click="syncDeviceChannel(record)">刷新</AButton>
+            <AButton type="link" size="small" @click="showDeviceChannel(record)">通道</AButton>
+            <AButton type="link" size="small" @click="editDevice(record)">编辑</AButton>
+            <Popconfirm
+              :id="record.id"
+              title="确定删除?"
+              ok-text="确定"
+              cancel-text="取消"
+              v-if="dataSource.length"
+              @confirm="deleteDevice(record)"
+            >
+              <AButton :id="record.id" type="link" danger size="small">删除</AButton>
+            </Popconfirm>
+          </template>
         </template>
-        <template v-if="column.dataIndex === 'onLine'">
-          <Tag color="processing" v-if="record.onLine === true">在线</Tag>
-          <Tag v-if="record.onLine === false">离线</Tag>
-        </template>
-        <template v-if="column.dataIndex === 'streamMode'">
-          <Select
-            size="mini"
-            @change="transportChange(record, record.streamMode)"
-            v-model:value="record.streamMode"
-            placeholder="请选择"
-            style="width: 120px"
-          >
-            <SelectOption key="UDP" title="UDP" value="UDP" />
-            <SelectOption key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE" />
-            <SelectOption key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE" />
-          </Select>
-        </template>
-        <template v-if="column.dataIndex === 'operation'">
-          <AButton type="link" size="small" @click="syncDeviceChannel(record)">刷新</AButton>
-          <AButton type="link" size="small" @click="showDeviceChannel(record)">通道</AButton>
-          <AButton type="link" size="small" @click="editDevice(record)">编辑</AButton>
-          <Popconfirm
-            :id="record.id"
-            title="确定删除?"
-            ok-text="确定"
-            cancel-text="取消"
-            v-if="dataSource.length"
-            @confirm="deleteDevice(record)"
-          >
-            <AButton :id="record.id" type="link" danger size="small">删除</AButton>
-          </Popconfirm>
-        </template>
-      </template>
-      <template #title>
-        <div style="width: 100%; display: flex">
-          <BasicTitle>国标设备</BasicTitle>
-          <div style="margin-left: auto">
-            <AButton type="primary" preIcon="ant-design:reload-outlined" size="small">添加</AButton>
+        <template #title>
+          <div style="width: 100%; display: flex">
+            <BasicTitle>国标设备</BasicTitle>
+            <div style="margin-left: auto">
+              <AButton type="primary" preIcon="ant-design:reload-outlined" size="small"
+                >添加</AButton
+              >
+            </div>
           </div>
-        </div>
-      </template>
-    </Table>
-  </PageWrapper>
-  <RefreshChanel ref="refreshChanel" />
+        </template>
+      </Table>
+      <RefreshChanel ref="refreshChanel" />
+    </PageWrapper>
+  </div>
 </template>
 <script lang="ts" setup>
   import { deviceColumns } from '/@/views/resource/gbResource/columns'
-  import { changeDeviceStreamTransportApi, deviceListApi } from '/@/api/resource/gbResource'
+  import {
+    changeDeviceStreamTransportApi,
+    deleteDeviceApi,
+    deviceListApi,
+  } from '/@/api/resource/gbResource'
   import { Device } from '/@/api/resource/model/gbResourceModel'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
@@ -129,8 +145,11 @@
     })
   }
   function deleteDevice(_device: Device): void {
-    console.log(_device)
-    console.log(_device.deviceId)
+    deleteDeviceApi(_device.deviceId)
+      .catch((e) => {
+        message.info('删除失败： ' + e.message)
+      })
+      .then(getDeviceList)
   }
   function syncDeviceChannel(_device: Device): void {
     console.log(_device)
