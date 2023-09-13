@@ -49,6 +49,7 @@
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.1",
     "echarts": "^5.3.2",
+    "g": "^2.0.1",
     "intro.js": "^5.1.0",
     "js-md5": "^0.7.3",
     "lodash-es": "^4.17.21",
@@ -67,7 +68,8 @@
     "vue-json-pretty": "^2.0.6",
     "vue-router": "^4.0.14",
     "vue-types": "^4.1.1",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.2.3",

@@ -90,3 +90,15 @@ export interface DeviceChannel {
  * @description: 通道列表的查询结果
  */
 export type DeviceChannelListResultModel = BasicFetchResult<DeviceChannel>
+
+export interface SyncStatus {
+  total: number
+  current: number
+  errorMsg: string
+  syncIng: boolean
+}
+
+/**
+ * @description: 通道同步状态
+ */
+export type SyncStatusResultModel = SyncStatus
