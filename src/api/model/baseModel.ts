@@ -35,8 +35,26 @@ export interface StreamInfo {
   rtc: string
   rtcs: string
   mediaServerId: string
-  tracks: any[]
+  tracks: Track[]
   startTime: string
   endTime: string
   progress: string
+}
+
+export interface Track {
+  channels: number
+  codec_id: number
+  codec_id_name: string
+  codec_type: number
+  ready: boolean
+  sample_bit: number
+  sample_rate: number
+  fps: number
+  height: number
+  width: number
+  frames: number
+  gop_interval_ms: number
+  gop_size: number
+  key_frames: number
+  loss: number
 }

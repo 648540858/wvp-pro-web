@@ -30,8 +30,10 @@
               />
             </template>
             <template v-if="column.dataIndex === 'status'">
-              <a-tag color="processing" v-if="record.status === true">在线</a-tag>
-              <a-tag v-if="record.status === false">离线</a-tag>
+              <a-tag color="processing" v-if="record.status === true && deviceOnline === true">
+                在线
+              </a-tag>
+              <a-tag v-if="record.status === false || deviceOnline === false">离线</a-tag>
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button
