@@ -95,7 +95,7 @@ export const useUserStore = defineStore({
         this.setRoleList([RoleEnum.SUPER])
         const userInfo = {
           // 头像
-          avatar: 'https://avatars.githubusercontent.com/u/18274453?s=48&v=4',
+          avatar: '/resource/img/defaultHead.png',
           // 昵称
           realName: username,
           roles: [

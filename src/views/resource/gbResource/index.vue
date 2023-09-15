@@ -1,6 +1,6 @@
 <template>
   <div id="DeviceList">
-    <PageWrapper>
+    <PageWrapper v-if="deviceIdForChannelList == ''">
       <Table
         :dataSource="dataSource"
         :columns="columns"
@@ -23,9 +23,13 @@
               placeholder="请选择"
               style="width: 120px"
             >
-              <SelectOption key="UDP" title="UDP" value="UDP" />
-              <SelectOption key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE" />
-              <SelectOption key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE" />
+              <SelectOption key="UDP" title="UDP" value="UDP">UDP</SelectOption>
+              <SelectOption key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE"
+                >TCP主动</SelectOption
+              >
+              <SelectOption key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE"
+                >TCP被动</SelectOption
+              >
             </Select>
           </template>
           <template v-if="column.dataIndex === 'channelCount'">
@@ -58,8 +62,15 @@
           </div>
         </template>
       </Table>
-      <RefreshChanel ref="refreshChanel" />
     </PageWrapper>
+    <RefreshChanel ref="refreshChanel" />
+    <ChannelList
+      ref="channelList"
+      v-if="deviceIdForChannelList != ''"
+      :device-id="deviceIdForChannelList"
+      :deviceOnline="deviceOnlineForChannelList"
+      @close-device-channel="closeDeviceChannel"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -83,6 +94,7 @@
     Popconfirm,
   } from 'ant-design-vue'
   import RefreshChanel from './refreshChanel/index.vue'
+  import ChannelList from './channelList/index.vue'
 
   /**
    * 定义变量
@@ -93,6 +105,8 @@
   let tablePage = ref(1)
   let tablePageSize = ref(10)
   let tableTotal = ref(0)
+  let deviceIdForChannelList = ref('')
+  let deviceOnlineForChannelList = ref(true)
   const pagination = computed(() => ({
     // 表格分页的配置
     current: tablePage.value,
@@ -152,13 +166,15 @@
       .then(getDeviceList)
   }
   function syncDeviceChannel(_device: Device): void {
-    console.log(_device)
-    console.log(_device.deviceId)
     refreshChanel.value.show(_device.deviceId)
   }
   function showDeviceChannel(_device: Device): void {
-    console.log(_device)
-    console.log(_device.deviceId)
+    deviceIdForChannelList.value = _device.deviceId
+    deviceOnlineForChannelList.value = _device.onLine
+  }
+  function closeDeviceChannel(): void {
+    deviceIdForChannelList.value = ''
+    deviceOnlineForChannelList.value = true
   }
   function editDevice(_device: Device): void {
     console.log(_device)

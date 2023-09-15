@@ -52,7 +52,8 @@ export function deviceChannelColumns(): ColumnsType {
     {
       title: '操作',
       dataIndex: 'operation',
-      width: 300,
+      width: 400,
+      fixed: 'right',
     },
   ]
 }
