@@ -39,6 +39,9 @@ export interface StreamInfo {
   startTime: string
   endTime: string
   progress: string
+  aliveSecond: number
+  bytesSpeed: number
+  totalReaderCount: number
 }
 
 export interface Track {

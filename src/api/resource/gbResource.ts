@@ -20,6 +20,7 @@ enum Api {
   DEVICE_CHANGE_UPDATE = '/api/device/query/channel/update/{deviceId}',
   PLAY = '/api/play/start/{deviceId}/{channelId}',
   STOP_PLAY = '/api/play/stop/{deviceId}/{channelId}',
+  GET_MEDIA_INFO = '/zlm/{mediaServerId}/index/api/getMediaInfo',
 }
 
 /**
@@ -128,5 +129,19 @@ export const stopPlayApi = (channel: DeviceChannel) =>
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
+    },
+  })
+export const getMediaInfoApi = (mediaServerId: string, app: string, stream: string ) =>
+  defHttp.get<StreamInfo>({
+    url: Api.GET_MEDIA_INFO.replace('{mediaServerId}', mediaServerId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      app: app,
+      stream: stream,
+      schema: 'rtsp',
+      vhost: '__defaultVhost__',
     },
   })
