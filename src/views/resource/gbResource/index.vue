@@ -49,6 +49,7 @@
             >
               <AButton :id="record.id" type="link" danger size="small">删除</AButton>
             </Popconfirm>
+            <AButton type="link" size="small">加入资源库</AButton>
           </template>
         </template>
         <template #title>

@@ -1,6 +1,6 @@
 export default {
-  resource: '设备管理',
-  businessGroup: '资源树管理',
+  resource: '资源管理',
+  businessGroup: '分组管理',
   region: '区域管理',
   gbResource: '国标28181',
   pushResource: '设备推流',

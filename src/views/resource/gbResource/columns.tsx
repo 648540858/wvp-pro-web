@@ -52,7 +52,7 @@ export function deviceColumns(): ColumnsType {
     {
       title: '操作',
       dataIndex: 'operation',
-      width: 400,
+      width: 600,
       fixed: 'right',
     },
   ]
