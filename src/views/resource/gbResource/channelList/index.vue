@@ -123,7 +123,7 @@
         </a-table>
       </Transition>
     </PageWrapper>
-    <Player ref="playRef" />
+    <Player ref="playRef" @ptzCamera="ptzCamera" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -132,6 +132,7 @@
     deviceChannelListApi,
     deviceSubChannelListApi,
     playApi,
+    ptzCameraApi,
     stopPlayApi,
     updateDeviceChannelApi,
   } from '/@/api/resource/gbResource'
@@ -279,9 +280,11 @@
       message.info('修改是否接收音频失败： ' + e.message)
     })
   }
+  let playChannel: DeviceChannel
   function play(_deviceChannel: DeviceChannel): void {
     console.log('播放')
     loading.value = true
+    playChannel = _deviceChannel
     playApi(_deviceChannel)
       .then((streamInfo) => {
         console.log(streamInfo)
@@ -306,6 +309,13 @@
   }
   function queryRecords(_deviceChannel: DeviceChannel): void {}
   function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
+  function ptzCamera(comond: string, speed: number): void {
+    console.log('ptz===> ' + comond)
+    console.log('ptz===> ' + speed)
+    ptzCameraApi(playChannel.deviceId, playChannel.channelId, comond, speed).catch((e) => {
+      message.error(e)
+    })
+  }
 
   // 初始化获取数据
   getDeviceChannelList()

@@ -9,6 +9,7 @@ export interface BasicFetchResult<T> {
 }
 
 export interface StreamInfo {
+  code: number
   app: string
   stream: string
   ip: string
@@ -39,9 +40,18 @@ export interface StreamInfo {
   startTime: string
   endTime: string
   progress: string
+  schema: string
+  vhost: string
   aliveSecond: number
   bytesSpeed: number
   totalReaderCount: number
+  readerCount: number
+  createStamp: number
+  isRecordingHLS: boolean
+  isRecordingMP4: boolean
+  originSock: any
+  originTypeStr: string
+  originUrl: string
 }
 
 export interface Track {

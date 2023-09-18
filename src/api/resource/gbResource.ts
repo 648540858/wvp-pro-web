@@ -21,6 +21,7 @@ enum Api {
   PLAY = '/api/play/start/{deviceId}/{channelId}',
   STOP_PLAY = '/api/play/stop/{deviceId}/{channelId}',
   GET_MEDIA_INFO = '/zlm/{mediaServerId}/index/api/getMediaInfo',
+  PTZ = '/api/ptz/control/{deviceId}/{channelId}',
 }
 
 /**
@@ -131,8 +132,8 @@ export const stopPlayApi = (channel: DeviceChannel) =>
       ignoreCancelToken: true,
     },
   })
-export const getMediaInfoApi = (mediaServerId: string, app: string, stream: string ) =>
-  defHttp.get<StreamInfo>({
+export const getMediaInfoApi = (mediaServerId: string, app: string, stream: string) =>
+  defHttp.get<any>({
     url: Api.GET_MEDIA_INFO.replace('{mediaServerId}', mediaServerId),
     headers: {
       // @ts-ignore
@@ -143,5 +144,24 @@ export const getMediaInfoApi = (mediaServerId: string, app: string, stream: stri
       stream: stream,
       schema: 'rtsp',
       vhost: '__defaultVhost__',
+    },
+  })
+export const ptzCameraApi = (
+  deviceId: string,
+  channelId: string,
+  command: string,
+  controlSpeed: number,
+) =>
+  defHttp.get<any>({
+    url: Api.PTZ.replace('{deviceId}', deviceId).replace('{channelId}', channelId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
+      horizonSpeed: controlSpeed,
+      verticalSpeed: controlSpeed,
+      zoomSpeed: controlSpeed,
     },
   })
