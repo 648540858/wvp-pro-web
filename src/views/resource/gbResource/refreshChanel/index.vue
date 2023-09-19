@@ -1,14 +1,14 @@
 <template>
-  <Modal v-model:visible="open" :title="msg" centered="true" :footer="null">
+  <a-modal v-model:visible="open" :title="msg" centered="true" :footer="null">
     <div style="padding: 1rem 2rem">
-      <Progress type="line" :percent="percent" :status="status" :show-info="true" />
+      <a-progress type="line" :percent="percent" :status="status" :show-info="true" />
     </div>
-  </Modal>
+  </a-modal>
 </template>
 <script lang="ts" setup>
   import { refreshChanelApi, refreshStatusChanelApi } from '/@/api/resource/gbResource'
   import { computed, onUnmounted, ref } from 'vue'
-  import { Progress, Modal } from 'ant-design-vue'
+  import { Progress as AProgress, Modal as AModal } from 'ant-design-vue'
 
   let open = ref(false)
   let current = ref(0)

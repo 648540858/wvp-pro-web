@@ -1,7 +1,7 @@
 <template>
   <div id="DeviceList">
     <PageWrapper v-if="deviceIdForChannelList == ''">
-      <Table
+      <a-table
         :dataSource="dataSource"
         :columns="columns"
         :loading="loading"
@@ -9,37 +9,37 @@
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'hostAddress'">
-            <Tag>{{ record.hostAddress }}</Tag>
+            <a-tag>{{ record.hostAddress }}</a-tag>
           </template>
           <template v-if="column.dataIndex === 'onLine'">
-            <Tag color="processing" v-if="record.onLine === true">在线</Tag>
-            <Tag v-if="record.onLine === false">离线</Tag>
+            <a-tag color="processing" v-if="record.onLine === true">在线</a-tag>
+            <a-tag v-if="record.onLine === false">离线</a-tag>
           </template>
           <template v-if="column.dataIndex === 'streamMode'">
-            <Select
+            <a-select
               size="mini"
               @change="transportChange(record, record.streamMode)"
               v-model:value="record.streamMode"
               placeholder="请选择"
               style="width: 120px"
             >
-              <SelectOption key="UDP" title="UDP" value="UDP">UDP</SelectOption>
-              <SelectOption key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE"
-                >TCP主动</SelectOption
+              <a-select-option key="UDP" title="UDP" value="UDP">UDP</a-select-option>
+              <a-select-option key="TCP-ACTIVE" title="TCP主动" value="TCP-ACTIVE"
+                >TCP主动</a-select-option
               >
-              <SelectOption key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE"
-                >TCP被动</SelectOption
+              <a-select-option key="TCP-PASSIVE" title="TCP被动" value="TCP-PASSIVE"
+                >TCP被动</a-select-option
               >
-            </Select>
+            </a-select>
           </template>
           <template v-if="column.dataIndex === 'channelCount'">
             <b style="font-size: 1.1rem">{{ record.channelCount }}</b>
           </template>
           <template v-if="column.dataIndex === 'operation'">
-            <AButton type="link" size="small" @click="syncDeviceChannel(record)">刷新</AButton>
-            <AButton type="link" size="small" @click="showDeviceChannel(record)">通道</AButton>
-            <AButton type="link" size="small" @click="editDevice(record)">编辑</AButton>
-            <Popconfirm
+            <a-button type="link" size="small" @click="syncDeviceChannel(record)">刷新</a-button>
+            <a-button type="link" size="small" @click="showDeviceChannel(record)">通道</a-button>
+            <a-button type="link" size="small" @click="editDevice(record)">编辑</a-button>
+            <a-popconfirm
               :id="record.id"
               title="确定删除?"
               ok-text="确定"
@@ -47,22 +47,22 @@
               v-if="dataSource.length"
               @confirm="deleteDevice(record)"
             >
-              <AButton :id="record.id" type="link" danger size="small">删除</AButton>
-            </Popconfirm>
-            <AButton type="link" size="small">加入资源库</AButton>
+              <a-button :id="record.id" type="link" danger size="small">删除</a-button>
+            </a-popconfirm>
+            <a-button type="link" size="small" @click="syncResource(record)">加入资源库</a-button>
           </template>
         </template>
         <template #title>
           <div style="width: 100%; display: flex">
             <BasicTitle>国标设备</BasicTitle>
             <div style="margin-left: auto">
-              <AButton type="primary" preIcon="ant-design:reload-outlined" size="small"
-                >添加</AButton
+              <a-button type="primary" preIcon="ant-design:reload-outlined" size="small"
+                >添加</a-button
               >
             </div>
           </div>
         </template>
-      </Table>
+      </a-table>
     </PageWrapper>
     <RefreshChanel ref="refreshChanel" />
     <ChannelList
@@ -72,6 +72,7 @@
       :deviceOnline="deviceOnlineForChannelList"
       @close-device-channel="closeDeviceChannel"
     />
+    <SyncResourceForm ref="syncResourceFormRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -86,16 +87,17 @@
   import { PageWrapper } from '/@/components/Page'
   import { BasicTitle } from '/@/components/Basic'
   import {
-    Table,
-    Tag,
+    Table as ATable,
+    Tag as ATag,
     Button as AButton,
-    Select,
-    SelectOption,
+    Select as ASelect,
+    SelectOption as ASelectOption,
     message,
-    Popconfirm,
+    Popconfirm as APopconfirm,
   } from 'ant-design-vue'
   import RefreshChanel from './refreshChanel/index.vue'
   import ChannelList from './channelList/index.vue'
+  import SyncResourceForm from './syncResourceForm/index.vue'
 
   /**
    * 定义变量
@@ -122,6 +124,7 @@
     onChange: pageChange,
   }))
   const refreshChanel = ref()
+  const syncResourceFormRef = ref()
 
   /**
    * 定义方法
@@ -181,7 +184,9 @@
     console.log(_device)
     console.log(_device.deviceId)
   }
-
+  const syncResource = (_device: Device) => {
+    syncResourceFormRef.value.show(_device.deviceId)
+  }
   // 初始化获取数据
   getDeviceList()
 </script>

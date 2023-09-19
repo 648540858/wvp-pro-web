@@ -22,6 +22,7 @@ enum Api {
   STOP_PLAY = '/api/play/stop/{deviceId}/{channelId}',
   GET_MEDIA_INFO = '/zlm/{mediaServerId}/index/api/getMediaInfo',
   PTZ = '/api/ptz/control/{deviceId}/{channelId}',
+  SYNC_28181 = '/api/channel/sync/device',
 }
 
 /**
@@ -163,5 +164,25 @@ export const ptzCameraApi = (
       horizonSpeed: controlSpeed,
       verticalSpeed: controlSpeed,
       zoomSpeed: controlSpeed,
+    },
+  })
+
+export const syncChannelFromGb28181Api = (
+  deviceId: string,
+  syncGroup: boolean,
+  syncRegion: boolean,
+  syncKeys: string,
+) =>
+  defHttp.get<any>({
+    url: Api.SYNC_28181,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      deviceId: deviceId,
+      syncGroup: syncGroup,
+      syncRegion: syncRegion,
+      syncKeys: syncKeys,
     },
   })
