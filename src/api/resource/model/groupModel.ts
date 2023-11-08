@@ -12,10 +12,6 @@ export interface Group extends RcTableProps {
   commonGroupParentId: string
   // 分组的顶级节点ID，对应多个虚拟组织的业务分组ID
   commonGroupTopId: string
-  // 创建时间
-  commonGroupCreateTime: string
-  // 更新时间
-  commonGroupUpdateTime: string
 }
 
 export type GroupListResultModel = BasicFetchResult<Group>

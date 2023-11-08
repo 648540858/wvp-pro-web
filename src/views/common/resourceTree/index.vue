@@ -17,6 +17,7 @@
       :tree-data="treeData"
       :load-data="onLoadData"
       :height="400"
+      style="background-color: transparent"
     >
       <template #icon="{ key, ptzType }">
         <template v-if="key === ''">
@@ -38,19 +39,28 @@
           <Icon icon="icon-park-outline:surveillance-cameras-two" />
         </template>
       </template>
-      <template #title="{ key, title }">
-        <a-dropdown :trigger="['contextmenu']">
+      <template #title="{ key, title, data }">
+        <a-dropdown v-if="!data.isLeaf" :trigger="['contextmenu']">
           <span>{{ title }}</span>
           <template #overlay>
-            <a-menu @click="({ key: menuKey }) => onContextMenuClick(key, menuKey)">
-              <a-menu-item key="add">添加分组</a-menu-item>
-              <a-menu-item key="edit">编辑分组</a-menu-item>
-              <a-menu-item key="delete">删除分组</a-menu-item>
+            <a-menu @click="({ key: menuKey }) => onContextMenuClick(key, menuKey, data.data)">
+              <a-menu-item key="add"> 添加分组 </a-menu-item>
+              <a-menu-item key="edit" v-if="data.data"> 编辑分组 </a-menu-item>
+              <a-menu-item key="delete" v-if="data.data"> 删除分组 </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+        <a-dropdown v-if="data.isLeaf" :trigger="['contextmenu']">
+          <span>{{ title }}</span>
+          <template #overlay>
+            <a-menu @click="({ key: menuKey }) => deleteChannel(key, menuKey, data.data)">
+              <a-menu-item key="deleteChannel" v-if="data.isLeaf"> 移除 </a-menu-item>
             </a-menu>
           </template>
         </a-dropdown>
       </template>
     </a-tree>
+    <EditGroup ref="editGroupRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -62,6 +72,7 @@
     SelectOption as ASelectOption,
     InputSearch as AInputSearch,
     Tree as ATree,
+    Modal,
   } from 'ant-design-vue'
   import type { TreeProps } from 'ant-design-vue'
   import { ref } from 'vue'
@@ -74,14 +85,17 @@
   } from '/@/api/resource/group'
   import { queryChannelListInGroup } from '/@/api/resource/channel'
   import { Icon } from '/@/components/Icon'
+  import EditGroup from '../editGroup/index.vue'
+  import { Group } from '/@/api/resource/model/groupModel'
+  import { CommonGbChannel } from '/@/api/resource/model/channelModel'
 
   let treeType = ref('group')
   let searchTreeValue = ref('')
   const expandedKeys = ref<(string | number)[]>([])
   const selectedKeys = ref<string[]>([])
   const treeData = ref<TreeProps['treeData']>([])
-
-  treeData.value = [{ title: '本平台', key: '' }]
+  const editGroupRef = ref()
+  treeData.value = [{ title: '本平台', key: '', data: undefined }]
   const onLoadData: TreeProps['loadData'] = (treeNode: any) => {
     return new Promise<void>((resolve) => {
       if (treeNode.dataRef.children) {
@@ -136,7 +150,61 @@
         })
     })
   }
-  const onContextMenuClick = (treeKey: string, menuKey: string | number) => {
+  const onContextMenuClick = (treeKey: string, menuKey: string | number, data: Group) => {
     console.log(`treeKey: ${treeKey}, menuKey: ${menuKey}`)
+    console.log(data)
+    console.log(data)
+    if (menuKey === 'add') {
+      editGroupRef.value.openModel({
+        commonGroupId: -1,
+        // 分组国标编号
+        commonGroupDeviceId: '',
+        // 分组名称
+        commonGroupName: '',
+        // 分组父ID
+        commonGroupParentId: treeKey === '' ? '' : data.commonGroupDeviceId,
+        // 分组的顶级节点ID，对应多个虚拟组织的业务分组ID
+        commonGroupTopId: treeKey === '' ? '' : data.commonGroupTopId,
+        // 创建时间
+        commonGroupCreateTime: '',
+        // 更新时间
+        commonGroupUpdateTime: '',
+      })
+    } else if (menuKey === 'edit') {
+      editGroupRef.value.openModel(data)
+    } else if (menuKey === 'delete') {
+      Modal.confirm({
+        title: `确认删除 ${data.commonGroupName}?`,
+        // icon: '',
+        content: `编号： ${data.commonGroupDeviceId} `,
+        okText: '确认',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk() {
+          console.log('OK')
+        },
+        onCancel() {
+          console.log('Cancel')
+        },
+      })
+    }
+  }
+  const deleteChannel = (treeKey: string, menuKey: string | number, data: CommonGbChannel) => {
+    console.log(`treeKey: ${treeKey}, menuKey: ${menuKey}`)
+    console.log(data)
+    Modal.confirm({
+      title: `确认删除 ${data.commonGbName}?`,
+      // icon: '',
+      content: `编号： ${data.commonGbDeviceID} `,
+      okText: '确认',
+      okType: 'danger',
+      cancelText: '取消',
+      onOk() {
+        console.log('OK')
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
   }
 </script>
