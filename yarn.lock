@@ -2260,9 +2260,9 @@ ansi-styles@^6.0.0:
   integrity sha512-VbqNsoz55SYGczauuup0MFUyXNQviSpFTj1RQtFzmQLk18qbVSpTFFGMT293rmDaQuKCT6InmbuEyUne4mTuxQ==
 
 ant-design-vue@^3.2.0:
-  version "3.2.9"
-  resolved "https://registry.npmmirror.com/ant-design-vue/-/ant-design-vue-3.2.9.tgz"
-  integrity sha512-fnZJpAf4tYAPGBALD9dv8VBmeqfJ+xPt87DfgY1/JI6x3hn6Gfge7voF1GkS0yVT0zLyzc2aTWkDVFWKB5iupA==
+  version "3.2.20"
+  resolved "https://registry.yarnpkg.com/ant-design-vue/-/ant-design-vue-3.2.20.tgz#552f5f08e2acbcc10bd4089145d4cc2b15d4cfec"
+  integrity sha512-YWpMfGaGoRastIXEYfCoJiaRiDHk4chqtYhlKQM5GqPt6NfvrM1Vg2e60yHtjxlZjed91wCMm0rAmyUr7Hwzdg==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons-vue" "^6.1.0"

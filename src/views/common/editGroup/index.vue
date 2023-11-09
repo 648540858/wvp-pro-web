@@ -21,9 +21,10 @@
         :rules="[{ required: true, message: 'Please input your username!' }]"
       >
         <a-input-group compact>
-          <a-input v-model:value="deviceIdPrefix" style="width: 9rem" />
+          <a-input v-model:value="deviceIdPrefix" style="width: 7rem" />
           <a-input v-model:value="deviceIdType" style="width: 3rem" disabled />
-          <a-input v-model:value="deviceIdSuffix" style="width: 8rem" />
+          <a-input v-model:value="deviceIdSuffix" style="width: 6rem" />
+          <a-button style="width: 4rem" @click="getChannelCode">生成</a-button>
         </a-input-group>
       </a-form-item>
 
@@ -35,13 +36,20 @@
         <a-input v-model:value="group.commonGroupName" style="width: 20rem" />
       </a-form-item>
     </a-form>
+    <ChannelCode ref="channelCodeRef" />
   </a-modal>
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue'
-  import { Modal as AModal, Form as AForm, FormItem as AFormItem } from 'ant-design-vue'
+  import {
+    Modal as AModal,
+    Form as AForm,
+    FormItem as AFormItem,
+    Button as AButton,
+  } from 'ant-design-vue'
   import { Group } from '/@/api/resource/model/groupModel'
   import { addGroupApi, updateGroupApi } from '/@/api/resource/group'
+  import ChannelCode from '../ChannelCode/index.vue'
 
   const open = ref<boolean>(false)
   const title = ref<string>('')
@@ -60,6 +68,7 @@
   const deviceIdPrefix = ref('')
   const deviceIdType = ref('')
   const deviceIdSuffix = ref('')
+  const channelCodeRef = ref()
   const openModel = (groupParam: Group) => {
     open.value = true
     if (groupParam.commonGroupId > 0) {
@@ -116,6 +125,9 @@
           open.value = false
         })
     }
+  }
+  const getChannelCode = () => {
+    channelCodeRef.value.openModel()
   }
 
   defineExpose({ openModel })
