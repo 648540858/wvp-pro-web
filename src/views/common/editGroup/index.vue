@@ -36,7 +36,7 @@
         <a-input v-model:value="group.commonGroupName" style="width: 20rem" />
       </a-form-item>
     </a-form>
-    <ChannelCode ref="channelCodeRef" />
+    <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd"/>
   </a-modal>
 </template>
 <script lang="ts" setup>
@@ -127,7 +127,11 @@
     }
   }
   const getChannelCode = () => {
-    channelCodeRef.value.openModel()
+    channelCodeRef.value.openModel(deviceIdPrefix.value + deviceIdType.value + deviceIdSuffix.value)
+  }
+  const getChannelCodeEnd = (code: string) => {
+    deviceIdPrefix.value = code.substring(0, 10)
+    deviceIdSuffix.value = code.substring(13, 20)
   }
 
   defineExpose({ openModel })

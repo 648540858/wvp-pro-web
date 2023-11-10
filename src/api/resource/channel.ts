@@ -1,5 +1,8 @@
 import { defHttp } from '/@/utils/http/axios'
 import { ChannelListResultModel } from '/@/api/resource/model/channelModel'
+import { IndustryCodeType } from "/@/api/resource/model/industryCodeType";
+import {DeviceType} from "/@/api/resource/model/deviceTypeModel";
+import {NetworkIdentificationType} from "/@/api/resource/model/networkIdentificationTypeModel";
 
 enum Api {
   // 查询分组下的通道
@@ -12,6 +15,12 @@ enum Api {
   QUERY_CITY_LIST_IN_REGION = '/api/channel/region/city',
   // 查询市下的所有的县
   QUERY_COUNTY_LIST_IN_REGION = '/api/channel/region/county',
+  // 查询行业编码列表
+  QUERY_INDUSTRY_CODE_LIST = '/api/channel/industry/list',
+  // 查询类型编码列表
+  QUERY_TYPE_LIST = '/api/channel/type/list',
+  // 查询类型编码列表
+  QUERY_NETWORK_IDENTIFICATION_LIST = '/api/channel/network/identification/list',
 }
 
 export const queryChannelListInGroup = (
@@ -60,6 +69,32 @@ export const queryCountyListInGroup = (city: string) =>
     params: {
       city: city,
     },
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const queryIndustryCodeList = () =>
+  defHttp.get<IndustryCodeType[]>({
+    url: Api.QUERY_INDUSTRY_CODE_LIST,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const queryDeviceTypeList = () =>
+  defHttp.get<DeviceType[]>({
+    url: Api.QUERY_TYPE_LIST,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const queryNetworkIdentificationTypeList = () =>
+  defHttp.get<NetworkIdentificationType[]>({
+    url: Api.QUERY_NETWORK_IDENTIFICATION_LIST,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
