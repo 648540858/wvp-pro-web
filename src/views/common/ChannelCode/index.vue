@@ -8,9 +8,9 @@
     :okText="okText"
     @ok="handleOk"
   >
-    <a-tabs v-model:activeKey="activeKey" centered @change="tabChange">
+    <a-tabs v-model:activeKey="activeKey" centered @change="tabChange" style="padding: 0 1rem">
       <a-tab-pane key="0">
-        <a-radio-group v-model:value="allVal[0].val">
+        <a-radio-group v-model:value="allVal[0].val" :disabled="allVal[0].lock">
           <a-radio v-for="item in regionList" :value="item.commonRegionDeviceId">
             {{ item.commonRegionName }} - {{ item.commonRegionDeviceId }}
           </a-radio>
@@ -21,7 +21,7 @@
         </template>
       </a-tab-pane>
       <a-tab-pane key="1">
-        <a-radio-group v-model:value="allVal[1].val">
+        <a-radio-group v-model:value="allVal[1].val" :disabled="allVal[1].lock">
           <a-radio v-for="item in regionList" :value="item.commonRegionDeviceId.substring(2)">
             {{ item.commonRegionName }} - {{ item.commonRegionDeviceId.substring(2) }}
           </a-radio>
@@ -32,7 +32,7 @@
         </template>
       </a-tab-pane>
       <a-tab-pane key="2">
-        <a-radio-group v-model:value="allVal[2].val">
+        <a-radio-group v-model:value="allVal[2].val" :disabled="allVal[2].lock">
           <a-radio v-for="item in regionList" :value="item.commonRegionDeviceId.substring(4)">
             {{ item.commonRegionName }} - {{ item.commonRegionDeviceId.substring(4) }}
           </a-radio>
@@ -43,15 +43,21 @@
         </template>
       </a-tab-pane>
       <a-tab-pane key="3">
-        请手动输入基层接入单位编码
-        <a-input v-model:value="allVal[3].val" />
+        请手动输入基层接入单位编码,两位数字
+        <a-input
+          v-model:value="allVal[3].val"
+          :maxLength="2"
+          showCount
+          @input="numValid(3)"
+          :disabled="allVal[3].lock"
+        />
         <template #tab>
           <div class="show-code-item">{{ allVal[3].val }}</div>
           <div style="text-align: center">{{ allVal[3].meaning }}</div>
         </template>
       </a-tab-pane>
       <a-tab-pane key="4">
-        <a-radio-group v-model:value="allVal[4].val">
+        <a-radio-group v-model:value="allVal[4].val" :disabled="allVal[4].lock">
           <a-radio v-for="item in industryCodeTypeList" :value="item.code">
             {{ item.name }} - {{ item.code }}
           </a-radio>
@@ -62,7 +68,7 @@
         </template>
       </a-tab-pane>
       <a-tab-pane key="5">
-        <a-radio-group v-model:value="allVal[5].val">
+        <a-radio-group v-model:value="allVal[5].val" :disabled="allVal[5].lock">
           <a-radio v-for="item in deviceTypeList" :value="item.code">
             {{ item.name }} - {{ item.code }}
           </a-radio>
@@ -73,7 +79,7 @@
         </template>
       </a-tab-pane>
       <a-tab-pane key="6">
-        <a-radio-group v-model:value="allVal[6].val">
+        <a-radio-group v-model:value="allVal[6].val" :disabled="allVal[6].lock">
           <a-radio v-for="item in networkIdentificationTypeList" :value="item.code">
             {{ item.name }} - {{ item.code }}
           </a-radio>
@@ -84,8 +90,14 @@
         </template>
       </a-tab-pane>
       <a-tab-pane key="7">
-        请手动输入设备/用户序号
-        <a-input v-model:value="allVal[7].val" />
+        请手动输入设备/用户序号, 六位数字
+        <a-input
+          v-model:value="allVal[7].val"
+          :maxLength="6"
+          showCount
+          @input="numValid(7)"
+          :disabled="allVal[7].lock"
+        />
         <template #tab>
           <div class="show-code-item">{{ allVal[7].val }}</div>
           <div style="text-align: center">{{ allVal[7].meaning }}</div>
@@ -125,56 +137,65 @@
     meaning: string // 含义。 比如 中心编码下的 省级编码
     val: string // 取值， 比如34
     type: string // 码段
+    lock: boolean
   }
   const emit = defineEmits(['end'])
   const allVal = ref<CodeType[]>([])
   allVal.value[0] = {
     id: [1, 2],
     meaning: '省级编码',
-    val: '00',
+    val: '11',
     type: '中心编码',
+    lock: false,
   }
   allVal.value[1] = {
     id: [3, 4],
     meaning: '市级编码',
-    val: '00',
+    val: '01',
     type: '中心编码',
+    lock: false,
   }
   allVal.value[2] = {
     id: [5, 6],
     meaning: '区级编码',
-    val: '00',
+    val: '01',
     type: '中心编码',
+    lock: false,
   }
   allVal.value[3] = {
     id: [7, 8],
     meaning: '基层接入单位编码',
-    val: '00',
+    val: '01',
     type: '中心编码',
+    lock: false,
   }
   allVal.value[4] = {
     id: [9, 10],
     meaning: '行业编码',
     val: '00',
     type: '行业编码',
+    lock: false,
   }
   allVal.value[5] = {
     id: [11, 13],
     meaning: '类型编码',
-    val: '000',
+    val: '132',
     type: '类型编码',
+    lock: false,
   }
   allVal.value[6] = {
     id: [14],
     meaning: '网络标识编码',
-    val: '0',
+    val: '7',
     type: '网络标识',
+    lock: false,
   }
   allVal.value[7] = {
     id: [15, 20],
     meaning: '设备/用户序号',
-    val: '000000',
+    val: '000001',
     type: '序号',
+    lock: false,
   }
   const regionList = ref<Region[]>()
   const deviceTypeList = ref<DeviceType[]>()
@@ -284,7 +305,7 @@
     console.log(activeKey.value)
     getRegionList()
   }
-  const openModel = (code: String | undefined) => {
+  const openModel = (code: String | undefined, lockIndex: number, lockContent: string) => {
     console.log(code)
     open.value = true
     if (typeof code != 'undefined' && code.length === 20) {
@@ -296,6 +317,10 @@
       allVal.value[5].val = code.substring(10, 13)
       allVal.value[6].val = code.substring(14, 15)
       allVal.value[7].val = code.substring(15)
+    }
+    if (typeof lockIndex != 'undefined') {
+      allVal.value[lockIndex].lock = true
+      allVal.value[lockIndex].val = lockContent
     }
   }
   const closeModel = () => {
@@ -315,6 +340,9 @@
     console.log(code)
     emit('end', code)
     open.value = false
+  }
+  const numValid = (index) => {
+    allVal.value[index].val = allVal.value[index].val.replace(/[^0-9]/g, '')
   }
 
   defineExpose({ openModel })

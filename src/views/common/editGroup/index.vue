@@ -127,7 +127,11 @@
     }
   }
   const getChannelCode = () => {
-    channelCodeRef.value.openModel(deviceIdPrefix.value + deviceIdType.value + deviceIdSuffix.value)
+    channelCodeRef.value.openModel(
+      deviceIdPrefix.value + deviceIdType.value + deviceIdSuffix.value,
+      5,
+      deviceIdType.value,
+    )
   }
   const getChannelCodeEnd = (code: string) => {
     deviceIdPrefix.value = code.substring(0, 10)
