@@ -73,6 +73,7 @@
     InputSearch as AInputSearch,
     Tree as ATree,
     Modal,
+    message,
   } from 'ant-design-vue'
   import type { TreeProps } from 'ant-design-vue'
   import { ref } from 'vue'
@@ -200,7 +201,13 @@
       okType: 'danger',
       cancelText: '取消',
       onOk() {
-        console.log('OK')
+        deleteGroupApi(data.commonGbDeviceID)
+          .then(() => {
+            message.success('删除成功')
+          })
+          .catch((exception) => {
+            message.success('删除失败： ' + exception)
+          })
       },
       onCancel() {
         console.log('Cancel')
