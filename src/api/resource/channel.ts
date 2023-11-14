@@ -1,8 +1,11 @@
 import { defHttp } from '/@/utils/http/axios'
-import { ChannelListResultModel } from '/@/api/resource/model/channelModel'
-import { IndustryCodeType } from "/@/api/resource/model/industryCodeType";
-import {DeviceType} from "/@/api/resource/model/deviceTypeModel";
-import {NetworkIdentificationType} from "/@/api/resource/model/networkIdentificationTypeModel";
+import {
+  ChannelListForGroupParams,
+  ChannelListResultModel, UpdateCommonChannelToGroup,
+} from '/@/api/resource/model/channelModel'
+import { IndustryCodeType } from '/@/api/resource/model/industryCodeType'
+import { DeviceType } from '/@/api/resource/model/deviceTypeModel'
+import { NetworkIdentificationType } from '/@/api/resource/model/networkIdentificationTypeModel'
 
 enum Api {
   // 查询分组下的通道
@@ -21,22 +24,16 @@ enum Api {
   QUERY_TYPE_LIST = '/api/channel/type/list',
   // 查询类型编码列表
   QUERY_NETWORK_IDENTIFICATION_LIST = '/api/channel/network/identification/list',
+  // 查询与分组相关的列表
+  UPDATE_TO_GROUP = '/api/channel/group/update',
+  // 移除分组信息
+  REMOVE_FROM_GROUP = '/api/channel/group/remove',
 }
 
-export const queryChannelListInGroup = (
-  groupDeviceId: string,
-  query: string,
-  page: number,
-  count: number,
-) =>
+export const queryChannelListInGroup = (params: ChannelListForGroupParams) =>
   defHttp.get<ChannelListResultModel>({
     url: Api.QUERY_CHANNEL_LIST_IN_GROUP,
-    params: {
-      groupDeviceId: groupDeviceId,
-      query: query,
-      page: page,
-      count: count,
-    },
+    params: params,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
@@ -95,6 +92,24 @@ export const queryDeviceTypeList = () =>
 export const queryNetworkIdentificationTypeList = () =>
   defHttp.get<NetworkIdentificationType[]>({
     url: Api.QUERY_NETWORK_IDENTIFICATION_LIST,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const updateToGroup = (params: UpdateCommonChannelToGroup) =>
+  defHttp.post<void>({
+    url: Api.UPDATE_TO_GROUP,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const removeFromGroup = (params: UpdateCommonChannelToGroup) =>
+  defHttp.post<void>({
+    url: Api.REMOVE_FROM_GROUP,
+    params: params,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

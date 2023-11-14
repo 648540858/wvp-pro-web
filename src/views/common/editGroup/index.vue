@@ -69,8 +69,10 @@
   const deviceIdType = ref('')
   const deviceIdSuffix = ref('')
   const channelCodeRef = ref()
-  const openModel = (groupParam: Group) => {
+  let endFnCallback: Function
+  const openModel = (groupParam: Group, endFn: Function) => {
     open.value = true
+    endFnCallback = endFn
     if (groupParam.commonGroupId > 0) {
       title.value = '编辑分组'
       deviceIdPrefix.value = groupParam.commonGroupDeviceId.substring(0, 10)
@@ -112,6 +114,7 @@
         })
         .finally(() => {
           open.value = false
+          endFnCallback(group.value)
         })
     } else {
       addGroupApi(group.value)
@@ -123,6 +126,7 @@
         })
         .finally(() => {
           open.value = false
+          endFnCallback(group.value)
         })
     }
   }

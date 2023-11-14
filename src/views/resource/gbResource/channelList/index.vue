@@ -162,7 +162,7 @@
   const columns = deviceChannelColumns()
   let dataSource = ref<DeviceChannel[]>([])
   let tablePage = ref(1)
-  let tablePageSize = ref(10)
+  let tablePageSize = ref(15)
   let tableTotal = ref(0)
   const pagination = computed(() => ({
     // 表格分页的配置
@@ -172,7 +172,7 @@
     showSizeChanger: true, // 用于控制展示每页多少条的下拉
     showQuickJumper: true,
     total: tableTotal.value,
-    pageSizeOptions: ['10', '20', '50'],
+    pageSizeOptions: ['15', '25', '50', '1000'],
     showTotal: (total) => `共 ${total} 条数据`,
     onShowSizeChange: pageSizeChange,
     onChange: pageChange,

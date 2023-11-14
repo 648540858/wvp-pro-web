@@ -45,10 +45,10 @@ export const updateGroupApi = (group: Group) =>
   })
 
 export const deleteGroupApi = (groupDeviceId: string) =>
-  defHttp.delete<void>({
+  defHttp.get<void>({
     url: Api.DELETE,
     params: {
-      groupDeviceId: groupDeviceId,
+      groupDeviceId,
     },
     headers: {
       // @ts-ignore

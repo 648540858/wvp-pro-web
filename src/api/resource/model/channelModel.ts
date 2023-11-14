@@ -1,4 +1,4 @@
-import { BasicFetchResult } from '/@/api/model/baseModel'
+import {BasicFetchResult, BasicPageParams} from '/@/api/model/baseModel'
 import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface CommonGbChannel extends RcTableProps {
@@ -97,3 +97,18 @@ export interface CommonGbChannel extends RcTableProps {
 }
 
 export type ChannelListResultModel = BasicFetchResult<CommonGbChannel>
+
+export interface ChannelListForGroupParams extends BasicPageParams {
+  query: string | null | undefined
+  type: string | null | undefined
+  inGroup: boolean | null | undefined
+  inRegion: boolean | null | undefined
+  groupDeviceId: string | null | undefined
+  regionDeviceId: string | null | undefined
+}
+
+export interface UpdateCommonChannelToGroup extends RcTableProps {
+  // 数据库自增ID
+  commonGbIds: number[]
+  commonGbBusinessGroupID: string
+}

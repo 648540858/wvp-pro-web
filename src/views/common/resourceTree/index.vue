@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; min-width: 280px">
+  <div style="height: 100%; min-width: 280px" id="resourceTree">
     <a-input-search v-model:value="searchTreeValue" style="margin-bottom: 8px" placeholder="搜索">
       <template #addonBefore>
         <a-select v-model:value="treeType">
@@ -16,7 +16,7 @@
       v-model:selectedKeys="selectedKeys"
       :tree-data="treeData"
       :load-data="onLoadData"
-      :height="400"
+      :height="treeHeight"
       style="background-color: transparent"
     >
       <template #icon="{ key, ptzType }">
@@ -76,7 +76,7 @@
     message,
   } from 'ant-design-vue'
   import type { TreeProps } from 'ant-design-vue'
-  import { ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import {
     addGroupApi,
     queryGroupListApi,
@@ -84,19 +84,23 @@
     deleteGroupApi,
     queryChildGroupListApi,
   } from '/@/api/resource/group'
-  import { queryChannelListInGroup } from '/@/api/resource/channel'
+  import { queryChannelListInGroup, removeFromGroup } from '/@/api/resource/channel'
   import { Icon } from '/@/components/Icon'
   import EditGroup from '../editGroup/index.vue'
   import { Group } from '/@/api/resource/model/groupModel'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
+  import { TreeNode } from 'echarts/types/src/data/Tree'
+  import { DataNode } from 'ant-design-vue/lib/vc-tree/interface'
 
   let treeType = ref('group')
   let searchTreeValue = ref('')
   const expandedKeys = ref<(string | number)[]>([])
   const selectedKeys = ref<string[]>([])
   const treeData = ref<TreeProps['treeData']>([])
+  const treeHeight = ref<number>(300)
   const editGroupRef = ref()
-  treeData.value = [{ title: '本平台', key: '', data: undefined }]
+
+  treeData.value = [{ title: '本平台', key: '', data: undefined, selectable: false }]
   const onLoadData: TreeProps['loadData'] = (treeNode: any) => {
     return new Promise<void>((resolve) => {
       if (treeNode.dataRef.children) {
@@ -125,7 +129,20 @@
           treeData.value = [...treeData.value]
         })
         .then(() => {
-          queryChannelListInGroup(treeNode.key, '', 1, 1000).then((result) => {
+          if (treeNode.key === '') {
+            resolve()
+            return
+          }
+          queryChannelListInGroup({
+            groupDeviceId: treeNode.key,
+            page: 1,
+            count: 1000,
+            query: '',
+            inGroup: null,
+            inRegion: null,
+            regionDeviceId: null,
+            type: null,
+          }).then((result) => {
             console.log(result)
             if (result.total == 0) {
               resolve()
@@ -138,6 +155,8 @@
                 key: result.list[i].commonGbDeviceID,
                 isLeaf: true,
                 ptzType: result.list[i].commonGbPtzType,
+                data: result.list[i],
+                selectable: false,
               })
             }
             treeData.value = [...treeData.value]
@@ -151,28 +170,70 @@
         })
     })
   }
+  const getSelectKey = () => {
+    return selectedKeys.value[0]
+  }
+
+  const refreshNote = (key: string, data: CommonGbChannel[]) => {
+    console.log(key)
+    console.log(data)
+    treeAction(treeData.value, key, (node: TreeNode[], item: DataNode, index: number) => {
+      if (!item.children) {
+        item.children = []
+      }
+      for (let i = 0; i < data.length; i++) {
+        item.children.push({
+          title: data[i].commonGbName,
+          key: data[i].commonGbDeviceID,
+          isLeaf: true,
+          ptzType: data[i].commonGbPtzType,
+          data: data[i],
+        })
+      }
+    })
+  }
   const onContextMenuClick = (treeKey: string, menuKey: string | number, data: Group) => {
     console.log(`treeKey: ${treeKey}, menuKey: ${menuKey}`)
     console.log(data)
     console.log(data)
     if (menuKey === 'add') {
-      editGroupRef.value.openModel({
-        commonGroupId: -1,
-        // 分组国标编号
-        commonGroupDeviceId: '',
-        // 分组名称
-        commonGroupName: '',
-        // 分组父ID
-        commonGroupParentId: treeKey === '' ? '' : data.commonGroupDeviceId,
-        // 分组的顶级节点ID，对应多个虚拟组织的业务分组ID
-        commonGroupTopId: treeKey === '' ? '' : data.commonGroupTopId,
-        // 创建时间
-        commonGroupCreateTime: '',
-        // 更新时间
-        commonGroupUpdateTime: '',
-      })
+      editGroupRef.value.openModel(
+        {
+          commonGroupId: -1,
+          // 分组国标编号
+          commonGroupDeviceId: '',
+          // 分组名称
+          commonGroupName: '',
+          // 分组父ID
+          commonGroupParentId: treeKey === '' ? '' : data.commonGroupDeviceId,
+          // 分组的顶级节点ID，对应多个虚拟组织的业务分组ID
+          commonGroupTopId: treeKey === '' ? '' : data.commonGroupTopId,
+          // 创建时间
+          commonGroupCreateTime: '',
+          // 更新时间
+          commonGroupUpdateTime: '',
+        },
+        (group: Group) => {
+          treeAction(treeData.value, treeKey, (node: DataNode[], item: DataNode, index: number) => {
+            if (!item.children) {
+              item.children = []
+            }
+            item.children.push({
+              title: group.commonGroupName,
+              key: group.commonGroupDeviceId,
+              data: group,
+            })
+          })
+        },
+      )
     } else if (menuKey === 'edit') {
-      editGroupRef.value.openModel(data)
+      editGroupRef.value.openModel(data, (group: Group) => {
+        treeAction(treeData.value, treeKey, (node: DataNode[], item: DataNode, index: number) => {
+          item.key = group.commonGroupDeviceId
+          item.title = group.commonGroupName
+          item.data = group
+        })
+      })
     } else if (menuKey === 'delete') {
       Modal.confirm({
         title: `确认删除 ${data.commonGroupName}?`,
@@ -182,7 +243,17 @@
         okType: 'danger',
         cancelText: '取消',
         onOk() {
-          console.log('OK')
+          deleteGroupApi(data.commonGroupDeviceId)
+            .then(() => {
+              message.success('删除成功')
+              treeAction(treeData.value, treeKey, (node: DataNode[], item: DataNode, index: number) => {
+                  node.splice(index, 1)
+                },
+              )
+            })
+            .catch((exception) => {
+              message.success('删除失败： ' + exception)
+            })
         },
         onCancel() {
           console.log('Cancel')
@@ -190,6 +261,7 @@
       })
     }
   }
+  const emits = defineEmits(['deleteChannelEvent'])
   const deleteChannel = (treeKey: string, menuKey: string | number, data: CommonGbChannel) => {
     console.log(`treeKey: ${treeKey}, menuKey: ${menuKey}`)
     console.log(data)
@@ -201,9 +273,16 @@
       okType: 'danger',
       cancelText: '取消',
       onOk() {
-        deleteGroupApi(data.commonGbDeviceID)
+        removeFromGroup({
+          commonGbIds: [data.commonGbId],
+          commonGbBusinessGroupID: '',
+        })
           .then(() => {
             message.success('删除成功')
+            treeAction(treeData.value, treeKey, (node: TreeNode[], id: string, index: number) => {
+              node.splice(index, 1)
+            })
+            emits('deleteChannelEvent')
           })
           .catch((exception) => {
             message.success('删除失败： ' + exception)
@@ -214,4 +293,23 @@
       },
     })
   }
+
+  const treeAction = (node: DataNode[], id: string, fn: Function) => {
+    console.log(node)
+    node.some((item: DataNode, index: number) => {
+      if (item.key === id) {
+        fn(node, item, index)
+        return true
+      }
+      if (item.children && item.children.length) {
+        treeAction(item.children, id, fn)
+      }
+    })
+  }
+  onMounted(() => {
+    const box = document.getElementById('resourceTree') as HTMLDivElement
+    treeHeight.value = box.offsetHeight - 50
+  })
+  defineExpose({ getSelectKey, refreshNote })
+
 </script>
