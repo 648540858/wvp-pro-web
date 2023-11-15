@@ -35,7 +35,7 @@ export const queryGroupListApi = (params: GroupListParams) =>
   })
 
 export const updateGroupApi = (group: Group) =>
-  defHttp.post<GroupListResultModel>({
+  defHttp.post<void>({
     url: Api.UPDATE,
     params: group,
     headers: {

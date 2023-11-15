@@ -8,8 +8,8 @@ const menu: MenuModule = {
 
     children: [
       {
-        path: 'businessGroup',
-        name: t('routes.resource.businessGroup'),
+        path: 'group',
+        name: t('routes.resource.group'),
       },
       {
         path: 'region',

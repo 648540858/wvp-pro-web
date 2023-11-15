@@ -36,7 +36,7 @@
         <a-input v-model:value="group.commonGroupName" style="width: 20rem" />
       </a-form-item>
     </a-form>
-    <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd"/>
+    <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd" />
   </a-modal>
 </template>
 <script lang="ts" setup>

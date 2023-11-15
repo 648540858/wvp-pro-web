@@ -1,7 +1,11 @@
 <template>
   <a-layout style="height: 100%">
     <a-layout-sider width="300" style="padding: 0 0.4rem; height: 100%; background: transparent">
-      <resourceTree ref="resourceTreeRef" @deleteChannelEvent="deleteChannelEvent" />
+      <resourceTree
+        ref="resourceTreeRef"
+        tree-type="group"
+        @deleteChannelEvent="deleteChannelEvent"
+      />
     </a-layout-sider>
     <a-layout-content style="padding-left: 0.2rem; padding-right: 1rem">
       <div style="border-left: 2px solid #c3c3c3; height: 100%">
@@ -93,9 +97,9 @@
     message,
   } from 'ant-design-vue'
   import resourceTree from '../../common/resourceTree/index.vue'
-  import { channelInGroupColumns } from '/@/views/resource/businessGroup/columns'
+  import { channelInGroupColumns } from '/src/views/resource/group/columns'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
-  import {queryChannelListInGroup, updateToGroup} from '/@/api/resource/channel'
+  import {queryChannelList, updateToGroup} from '/@/api/resource/channel'
 
   const columns = channelInGroupColumns()
   let dataSource = ref<CommonGbChannel[]>([])
@@ -133,7 +137,7 @@
     getChannelList()
   }
   const getChannelList = (): void => {
-    queryChannelListInGroup({
+    queryChannelList({
       groupDeviceId: null,
       page: tablePage.value,
       count: tablePageSize.value,

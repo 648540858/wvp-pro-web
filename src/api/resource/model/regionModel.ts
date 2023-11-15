@@ -17,3 +17,7 @@ export type RegionListResultModel = BasicFetchResult<Region>
 export interface RegionListParams extends BasicPageParams {
   query: string | null | undefined
 }
+
+export interface ChildRegionListParams extends BasicPageParams {
+  regionParentId: string | null | undefined
+}

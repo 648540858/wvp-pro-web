@@ -112,3 +112,9 @@ export interface UpdateCommonChannelToGroup extends RcTableProps {
   commonGbIds: number[]
   commonGbBusinessGroupID: string
 }
+
+export interface UpdateCommonChannelToRegion extends RcTableProps {
+  // 数据库自增ID
+  commonGbIds: number[]
+  commonGbCivilCode: string
+}

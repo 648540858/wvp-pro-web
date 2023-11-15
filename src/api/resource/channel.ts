@@ -1,7 +1,9 @@
 import { defHttp } from '/@/utils/http/axios'
 import {
   ChannelListForGroupParams,
-  ChannelListResultModel, UpdateCommonChannelToGroup,
+  ChannelListResultModel,
+  UpdateCommonChannelToGroup,
+  UpdateCommonChannelToRegion,
 } from '/@/api/resource/model/channelModel'
 import { IndustryCodeType } from '/@/api/resource/model/industryCodeType'
 import { DeviceType } from '/@/api/resource/model/deviceTypeModel'
@@ -9,7 +11,7 @@ import { NetworkIdentificationType } from '/@/api/resource/model/networkIdentifi
 
 enum Api {
   // 查询分组下的通道
-  QUERY_CHANNEL_LIST_IN_GROUP = '/api/channel/group/list',
+  LIST = '/api/channel/list',
   // 查询区域下的通道
   QUERY_CHANNEL_LIST_IN_REGION = '/api/channel/region/list',
   // 查询所有的省
@@ -28,11 +30,15 @@ enum Api {
   UPDATE_TO_GROUP = '/api/channel/group/update',
   // 移除分组信息
   REMOVE_FROM_GROUP = '/api/channel/group/remove',
+  // 查询与区域相关的列表
+  UPDATE_TO_REGION = '/api/channel/region/update',
+  // 移除区域信息
+  REMOVE_FROM_REGION = '/api/channel/region/remove',
 }
 
-export const queryChannelListInGroup = (params: ChannelListForGroupParams) =>
+export const queryChannelList = (params: ChannelListForGroupParams) =>
   defHttp.get<ChannelListResultModel>({
-    url: Api.QUERY_CHANNEL_LIST_IN_GROUP,
+    url: Api.LIST,
     params: params,
     headers: {
       // @ts-ignore
@@ -109,6 +115,25 @@ export const updateToGroup = (params: UpdateCommonChannelToGroup) =>
 export const removeFromGroup = (params: UpdateCommonChannelToGroup) =>
   defHttp.post<void>({
     url: Api.REMOVE_FROM_GROUP,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const updateToRegion = (params: UpdateCommonChannelToRegion) =>
+  defHttp.post<void>({
+    url: Api.UPDATE_TO_REGION,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const removeFromRegion = (params: UpdateCommonChannelToRegion) =>
+  defHttp.post<void>({
+    url: Api.REMOVE_FROM_REGION,
     params: params,
     headers: {
       // @ts-ignore
