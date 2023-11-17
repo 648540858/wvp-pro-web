@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; min-width: 280px; padding-top: 0.5rem" id="groupTree">
+  <div style="min-width: 280px; padding-top: 0.5rem" id="groupTree">
     <a-tree
       :show-icon="true"
       v-model:expanded-keys="expandedKeys"
@@ -10,10 +10,10 @@
       style="background-color: transparent"
     >
       <template #icon="{ key, ptzType, isLeaf }">
-        <template v-if="key === ''">
+        <template v-if="key === 'TopParentNote'">
           <Icon icon="tdesign:home" />
         </template>
-        <template v-if="key !== '' && !isLeaf">
+        <template v-if="key !== 'TopParentNote' && !isLeaf">
           <Icon icon="material-symbols:ad-group-outline" />
         </template>
         <template v-if="ptzType === 0">
@@ -78,6 +78,7 @@
 
   const expandedKeys = ref<(string | number)[]>(['TopParentNote'])
   const selectedKeys = ref<string[]>([])
+  const allTopNodeKey = 'TopParentNote'
   const treeData = ref<TreeProps['treeData']>([
     { title: '本平台', key: 'TopParentNote', data: undefined, selectable: false },
   ])
@@ -207,9 +208,9 @@
           // 分组名称
           commonGroupName: '',
           // 分组父ID
-          commonGroupParentId: treeKey === '' ? '' : data.commonGroupDeviceId,
+          commonGroupParentId: treeKey === allTopNodeKey ? '' : data.commonGroupDeviceId,
           // 分组的顶级节点ID，对应多个虚拟组织的业务分组ID
-          commonGroupTopId: treeKey === '' ? '' : data.commonGroupTopId,
+          commonGroupTopId: treeKey === allTopNodeKey ? '' : data.commonGroupTopId,
           // 创建时间
           commonGroupCreateTime: '',
           // 更新时间
@@ -352,7 +353,7 @@
   }
   onMounted(() => {
     const box = document.getElementById('resourceTree') as HTMLDivElement
-    treeHeight.value = box.offsetHeight - 50
+    treeHeight.value = box.offsetHeight - 80
   })
   defineExpose({ getSelectKey, refreshNote })
 </script>

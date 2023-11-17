@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; min-width: 280px; padding-top: 0.5rem" id="regionTree">
+  <div style="min-width: 280px; padding-top: 0.5rem" id="regionTree">
     <a-tree
       :show-icon="true"
       v-model:expanded-keys="expandedKeys"
@@ -10,11 +10,11 @@
       style="background-color: transparent"
     >
       <template #icon="{ key, ptzType, isLeaf }">
-        <template v-if="key === ''">
+        <template v-if="key === 'TopParentNote'">
           <Icon icon="tdesign:home" />
         </template>
-        <template v-if="key !== '' && !isLeaf">
-          <Icon icon="material-symbols:ad-group-outline" />
+        <template v-if="key !== 'TopParentNote' && !isLeaf">
+          <Icon icon="icon-park-outline:city" />
         </template>
         <template v-if="ptzType === 0">
           <Icon icon="icon-park-outline:camera-five" />
@@ -37,9 +37,9 @@
           <span>{{ title }}</span>
           <template #overlay>
             <a-menu @click="({ key: menuKey }) => onContextMenuClick(key, menuKey, data.data)">
-              <a-menu-item key="add"> 添加分组 </a-menu-item>
-              <a-menu-item key="edit" v-if="data.data"> 编辑分组 </a-menu-item>
-              <a-menu-item key="delete" v-if="data.data"> 删除分组 </a-menu-item>
+              <a-menu-item key="add"> 添加区域 </a-menu-item>
+              <a-menu-item key="edit" v-if="data.data"> 编辑区域 </a-menu-item>
+              <a-menu-item key="delete" v-if="data.data"> 删除区域 </a-menu-item>
               <a-menu-item key="clearChannel" v-if="data.data"> 清空通道 </a-menu-item>
             </a-menu>
           </template>
@@ -78,8 +78,9 @@
 
   const expandedKeys = ref<(string | number)[]>(['TopParentNote'])
   const selectedKeys = ref<string[]>([])
+  const allTopNodeKey = 'TopParentNote'
   const treeData = ref<TreeProps['treeData']>([
-    { title: '本平台', key: 'TopParentNote', data: undefined, selectable: false },
+    { title: '本平台', key: allTopNodeKey, data: undefined, selectable: false },
   ])
   const treeHeight = ref<number>(300)
   const editRegionRef = ref()
@@ -197,6 +198,7 @@
     })
   }
   const onContextMenuClick = (treeKey: string, menuKey: string | number, data: Region) => {
+    console.log(data)
     if (menuKey === 'add') {
       // 为打开的编辑弹窗传输初始数据
       editRegionRef.value.openModel(
@@ -208,7 +210,7 @@
           // 区域名称
           commonRegionName: '',
           // 父区域国标ID
-          commonRegionParentId: treeKey === '' ? '' : data.commonRegionDeviceId,
+          commonRegionParentId: treeKey === allTopNodeKey ? '' : data.commonRegionDeviceId,
         },
         (region: Region) => {
           treeAction(treeData.value, treeKey, (node: DataNode[], item: DataNode, index: number) => {
@@ -347,7 +349,7 @@
   }
   onMounted(() => {
     const box = document.getElementById('resourceTree') as HTMLDivElement
-    treeHeight.value = box.offsetHeight - 50
+    treeHeight.value = box.offsetHeight - 80
   })
   defineExpose({ getSelectKey, refreshNote })
 </script>

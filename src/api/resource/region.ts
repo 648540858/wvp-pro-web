@@ -12,6 +12,7 @@ enum Api {
   UPDATE = '/api/region/update',
   DELETE = '/api/region/delete',
   ADD = '/api/region/add',
+  QUERY_BY_DEVICE_ID = '/api/region/one',
 }
 
 export const queryChildList = (parent: string) =>
@@ -61,6 +62,18 @@ export const addRegionApi = (region: Region) =>
   defHttp.post<void>({
     url: Api.ADD,
     params: region,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const getRegionByDeviceIdApi = (regionDeviceId: string) =>
+  defHttp.get<Region>({
+    url: Api.QUERY_BY_DEVICE_ID,
+    params: {
+      regionDeviceId: regionDeviceId,
+    },
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

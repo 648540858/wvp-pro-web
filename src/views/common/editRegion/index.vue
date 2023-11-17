@@ -20,7 +20,10 @@
         name="commonRegionDeviceId"
         :rules="[{ required: true, message: 'Please input your username!' }]"
       >
-        <a-input v-model:value="region.commonRegionDeviceId" style="width: 20rem" />
+        <a-input-group compact>
+          <a-input v-model:value="region.commonRegionDeviceId" style="width: 14rem" />
+          <a-button style="width: 6rem" @click="chooseRegion">选择区域</a-button>
+        </a-input-group>
       </a-form-item>
 
       <a-form-item
@@ -32,13 +35,16 @@
       </a-form-item>
     </a-form>
   </a-modal>
+  <EditRegion ref="editRegionRef" />
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue'
   import { Modal as AModal, Form as AForm, FormItem as AFormItem } from 'ant-design-vue'
   import { Region } from '/@/api/resource/model/regionModel'
-  import {addRegionApi, deleteRegionApi, updateRegionApi} from '/@/api/resource/region'
+  import { addRegionApi, updateRegionApi } from '/@/api/resource/region'
+  import EditRegion from '../regionCode/index.vue'
 
+  const editRegionRef = ref()
   const open = ref<boolean>(false)
   const title = ref<string>('')
   const region = ref<Region>({
@@ -53,18 +59,18 @@
   })
 
   let endFnCallback: Function
-  const openModel = (groupParam: Region, endFn: Function) => {
+  const openModel = (regionParam: Region, endFn: Function) => {
     open.value = true
     endFnCallback = endFn
-    if (groupParam.commonRegionId > 0) {
-      title.value = '编辑分组'
-      region.value = groupParam
+    if (regionParam.commonRegionId > 0) {
+      title.value = '编辑区域'
+      region.value = regionParam
     } else {
-      title.value = '添加分组'
+      title.value = '添加区域'
       region.value.commonRegionId = -1
       region.value.commonRegionDeviceId = ''
       region.value.commonRegionName = ''
-      region.value.commonRegionParentId = groupParam.commonRegionParentId
+      region.value.commonRegionParentId = regionParam.commonRegionParentId
     }
   }
   const closeModel = () => {
@@ -99,6 +105,9 @@
           endFnCallback(region.value)
         })
     }
+  }
+  const chooseRegion = () => {
+    editRegionRef.value.openModel()
   }
 
   defineExpose({ openModel })
