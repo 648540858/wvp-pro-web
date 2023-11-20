@@ -9,11 +9,11 @@
       :height="treeHeight"
       style="background-color: transparent"
     >
-      <template #icon="{ key, ptzType, isLeaf }">
+      <template #icon="{ key, ptzType, isRegion }">
         <template v-if="key === 'TopParentNote'">
           <Icon icon="tdesign:home" />
         </template>
-        <template v-if="key !== 'TopParentNote' && !isLeaf">
+        <template v-if="key !== 'TopParentNote' && isRegion">
           <Icon icon="icon-park-outline:city" />
         </template>
         <template v-if="ptzType === 0">
@@ -101,6 +101,7 @@
         title: result.list[i].commonRegionName,
         key: result.list[i].commonRegionDeviceId,
         isLeaf: false,
+        isRegion: true,
         data: result.list[i],
       })
     }
@@ -129,6 +130,7 @@
               title: result.list[i].commonRegionName,
               key: result.list[i].commonRegionDeviceId,
               isLeaf: false,
+              isRegion: true,
               data: result.list[i],
             })
           }
@@ -162,6 +164,7 @@
                 isLeaf: true,
                 ptzType: result.list[i].commonGbPtzType,
                 data: result.list[i],
+                isRegion: false,
                 selectable: false,
               })
             }
@@ -191,6 +194,7 @@
           key: data[i].commonGbDeviceID,
           isLeaf: true,
           ptzType: data[i].commonGbPtzType,
+          isRegion: false,
           data: data[i],
           selectable: false,
         })
@@ -221,6 +225,7 @@
               title: region.commonRegionName,
               key: region.commonRegionDeviceId,
               data: region,
+              isRegion: true,
             })
           })
         },

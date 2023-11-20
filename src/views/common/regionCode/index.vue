@@ -8,17 +8,22 @@
     :okText="okText"
     @ok="handleOk"
   >
-    <a-breadcrumb :loading="breadcrumbLoading">
-      <a-breadcrumb-item v-for="item in parentPathList" @click="parentPathClick(item)">
-        {{ item.name }}
-      </a-breadcrumb-item>
-    </a-breadcrumb>
-    <div class="content">
-      <a-radio-group v-model:value="chooseRegion" @change="regionChange">
-        <a-radio v-for="item in regionList" :value="item">
-          {{ item.commonRegionName }}
-        </a-radio>
-      </a-radio-group>
+    <div style="padding: 0 1rem">
+      <a-breadcrumb :loading="breadcrumbLoading" style="height: 30px; line-height: 30px">
+        <a-breadcrumb-item @click="homePathClick()">
+          <Icon icon="tdesign:home" />
+        </a-breadcrumb-item>
+        <a-breadcrumb-item v-for="item in parentPathList" @click="parentPathClick(item)">
+          {{ item.name }}
+        </a-breadcrumb-item>
+      </a-breadcrumb>
+      <div class="content">
+        <a-radio-group v-model:value="chooseRegion" @change="regionChange">
+          <a-radio v-for="item in regionList" :value="item">
+            {{ item.commonRegionName }}
+          </a-radio>
+        </a-radio-group>
+      </div>
     </div>
   </a-modal>
 </template>
@@ -33,7 +38,9 @@
   } from 'ant-design-vue'
   import { Region } from '/@/api/resource/model/regionModel'
   import { getRegionByDeviceIdApi, queryChildList } from '/@/api/resource/region'
+  import Icon from '/@/components/Icon/src/Icon.vue'
 
+  const emit = defineEmits(['end'])
   const open = ref<boolean>(false)
   const breadcrumbLoading = ref<boolean>(false)
   const okText = ref<string>('完成')
@@ -45,6 +52,10 @@
   }
   const parentPathList = ref<ParentPath[]>([])
   const regionList = ref<Region[]>()
+  const homePathClick = () => {
+    parentPathList.value = []
+    getRegionList()
+  }
   const parentPathClick = (path: ParentPath) => {
     console.log(path)
     let index = parentPathList.value.indexOf(path)
@@ -105,11 +116,10 @@
     open.value = false
   }
   const handleOk = () => {
-    // const code =
-    //   allVal.value[0].val + allVal.value[1].val + allVal.value[2].val + allVal.value[3].val
     // console.log(code)
     // emit('end', code)
-    // open.value = false
+    open.value = false
+    emit('end', chooseRegion.value)
   }
   // const numValid = (index) => {
   //   allVal.value[index].val = allVal.value[index].val.replace(/[^0-9]/g, '')

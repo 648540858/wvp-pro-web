@@ -35,16 +35,16 @@
       </a-form-item>
     </a-form>
   </a-modal>
-  <EditRegion ref="editRegionRef" />
+  <ChooseRegionCode ref="chooseRegionCodeRef" @end="chooseRegionEnd"/>
 </template>
 <script lang="ts" setup>
   import { ref } from 'vue'
   import { Modal as AModal, Form as AForm, FormItem as AFormItem } from 'ant-design-vue'
   import { Region } from '/@/api/resource/model/regionModel'
   import { addRegionApi, updateRegionApi } from '/@/api/resource/region'
-  import EditRegion from '../regionCode/index.vue'
+  import ChooseRegionCode from '../regionCode/index.vue'
 
-  const editRegionRef = ref()
+  const chooseRegionCodeRef = ref()
   const open = ref<boolean>(false)
   const title = ref<string>('')
   const region = ref<Region>({
@@ -107,7 +107,10 @@
     }
   }
   const chooseRegion = () => {
-    editRegionRef.value.openModel()
+    chooseRegionCodeRef.value.openModel()
+  }
+  const chooseRegionEnd = (regionFromParam: Region) => {
+    region.value = regionFromParam
   }
 
   defineExpose({ openModel })
