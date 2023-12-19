@@ -1,6 +1,6 @@
 <template>
   <a-layout style="height: 100%">
-    <a-layout-sider width="300" style="padding: 0 0.4rem; height: 100%; background: transparent">
+    <a-layout-sider style="padding: 0 0.4rem; height: 100%; background: transparent">
       <resourceTree
         ref="resourceTreeRef"
         tree-type="group"

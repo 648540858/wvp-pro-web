@@ -9,24 +9,39 @@
           :pagination="pagination"
         >
           <template #bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'pushIng'">
-              <a-tag color="processing" v-if="record.pushIng"> 正在推流 </a-tag>
-              <a-tag v-if="!record.pushIng">已停止</a-tag>
+            <!--            <template v-if="column.dataIndex === 'snap'">-->
+            <!--              <a-image-->
+            <!--                :src="getSnap(record)"-->
+            <!--                fallback="/resource/img/defaultSnap.png"-->
+            <!--                style="width: 3rem"-->
+            <!--              />-->
+            <!--            </template>-->
+            <template v-if="column.dataIndex === 'commonGbLongitudeAndLatitude'">
+              <span v-if="record.commonGbLongitude * record.commonGbLatitude > 0"
+                >{{ record.commonGbLongitude }},<br />{{ record.commonGbLatitude }}</span
+              >
+              <span v-if="record.longitude * record.latitude === 0">无</span>
+            </template>
+            <template v-if="column.dataIndex === 'commonGbStatus'">
+              <a-tag color="processing" v-if="record.commonGbStatus"> 在线 </a-tag>
+              <a-tag v-if="!record.commonGbStatus">离线</a-tag>
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button
+                :disabled="deviceId == null || !deviceOnline"
                 type="link"
                 size="small"
                 @click="play(record)"
                 >播放</a-button
               >
               <a-button
+                :disabled="deviceId == null || !deviceOnline"
                 type="link"
                 danger
                 size="small"
                 v-if="!!record.streamId"
                 @click="stop(record)"
-                >移除</a-button
+                >停止</a-button
               >
               <a-button
                 type="link"
@@ -43,6 +58,11 @@
           </template>
           <template #title>
             <div style="width: 100%; display: inline-flex">
+              <a-button type="link" size="small" @click="back()" style="color: #000">
+                <template #icon>
+                  <ArrowLeftOutlined />
+                </template>
+              </a-button>
               <BasicTitle>国标通道</BasicTitle>
               <div style="margin-left: auto; display: inline-flex">
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
@@ -92,6 +112,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import { deviceChannelColumns } from '/@/views/resource/gbResource/channelList/columns'
   import {
     deviceChannelListApi,
     deviceSubChannelListApi,
@@ -117,16 +138,14 @@
   } from 'ant-design-vue'
   import { ArrowLeftOutlined } from '@ant-design/icons-vue'
   import Player from '/@/views/common/player/index.vue'
-  import { pushColumns } from '/@/views/resource/pushResource/columns'
-  import { PushModel } from '/@/api/resource/model/pushModel'
 
   const playRef = ref()
   /**
    * 定义变量
    */
   let loading = ref(false)
-  const columns = pushColumns()
-  let dataSource = ref<PushModel[]>([])
+  const columns = deviceChannelColumns()
+  let dataSource = ref<DeviceChannel[]>([])
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
@@ -143,10 +162,33 @@
     onShowSizeChange: pageSizeChange,
     onChange: pageChange,
   }))
+  const props = defineProps({
+    deviceId: {
+      type: String,
+      required: true,
+    },
+    deviceOnline: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  })
+  const closeEmit = defineEmits(['close-device-channel'])
   let searchSrt = ref<string>('')
   let channelType = ref<string>('')
   let online = ref<string>('')
   let parentChannelId = ref<string>('')
+  function back() {
+    if (parentChannelId.value) {
+      parentChannelId.value = ''
+      pagination.value.total = 0
+      pagination.value.current = 1
+      getDeviceChannelList()
+    } else {
+      // 通知父组件
+      closeEmit('close-device-channel')
+    }
+  }
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
     console.log('pageSizeChange')
@@ -170,6 +212,7 @@
           channelType: channelType.value,
           catalogUnderDevice: 'false',
         },
+        props.deviceId,
         parentChannelId.value,
       )
         .then((result) => {
@@ -193,6 +236,7 @@
           channelType: channelType.value,
           catalogUnderDevice: 'false',
         },
+        props.deviceId,
       )
         .then((result) => {
           console.log(result)

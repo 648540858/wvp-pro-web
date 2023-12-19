@@ -8,6 +8,10 @@ const menu: MenuModule = {
 
     children: [
       {
+        path: 'channel',
+        name: t('routes.resource.channel'),
+      },
+      {
         path: 'group',
         name: t('routes.resource.group'),
       },

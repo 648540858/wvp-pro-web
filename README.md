@@ -24,3 +24,6 @@
 - 带宽
 
 
+部署在spring boot中时 VITE_GLOB_API_URL配置空字符串即可， 部署在nginx下时设置为具体的服务信息
+
+

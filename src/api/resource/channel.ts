@@ -12,8 +12,6 @@ import { NetworkIdentificationType } from '/@/api/resource/model/networkIdentifi
 enum Api {
   // 查询分组下的通道
   LIST = '/api/channel/list',
-  // 查询区域下的通道
-  QUERY_CHANNEL_LIST_IN_REGION = '/api/channel/region/list',
   // 查询所有的省
   QUERY_PROVINCE_LIST_IN_REGION = '/api/channel/region/province',
   // 查询省下的所有的市

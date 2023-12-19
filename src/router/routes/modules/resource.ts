@@ -15,6 +15,15 @@ const dashboard: AppRouteModule = {
   },
   children: [
     {
+      path: 'channel',
+      name: 'Channel',
+      component: () => import('/src/views/resource/channel/index.vue'),
+      meta: {
+        // affix: true,
+        title: t('routes.resource.channel'),
+      },
+    },
+    {
       path: 'group',
       name: 'Group',
       component: () => import('/src/views/resource/group/index.vue'),
