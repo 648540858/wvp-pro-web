@@ -1,53 +1,40 @@
 <template>
   <div style="width: 100%; display: flex; justify-content: center">
     <div class="control-wrapper">
-      <div
-        class="control-btn control-top"
-        @mousedown="ptzCamera('up')"
-        @mouseup="ptzCamera('stop')"
-      >
-        <Icon icon="ep:arrow-up-bold" />
+      <div class="control-zoom">
+        <div class="control-zoom-in" @mousedown="ptzCamera('zoomin')" @mouseup="ptzCamera('stop')">
+          <Icon icon="ic:twotone-add" class="control-btn" :size="20" />
+        </div>
+        <div
+          class="control-zoom-out"
+          @mousedown="ptzCamera('zoomout')"
+          @mouseup="ptzCamera('stop')"
+        >
+          <Icon icon="ic:twotone-horizontal-rule" class="control-btn" :size="20" />
+        </div>
       </div>
-      <div
-        class="control-btn control-left"
-        @mousedown="ptzCamera('left')"
-        @mouseup="ptzCamera('stop')"
-      >
-        <Icon icon="ep:arrow-up-bold" />
+      <div class="control-ptz">
+        <div class="control-ptz-top" @mousedown="ptzCamera('up')" @mouseup="ptzCamera('stop')">
+          <Icon icon="fa6-solid:chevron-up" class="control-btn" :size="ptzIconSize" />
+        </div>
+        <div class="control-ptz-left-right">
+          <div class="control-ptz-left" @mousedown="ptzCamera('left')" @mouseup="ptzCamera('stop')">
+            <Icon icon="fa6-solid:chevron-left" class="control-btn" :size="ptzIconSize"
+          /></div>
+          <div
+            class="control-ptz-right"
+            @mousedown="ptzCamera('right')"
+            @mouseup="ptzCamera('stop')"
+            ><Icon icon="fa6-solid:chevron-right" class="control-btn" :size="ptzIconSize"
+          /></div>
+        </div>
+        <div class="control-ptz-bottom" @mousedown="ptzCamera('down')" @mouseup="ptzCamera('stop')"
+          ><Icon icon="fa6-solid:chevron-down" class="control-btn" :size="ptzIconSize"
+        /></div>
       </div>
-      <div
-        class="control-btn control-bottom"
-        @mousedown="ptzCamera('down')"
-        @mouseup="ptzCamera('stop')"
-      >
-        <Icon icon="ep:arrow-up-bold" />
+      <div class="control-speed">
+        <a-slider id="test" v-model:value="speed" :min="0" :max="255" vertical />
       </div>
-      <div
-        class="control-btn control-right"
-        @mousedown="ptzCamera('right')"
-        @mouseup="ptzCamera('stop')"
-      >
-        <Icon icon="ep:arrow-up-bold" />
-      </div>
-      <div
-        class="control-btn"
-        style="position: absolute; left: 6.25rem; top: 0.25rem"
-        @mousedown="ptzCamera('zoomin')"
-        @mouseup="ptzCamera('stop')"
-      >
-        <Icon icon="ic:twotone-add" />
-      </div>
-      <div
-        class="control-btn"
-        style="position: absolute; left: 6.25rem; top: 3.25rem"
-        @mousedown="ptzCamera('zoomout')"
-        @mouseup="ptzCamera('stop')"
-      >
-        <Icon icon="ic:twotone-horizontal-rule" />
-      </div>
-    </div>
-    <div class="contro-speed" style="position: absolute; top: 11rem; width: 9rem">
-      <a-slider id="test" v-model:value="speed" :min="0" :max="255" />
     </div>
   </div>
 </template>
@@ -58,32 +45,81 @@
 
   const emit = defineEmits(['ptzCamera'])
   const speed = ref<number>(30)
+  const ptzIconSize = ref<number>(18)
   const ptzCamera = (comond) => {
     emit('ptzCamera', comond, speed.value)
   }
 </script>
 <style>
   .control-wrapper {
+    padding: 0;
+    margin: 0;
     position: relative;
-    width: 6.25rem;
-    height: 6.25rem;
-    max-width: 6.25rem;
-    max-height: 6.25rem;
-    border-radius: 100%;
-    margin-top: 1.5rem;
-    margin-left: 0.5rem;
+    width: 240px;
+    height: 144px;
     float: left;
+    display: flex;
+    flex-wrap: nowrap;
   }
-  .control-btn {
+  .control-zoom {
+    width: 48px;
+    height: 144px;
+  }
+  .control-zoom-in {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    margin-top: 12px;
+    text-align: center;
+  }
+  .control-zoom-out {
+    width: 48px;
+    height: 48px;
+    margin-top: 36px;
+    line-height: 48px;
+    text-align: center;
+  }
+  .control-ptz {
+    width: 144px;
+    height: 144px;
+  }
+  .control-ptz-left-right {
+    width: 144px;
+    height: 48px;
     display: flex;
     justify-content: center;
-    position: absolute;
-    width: 3rem;
-    height: 3rem;
-    line-height: 3rem;
-    align-items: center;
   }
-
+  .control-ptz-top {
+    width: 144px;
+    height: 48px;
+    text-align: center;
+    line-height: 48px;
+  }
+  .control-ptz-left {
+    width: 48px;
+    height: 48px;
+    text-align: center;
+    line-height: 48px;
+  }
+  .control-ptz-right {
+    width: 48px;
+    height: 48px;
+    margin-left: 48px;
+    text-align: center;
+    line-height: 48px;
+  }
+  .control-ptz-bottom {
+    width: 144px;
+    height: 48px;
+    text-align: center;
+    line-height: 48px;
+  }
+  .control-speed {
+    width: 48px;
+    height: 144px;
+    margin: 0;
+    padding: 10px 8px 22px 8px;
+  }
   .control-btn:hover {
     cursor: pointer;
   }
@@ -97,29 +133,5 @@
 
   .control-btn i:hover {
     cursor: pointer;
-  }
-
-  .control-top {
-    top: -8%;
-    left: 27%;
-    transform: rotate(0deg);
-  }
-
-  .control-left {
-    top: 27%;
-    left: -8%;
-    transform: rotate(-90deg);
-  }
-
-  .control-right {
-    top: 27%;
-    right: -8%;
-    transform: rotate(90deg);
-  }
-
-  .control-bottom {
-    left: 27%;
-    bottom: -8%;
-    transform: rotate(180deg);
   }
 </style>

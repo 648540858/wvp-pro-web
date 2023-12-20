@@ -10,17 +10,21 @@
   >
     <a-row>
       <a-col :span="18">
-        <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="false" />
+        <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="false" style="width: 100%" />
       </a-col>
       <a-col :span="6">
         <a-tabs style="width: 100%" centered size="small" type="card">
-          <a-tab-pane key="1" tab="信息" style="padding: 1rem; height: 25vw; overflow: scroll">
-            <a-descriptions :column="1" title="概况">
+          <a-tab-pane
+            key="1"
+            tab="信息"
+            style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll"
+          >
+            <a-descriptions :column="2" title="概况" :labelStyle="{ fontsize: '12px' }">
               <a-descriptions-item label="观看人数">{{ totalReaderCount }}</a-descriptions-item>
               <a-descriptions-item label="网络">{{ formatByteSpeed() }}</a-descriptions-item>
               <a-descriptions-item label="持续时间">{{ formatAliveSecond() }}</a-descriptions-item>
             </a-descriptions>
-            <a-descriptions v-if="!!videoTrack" :column="1" title="视频信息">
+            <a-descriptions v-if="!!videoTrack" :column="2" title="视频信息">
               <a-descriptions-item label="编码">{{ videoTrack.codec_id_name }}</a-descriptions-item>
               <a-descriptions-item label="分辨率"
                 >{{ videoTrack.width }}x{{ videoTrack.height }}
@@ -37,7 +41,7 @@
               </a-descriptions-item>
               <a-descriptions-item label="丢包率">{{ videoTrack.loss }}</a-descriptions-item>
             </a-descriptions>
-            <a-descriptions v-if="!!audioTrack" :column="1" title="音频信息" style="width: 100%">
+            <a-descriptions v-if="!!audioTrack" :column="2" title="音频信息" style="width: 100%">
               <a-descriptions-item label="编码">
                 {{ audioTrack.codec_id_name }}
               </a-descriptions-item>
@@ -48,8 +52,11 @@
               <a-descriptions-item label="丢包率">{{ audioTrack.loss }}</a-descriptions-item>
             </a-descriptions>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="控制">
-            <ptz @ptz-camera="ptzCamera"></ptz>
+          <a-tab-pane key="2" tab="云台控制" style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll">
+            <ptz @ptz-camera="ptzCamera" />
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="其他控制" style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll">
+            11
           </a-tab-pane>
         </a-tabs>
       </a-col>
@@ -80,6 +87,7 @@
   let timer = 0
   let streamInfo: StreamInfo
   const jessibuca = ref()
+
   const play = (streamInfoParam: StreamInfo, name: string) => {
     title.value = name
     streamInfo = streamInfoParam
@@ -187,77 +195,29 @@
     overflow: scroll;
     opacity: 0.7;
   }
-
-  .control-wrapper {
-    position: relative;
-    width: 6.25rem;
-    height: 6.25rem;
-    max-width: 6.25rem;
-    max-height: 6.25rem;
-    border-radius: 100%;
-    margin-top: 1.5rem;
-    margin-left: 0.5rem;
-    float: left;
+  .ant-descriptions-title {
+    flex: auto;
+    overflow: hidden;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
-
-  .control-panel {
-    position: relative;
-    top: 0;
-    left: 5rem;
-    height: 11rem;
-    max-height: 11rem;
+  .ant-descriptions-item-label {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 1;
+    text-align: start;
   }
-
-  .control-btn {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    width: 3rem;
-    height: 3rem;
-    line-height: 3rem;
-    align-items: center;
-  }
-
-  .control-btn:hover {
-    cursor: pointer;
-  }
-
-  .control-btn i {
-    font-size: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .control-btn i:hover {
-    cursor: pointer;
-  }
-
-  .control-zoom-btn:hover {
-    cursor: pointer;
-  }
-
-  .control-top {
-    top: -8%;
-    left: 27%;
-    transform: rotate(0deg);
-  }
-
-  .control-left {
-    top: 27%;
-    left: -8%;
-    transform: rotate(-90deg);
-  }
-
-  .control-right {
-    top: 27%;
-    right: -8%;
-    transform: rotate(90deg);
-  }
-
-  .control-bottom {
-    left: 27%;
-    bottom: -8%;
-    transform: rotate(180deg);
+  .ant-descriptions-item-content {
+    flex: 1;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 12px;
+    line-height: 1;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
 </style>

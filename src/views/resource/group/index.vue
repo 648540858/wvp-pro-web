@@ -96,10 +96,10 @@
     SelectOption as ASelectOption,
     message,
   } from 'ant-design-vue'
-  import resourceTree from '../../common/resourceTree/index.vue'
-  import { channelInGroupColumns } from '/src/views/resource/group/columns'
+  import resourceTree from '/@/views/common/resourceTree/index.vue'
+  import { channelInGroupColumns } from './columns'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
-  import {queryChannelList, updateToGroup} from '/@/api/resource/channel'
+  import { queryChannelList, updateToGroup } from '/@/api/resource/channel'
 
   const columns = channelInGroupColumns()
   let dataSource = ref<CommonGbChannel[]>([])

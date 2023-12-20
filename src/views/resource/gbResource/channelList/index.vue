@@ -152,7 +152,7 @@
     message,
   } from 'ant-design-vue'
   import { ArrowLeftOutlined } from '@ant-design/icons-vue'
-  import Player from '../../../common/player/index.vue'
+  import Player from '/@/views/common/player/index.vue'
 
   const playRef = ref()
   /**

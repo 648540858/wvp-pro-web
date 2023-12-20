@@ -96,7 +96,7 @@
     SelectOption as ASelectOption,
     message,
   } from 'ant-design-vue'
-  import resourceTree from '../../common/resourceTree/index.vue'
+  import resourceTree from '/@/views/common/resourceTree/index.vue'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
   import { queryChannelList, updateToRegion } from '/@/api/resource/channel'
   import { channelInRegionColumns } from '/@/views/resource/region/columns'

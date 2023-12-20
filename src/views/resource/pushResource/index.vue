@@ -117,8 +117,8 @@
   } from 'ant-design-vue'
   import { ArrowLeftOutlined } from '@ant-design/icons-vue'
   import Player from '/@/views/common/player/index.vue'
-  import { pushColumns } from '/@/views/resource/pushResource/columns'
-  import { PushModel } from '/@/api/resource/model/pushModel'
+  import {pushColumns} from "/@/views/resource/pushResource/columns";
+  import {PushModel} from "/@/api/resource/model/pushModel";
 
   const playRef = ref()
   /**
