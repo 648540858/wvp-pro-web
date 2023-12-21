@@ -1,86 +1,82 @@
 <template>
-  <div
-    ref="container"
-    id="container"
-    @dblclick="fullscreenSwich"
-    @mousemove="mouseenter"
-    style="width: 100%; height: 100%; background-color: #000000; margin: 0 auto"
-  >
-    <transition name="toolBtn">
-      <div
-        v-if="showToolBtn"
-        class="buttons-box"
-        id="buttonsBox"
-        @mouseenter="keepShowTool"
-        @mousemove="
-          (e) => {
-            e.stopPropagation()
-          }
-        "
-        @mouseleave="mouseenter"
-      >
-        <div class="buttons-box-left">
-          <Icon
-            v-if="!playing"
-            :size="iconSize"
-            class="jessibuca-btn"
-            icon="ic:baseline-play-arrow"
-            @click="playBtnClick"
-          />
-          <Icon
-            :size="iconSize"
-            v-if="playing"
-            class="jessibuca-btn"
-            icon="ic:baseline-pause"
-            @click="pause"
-          />
-          <Icon :size="iconSize" icon="ic:baseline-stop" class="jessibuca-btn" @click="destroy" />
-          <Icon
-            :size="iconSize"
-            v-if="!quieting"
-            icon="ic:baseline-volume-up"
-            class="jessibuca-btn"
-            @click="mute"
-          />
-          <Icon
-            :size="iconSize"
-            v-if="quieting"
-            icon="ic:baseline-volume-off"
-            class="jessibuca-btn"
-            @click="cancelMute"
-          />
+  <div :style="getPlayerDomStyle" id="111">
+    <div ref="container"  id="container" @dblclick="fullscreenSwich" @mousemove="mouseenter">
+      <transition name="toolBtn">
+        <div
+          v-if="showToolBtn"
+          class="buttons-box"
+          id="buttonsBox"
+          @mouseenter="keepShowTool"
+          @mousemove="
+            (e) => {
+              e.stopPropagation()
+            }
+          "
+          @mouseleave="mouseenter"
+        >
+          <div class="buttons-box-left">
+            <Icon
+              v-if="!playing"
+              :size="iconSize"
+              class="jessibuca-btn"
+              icon="ic:baseline-play-arrow"
+              @click="playBtnClick"
+            />
+            <Icon
+              :size="iconSize"
+              v-if="playing"
+              class="jessibuca-btn"
+              icon="ic:baseline-pause"
+              @click="pause"
+            />
+            <Icon :size="iconSize" icon="ic:baseline-stop" class="jessibuca-btn" @click="destroy" />
+            <Icon
+              :size="iconSize"
+              v-if="!quieting"
+              icon="ic:baseline-volume-up"
+              class="jessibuca-btn"
+              @click="mute"
+            />
+            <Icon
+              :size="iconSize"
+              v-if="quieting"
+              icon="ic:baseline-volume-off"
+              class="jessibuca-btn"
+              @click="cancelMute"
+            />
+          </div>
+          <div class="buttons-box-right">
+            <span class="jessibuca-btn">{{ kBps }} kb/s</span>
+            <Icon
+              :size="iconSize"
+              icon="ic:baseline-camera"
+              class="jessibuca-btn"
+              @click="screenshot"
+            />
+            <Icon
+              :size="iconSize"
+              icon="ic:baseline-replay"
+              class="jessibuca-btn"
+              @click="playBtnClick"
+            />
+            <Icon
+              :size="iconSize"
+              v-if="!fullscreen"
+              icon="ic:baseline-fullscreen"
+              class="jessibuca-btn"
+              @click="fullscreenSwich"
+            />
+            <Icon
+              :size="iconSize"
+              v-if="fullscreen"
+              icon="ic:baseline-fullscreen-exit"
+              class="jessibuca-btn"
+              @click="fullscreenSwich"
+            />
+          </div>
         </div>
-        <div class="buttons-box-right">
-          <span class="jessibuca-btn">{{ kBps }} kb/s</span>
-          <Icon
-            :size="iconSize"
-            icon="ic:baseline-camera"
-            class="jessibuca-btn"
-            @click="screenshot"
-          />
-          <Icon
-            :size="iconSize"
-            icon="ic:baseline-replay"
-            class="jessibuca-btn"
-            @click="playBtnClick"
-          />
-          <Icon
-            :size="iconSize"
-            v-if="!fullscreen"
-            icon="ic:baseline-fullscreen"
-            class="jessibuca-btn"
-            @click="fullscreenSwich"
-          />
-          <Icon
-            :size="iconSize"
-            v-if="fullscreen"
-            icon="ic:baseline-fullscreen-exit"
-            class="jessibuca-btn"
-            @click="fullscreenSwich"
-          />
-        </div>
-      </div>
-    </transition>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -100,7 +96,10 @@
   const showToolBtn = ref(false)
   const kBps = ref(0)
   const iconSize = ref(16)
-
+  interface VideoInfo {
+    height: string
+    width: string
+  }
   const props = defineProps({
     playUrl: {
       type: String,
@@ -108,6 +107,14 @@
     },
     hasAudio: {
       type: Boolean,
+      required: true,
+    },
+    width: {
+      type: Number,
+      required: true,
+    },
+    height: {
+      type: Number,
       required: true,
     },
   })
@@ -194,7 +201,7 @@
       console.log('audioInfo', msg)
     })
 
-    jessibuca.on('videoInfo', function (info: any) {
+    jessibuca.on('videoInfo', function (info: VideoInfo) {
       console.log('videoInfo', info)
     })
 
@@ -230,7 +237,6 @@
   )
 
   onMounted(() => {
-    updatePlayerDomSize()
     console.log('播放器拿到的地址： ' + props.playUrl)
     if (props.playUrl) {
       play(props.playUrl)
@@ -241,20 +247,25 @@
     jessibuca && jessibuca.destroy()
   })
 
-  const updatePlayerDomSize = () => {
+  const getPlayerDomStyle = (): VideoInfo => {
     let dom = container.value
     let width = dom.parentNode.clientWidth
-    let height = (9 / 16) * width
+    let height = parseInt((props.height / props.width) * width)
 
-    const clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-    if (height > clientHeight) {
-      height = clientHeight
-      width = (16 / 9) * height
+    // const clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
+    if (height > dom.parentNode.clientWidth) {
+      height = dom.parentNode.clientHeight
+      width = parseInt((props.width / props.height) * height)
     }
     console.log('updatePlayerDomSize')
+    console.log(width)
     console.log(height)
-    dom.style.width = width + 'px'
-    dom.style.height = height + 'px'
+    return {
+      width: width + 'px',
+      height: height + 'px',
+    }
+    // // dom.style.width = width + 'px'
+    // dom.style.height = height + 'px'
   }
 
   const play = (url: string) => {

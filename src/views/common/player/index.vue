@@ -9,16 +9,25 @@
     :footer="null"
   >
     <a-row>
-      <a-col :span="18">
-        <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="false" style="width: 100%" />
+      <a-col style="width: 48vw">
+        <a-tabs style="width: 100%; height: 32vw" size="small" type="card">
+          <a-tab-pane key="1" tab="Jessibuca" style="width: 100%; height: 32vw">
+            <Jessibuca ref="jessibuca" :play-url="playUrl" :width="videoTrack.width" :height="videoTrack.height" :hasAudio="false" />
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="WebRTC" style="width: 100%; height: 30vw">
+
+          </a-tab-pane>
+          <a-tab-pane key="3" tab="Video标签" style="width: 100%; height: 30vw">
+
+          </a-tab-pane>
+          <a-tab-pane key="4" tab="HLS" style="width: 100%; height: 30vw">
+
+          </a-tab-pane>
+        </a-tabs>
       </a-col>
-      <a-col :span="6">
-        <a-tabs style="width: 100%" centered size="small" type="card">
-          <a-tab-pane
-            key="1"
-            tab="信息"
-            style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll"
-          >
+      <a-col style="width: 17vw">
+        <a-tabs style="width: 100%" size="small" type="card">
+          <a-tab-pane key="1" tab="信息" style="padding: 0 1rem 0 1rem; height: 28vw">
             <a-descriptions :column="2" title="概况" :labelStyle="{ fontsize: '12px' }">
               <a-descriptions-item label="观看人数">{{ totalReaderCount }}</a-descriptions-item>
               <a-descriptions-item label="网络">{{ formatByteSpeed() }}</a-descriptions-item>
@@ -52,10 +61,18 @@
               <a-descriptions-item label="丢包率">{{ audioTrack.loss }}</a-descriptions-item>
             </a-descriptions>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="云台控制" style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll">
+          <a-tab-pane
+            key="2"
+            tab="云台控制"
+            style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll"
+          >
             <ptz @ptz-camera="ptzCamera" />
           </a-tab-pane>
-          <a-tab-pane key="3" tab="其他控制" style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll">
+          <a-tab-pane
+            key="3"
+            tab="其他控制"
+            style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll"
+          >
             11
           </a-tab-pane>
         </a-tabs>
