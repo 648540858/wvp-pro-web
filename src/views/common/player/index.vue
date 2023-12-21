@@ -11,8 +11,8 @@
     <a-row>
       <a-col style="width: 48vw">
         <a-tabs style="width: 100%; height: 32vw" size="small" type="card">
-          <a-tab-pane key="1" tab="Jessibuca" style="width: 100%; height: 32vw">
-            <Jessibuca ref="jessibuca" :play-url="playUrl" :width="videoTrack.width" :height="videoTrack.height" :hasAudio="false" />
+          <a-tab-pane key="1" tab="Jessibuca" style="width: 100%; height: 30vw">
+            <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="false" />
           </a-tab-pane>
           <a-tab-pane key="2" tab="WebRTC" style="width: 100%; height: 30vw">
 
@@ -236,5 +236,8 @@
     line-height: 1;
     word-break: break-word;
     overflow-wrap: break-word;
+  }
+  .ant-tabs-top > .ant-tabs-nav {
+    margin: 0;
   }
 </style>

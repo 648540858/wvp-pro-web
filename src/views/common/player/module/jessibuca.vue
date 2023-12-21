@@ -1,5 +1,5 @@
 <template>
-  <div :style="getPlayerDomStyle" id="111">
+  <div style="width: 100%; height: 100%; background-color: #000c17;">
     <div ref="container"  id="container" @dblclick="fullscreenSwich" @mousemove="mouseenter">
       <transition name="toolBtn">
         <div
@@ -137,7 +137,7 @@
       isFlv: false,
       isFullResize: false,
       isNotMute: quieting.value,
-      isResize: false,
+      isResize: true,
       keepScreenOn: false,
       loadingText: '请稍等, 视频加载中......',
       loadingTimeout: 10,
