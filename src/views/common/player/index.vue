@@ -94,23 +94,6 @@
                 </a-button-group>
               </div>
             </div>
-
-            <!--            <a-table-->
-            <!--              :pagination="false"-->
-            <!--              :dataSource="presetList"-->
-            <!--              :columns="columns"-->
-            <!--              :loading="presetLoading"-->
-            <!--              size="small"-->
-            <!--              style="width: 100%; height: 21vw; overflow: auto; padding: 0 5px 0 5px"-->
-            <!--            >-->
-            <!--              <template #bodyCell="{ column, record }">-->
-            <!--                <template v-if="column.dataIndex === 'operation'">-->
-            <!--                  <a @click="gotoPreset(record)" title="移动镜头到预置位" class="preset-btn">调用</a>-->
-            <!--                  <a @click="setPreset(record)" title="设置当前镜头为此预置位" class="preset-btn">设置</a>-->
-            <!--                  <a @click="delPreset(record)" title="删除此预置位" class="preset-btn preset-danger">删除</a>-->
-            <!--                </template>-->
-            <!--              </template>-->
-            <!--            </a-table>-->
           </a-tab-pane>
           <a-tab-pane key="2" tab="信息" style="padding: 0 1rem 0 1rem">
             <a-descriptions :column="2" title="概况" :labelStyle="{ fontsize: '12px' }">
@@ -174,13 +157,12 @@
     RadioButton as ARadioButton,
     Select as ASelect,
     SelectOption as ASelectOption,
-    Input as AInput,
     InputNumber as AInputNumber,
     ButtonGroup as AButtonGroup,
     Button as AButton,
   } from 'ant-design-vue'
   import Jessibuca from './module/jessibuca.vue'
-  import { getMediaInfoApi, presetControlApi } from '/@/api/resource/gbResource'
+  import { getMediaInfoApi } from '/@/api/resource/gbResource'
   import Ptz from '../ptz/index.vue'
   import { PresetItem } from '/@/api/resource/model/gbResourceModel'
   import { presetColumns } from '/@/views/common/player/columns'
