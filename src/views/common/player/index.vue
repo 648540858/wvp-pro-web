@@ -3,31 +3,116 @@
     ref="playerRef"
     v-model:visible="open"
     :title="title"
-    width="65vw"
+    width="70vw"
     :wrap-style="{ overflow: 'hidden' }"
     @cancel="closeModel"
     :footer="null"
   >
     <a-row>
-      <a-col style="width: 48vw">
-        <a-tabs style="width: 100%; height: 32vw" size="small" type="card">
-          <a-tab-pane key="1" tab="Jessibuca" style="width: 100%; height: 30vw">
+      <a-col style="width: 54vw">
+        <div style="width: 100%; height: 32vw">
+          <a-radio-group
+            v-model:value="playerType"
+            style="width: 100%; height: 1.625vw; padding: 0 2px; min-height: 34px"
+          >
+            <a-radio-button value="1">Jessibuca</a-radio-button>
+            <a-radio-button value="2">WebRTC</a-radio-button>
+            <a-radio-button value="3">Video标签</a-radio-button>
+            <a-radio-button value="4">HLS</a-radio-button>
+          </a-radio-group>
+          <div v-if="playerType == 1" style="width: 100%; height: 30.375vw">
             <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="false" />
-          </a-tab-pane>
-          <a-tab-pane key="2" tab="WebRTC" style="width: 100%; height: 30vw">
-
-          </a-tab-pane>
-          <a-tab-pane key="3" tab="Video标签" style="width: 100%; height: 30vw">
-
-          </a-tab-pane>
-          <a-tab-pane key="4" tab="HLS" style="width: 100%; height: 30vw">
-
-          </a-tab-pane>
-        </a-tabs>
+          </div>
+        </div>
       </a-col>
-      <a-col style="width: 17vw">
+      <a-col style="width: 16vw; height: 30vw">
         <a-tabs style="width: 100%" size="small" type="card">
-          <a-tab-pane key="1" tab="信息" style="padding: 0 1rem 0 1rem; height: 28vw">
+          <a-tab-pane key="1" tab="云台控制">
+            <ptz @ptz-camera="ptzCamera" style="width: 15vw; height: 9vw; padding: 0 1rem 0 1rem" />
+            <div style="height: 21vw; padding: 0 1rem">
+              <a-select ref="select" v-model:value="ptzControlType" style="width: 100%">
+                <a-select-option value="1">预置位</a-select-option>
+                <a-select-option value="2">巡航组</a-select-option>
+                <a-select-option value="3">水平扫描</a-select-option>
+                <a-select-option value="4">辅助开关</a-select-option>
+              </a-select>
+              <div v-if="ptzControlType == 1">
+                <a-input-number
+                  v-model:value="ptzPresetId"
+                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                />
+                <span style="width: 5vw; font-size: 13px">(1-255)</span>
+                <a-button-group>
+                  <a-button @click="gotoPreset()" title="移动镜头到预置位">查看</a-button>
+                  <a-button @click="setPreset()" title="设置当前镜头为此预置位">添加</a-button>
+                  <a-button @click="delPreset()" title="删除此预置位">删除</a-button>
+                </a-button-group>
+              </div>
+              <div v-if="ptzControlType == 2">
+                <a-input-number
+                  v-model:value="ptzCruiseId"
+                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                />
+                <span style="width: 5vw; font-size: 13px">(1-255)</span>
+                <a-button-group>
+                  <a-button @click="startCruise()" title="开始巡航">开始</a-button>
+                  <a-button @click="addCruise()" title="添加预置位">添加</a-button>
+                  <a-button @click="delCruise()" title="删除巡航组">删除</a-button>
+                </a-button-group>
+                <div v-if="addCruiseSwitch">
+                  <a-input-number
+                    size="small"
+                    v-model:value="ptzPresetIdForCruise"
+                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  />
+                  <span style="width: 5vw; font-size: 12px">(1-255)</span>
+                  <a-button-group size="small">
+                    <a-button @click="addPresetForCruise()" title="添加预置位">添加预置位</a-button>
+                    <a-button @click="delPresetForCruise()" title="删除预置位">删除预置位</a-button>
+                  </a-button-group>
+                </div>
+              </div>
+              <div v-if="ptzControlType == 3">
+                <a-button-group style="margin: 1rem 10px 1rem 0">
+                  <a-button @click="startScan()" title="开始扫描">开始</a-button>
+                  <a-button @click="setScan()" title="设置扫描">设置</a-button>
+                </a-button-group>
+                <a-button-group size="small" v-if="setScanSwitch">
+                  <a-button @click="setScanLeft()" title="设置左边界">左边界</a-button>
+                  <a-button @click="setScanRight()" title="设置右边界">右边界</a-button>
+                </a-button-group>
+              </div>
+              <div v-if="ptzControlType == 4">
+                <a-input-number
+                  v-model:value="ptzAuxiliarySwitchId"
+                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                />
+                <span style="width: 5vw; font-size: 13px">(1-255)</span>
+                <a-button-group>
+                  <a-button @click="startAuxiliarySwitch()" title="开启辅助开关">开启</a-button>
+                  <a-button @click="stopAuxiliarySwitch()" title="关闭辅助开关">关闭</a-button>
+                </a-button-group>
+              </div>
+            </div>
+
+            <!--            <a-table-->
+            <!--              :pagination="false"-->
+            <!--              :dataSource="presetList"-->
+            <!--              :columns="columns"-->
+            <!--              :loading="presetLoading"-->
+            <!--              size="small"-->
+            <!--              style="width: 100%; height: 21vw; overflow: auto; padding: 0 5px 0 5px"-->
+            <!--            >-->
+            <!--              <template #bodyCell="{ column, record }">-->
+            <!--                <template v-if="column.dataIndex === 'operation'">-->
+            <!--                  <a @click="gotoPreset(record)" title="移动镜头到预置位" class="preset-btn">调用</a>-->
+            <!--                  <a @click="setPreset(record)" title="设置当前镜头为此预置位" class="preset-btn">设置</a>-->
+            <!--                  <a @click="delPreset(record)" title="删除此预置位" class="preset-btn preset-danger">删除</a>-->
+            <!--                </template>-->
+            <!--              </template>-->
+            <!--            </a-table>-->
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="信息" style="padding: 0 1rem 0 1rem">
             <a-descriptions :column="2" title="概况" :labelStyle="{ fontsize: '12px' }">
               <a-descriptions-item label="观看人数">{{ totalReaderCount }}</a-descriptions-item>
               <a-descriptions-item label="网络">{{ formatByteSpeed() }}</a-descriptions-item>
@@ -61,13 +146,7 @@
               <a-descriptions-item label="丢包率">{{ audioTrack.loss }}</a-descriptions-item>
             </a-descriptions>
           </a-tab-pane>
-          <a-tab-pane
-            key="2"
-            tab="云台控制"
-            style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll"
-          >
-            <ptz @ptz-camera="ptzCamera" />
-          </a-tab-pane>
+
           <a-tab-pane
             key="3"
             tab="其他控制"
@@ -91,19 +170,41 @@
     TabPane as ATabPane,
     Descriptions as ADescriptions,
     DescriptionsItem as ADescriptionsItem,
+    RadioGroup as ARadioGroup,
+    RadioButton as ARadioButton,
+    Select as ASelect,
+    SelectOption as ASelectOption,
+    Input as AInput,
+    InputNumber as AInputNumber,
+    ButtonGroup as AButtonGroup,
+    Button as AButton,
   } from 'ant-design-vue'
   import Jessibuca from './module/jessibuca.vue'
-  import { getMediaInfoApi } from '/@/api/resource/gbResource'
+  import { getMediaInfoApi, presetControlApi } from '/@/api/resource/gbResource'
   import Ptz from '../ptz/index.vue'
+  import { PresetItem } from '/@/api/resource/model/gbResourceModel'
+  import { presetColumns } from '/@/views/common/player/columns'
 
   const open = ref<boolean>(false)
+  const playerType = ref<any>('1')
   let playUrl = ref<String>()
+  let ptzControlType = ref<String>('1')
+  let ptzPresetId = ref<String>('1')
+  let ptzCruiseId = ref<String>('1')
+  let ptzPresetIdForCruise = ref<String>('1')
+  let ptzAuxiliarySwitchId = ref<String>('1')
   let videoTrack = ref<Track>()
   let audioTrack = ref<Track>()
   let title = ref<String>()
   let timer = 0
   let streamInfo: StreamInfo
   const jessibuca = ref()
+  let presetLoading = ref<boolean>(true)
+  let addCruiseSwitch = ref<boolean>(false)
+  let setScanSwitch = ref<boolean>(false)
+  const presetList = ref<PresetItem[]>()
+
+  const columns = presetColumns()
 
   const play = (streamInfoParam: StreamInfo, name: string) => {
     title.value = name
@@ -123,10 +224,44 @@
       refreshStreamInfo()
     }, 1000)
   }
-  const emit = defineEmits(['ptzCamera'])
+
+  const presetQuery = (presetItemList: PresetItem[]) => {
+    presetLoading.value = false
+    if (presetItemList.length > 255) {
+      presetList.value = presetItemList.slice(0, 255)
+    } else {
+      presetList.value = presetItemList
+    }
+  }
+  const emit = defineEmits(['ptzCamera', 'presetControl'])
   const ptzCamera = (comond: string, speed: number) => {
     emit('ptzCamera', comond, speed)
   }
+  const gotoPreset = () => {
+    emit('presetControl', ptzPresetId.value, 'goto')
+  }
+  const setPreset = () => {
+    emit('presetControl', ptzPresetId.value, 'set')
+  }
+  const delPreset = () => {
+    emit('presetControl', ptzPresetId.value, 'delete')
+  }
+  const startCruise = () => {}
+  const addCruise = () => {
+    addCruiseSwitch.value = !addCruiseSwitch.value
+  }
+  const delCruise = () => {}
+  const addPresetForCruise = () => {}
+  const delPresetForCruise = () => {}
+  const startScan = () => {}
+
+  const setScan = () => {
+    setScanSwitch.value = !setScanSwitch.value
+  }
+  const setScanLeft = () => {}
+  const setScanRight = () => {}
+  const startAuxiliarySwitch = () => {}
+  const stopAuxiliarySwitch = () => {}
   // 存活时间，单位秒
   let aliveSecond = ref<number>(0)
   // 观看总人数
@@ -194,7 +329,7 @@
     }秒`
   }
 
-  defineExpose({ play })
+  defineExpose({ play, presetQuery })
 </script>
 <style>
   #mediaInfo {
@@ -237,7 +372,12 @@
     word-break: break-word;
     overflow-wrap: break-word;
   }
-  .ant-tabs-top > .ant-tabs-nav {
-    margin: 0;
+  .preset-btn {
+    font-size: 12px;
+    padding-right: 10px;
+  }
+  .preset-danger {
+    color: #ed6f6f;
+    padding-right: 0;
   }
 </style>

@@ -6,6 +6,7 @@ import {
   DeviceChannelListResultModel,
   SyncStatusResultModel,
   DeviceChannel,
+  PresetItem,
 } from '/@/api/resource/model/gbResourceModel'
 import { StreamInfo } from '/@/api/model/baseModel'
 
@@ -23,6 +24,8 @@ enum Api {
   GET_MEDIA_INFO = '/zlm/{mediaServerId}/index/api/getMediaInfo',
   PTZ = '/api/ptz/control/{deviceId}/{channelId}',
   SYNC_28181 = '/api/channel/sync/device',
+  PRESET_QUERY = '/api/ptz/preset/query/{deviceId}/{channelId}',
+  PRESET_CONTROL = '/api/ptz/preset/control/{deviceId}/{channelId}',
 }
 
 /**
@@ -184,5 +187,33 @@ export const syncChannelFromGb28181Api = (
       syncGroup: syncGroup,
       syncRegion: syncRegion,
       syncKeys: syncKeys,
+    },
+  })
+
+export const presetQueryApi = (deviceChannel: DeviceChannel) =>
+  defHttp.get<PresetItem[]>({
+    url: Api.PRESET_QUERY.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const presetControlApi = (deviceChannel: DeviceChannel, command: string, presetId: number) =>
+  defHttp.get<void>({
+    url: Api.PRESET_CONTROL.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
+      presetId: presetId,
     },
   })

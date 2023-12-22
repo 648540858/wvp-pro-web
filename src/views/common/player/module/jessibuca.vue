@@ -1,6 +1,6 @@
 <template>
-  <div style="width: 100%; height: 100%; background-color: #000c17;">
-    <div ref="container"  id="container" @dblclick="fullscreenSwich" @mousemove="mouseenter">
+  <div style="width: 100%; height: 100%; background-color: #000c17">
+    <div ref="container" id="container" @dblclick="fullscreenSwich" @mousemove="mouseenter">
       <transition name="toolBtn">
         <div
           v-if="showToolBtn"
@@ -107,14 +107,6 @@
     },
     hasAudio: {
       type: Boolean,
-      required: true,
-    },
-    width: {
-      type: Number,
-      required: true,
-    },
-    height: {
-      type: Number,
       required: true,
     },
   })
@@ -247,27 +239,6 @@
     jessibuca && jessibuca.destroy()
   })
 
-  const getPlayerDomStyle = (): VideoInfo => {
-    let dom = container.value
-    let width = dom.parentNode.clientWidth
-    let height = parseInt((props.height / props.width) * width)
-
-    // const clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-    if (height > dom.parentNode.clientWidth) {
-      height = dom.parentNode.clientHeight
-      width = parseInt((props.width / props.height) * height)
-    }
-    console.log('updatePlayerDomSize')
-    console.log(width)
-    console.log(height)
-    return {
-      width: width + 'px',
-      height: height + 'px',
-    }
-    // // dom.style.width = width + 'px'
-    // dom.style.height = height + 'px'
-  }
-
   const play = (url: string) => {
     console.log(url)
     if (jessibuca) {
@@ -323,7 +294,7 @@
     }
     showToolBtnTimer = window.setTimeout(() => {
       showToolBtn.value = false
-    }, 2000)
+    }, 4000)
   }
   const keepShowTool = () => {
     console.log('keepShowToolkeepShowToolkeepShowTool')

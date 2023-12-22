@@ -86,6 +86,11 @@ export interface DeviceChannel {
   gpsTime: string
 }
 
+export interface PresetItem {
+  presetId: number
+  presetName: string
+}
+
 /**
  * @description: 通道列表的查询结果
  */

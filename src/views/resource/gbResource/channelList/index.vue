@@ -123,7 +123,7 @@
         </a-table>
       </Transition>
     </PageWrapper>
-    <Player ref="playRef" @ptzCamera="ptzCamera" />
+    <Player ref="playRef" @ptzCamera="ptzCamera" @presetControl="presetControl" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -132,6 +132,8 @@
     deviceChannelListApi,
     deviceSubChannelListApi,
     playApi,
+    presetControlApi,
+    presetQueryApi,
     ptzCameraApi,
     stopPlayApi,
     updateDeviceChannelApi,
@@ -290,6 +292,13 @@
         console.log(streamInfo)
         _deviceChannel.streamId = streamInfo.stream
         playRef.value.play(streamInfo, _deviceChannel.name)
+        presetQueryApi(playChannel)
+          .then((presetItemlist) => {
+            playRef.value.presetQuery(presetItemlist)
+          })
+          .catch((e) => {
+            message.error(e)
+          })
       })
       .finally(() => {
         loading.value = false
@@ -309,10 +318,15 @@
   }
   function queryRecords(_deviceChannel: DeviceChannel): void {}
   function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
-  function ptzCamera(comond: string, speed: number): void {
-    console.log('ptz===> ' + comond)
+  function ptzCamera(command: string, speed: number): void {
+    console.log('ptz===> ' + command)
     console.log('ptz===> ' + speed)
-    ptzCameraApi(playChannel.deviceId, playChannel.channelId, comond, speed).catch((e) => {
+    ptzCameraApi(playChannel.deviceId, playChannel.channelId, command, speed).catch((e) => {
+      message.error(e)
+    })
+  }
+  function presetControl(presetId: number, command: string): void {
+    presetControlApi(playChannel, command, presetId).catch((e) => {
       message.error(e)
     })
   }

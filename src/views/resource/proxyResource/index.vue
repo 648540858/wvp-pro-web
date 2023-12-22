@@ -1,11 +1,11 @@
 <template>
   <PageWrapper>
-    <div class="lg:flex">
-      <div class="lg:w-7/10 w-full !mr-4 enter-y"> 拉流代理 </div>
-      <div class="lg:w-3/10 w-full enter-y"> 2 </div>
-    </div>
+    <ptz @ptz-camera="ptzCamera" style="width: 30vw; height: 18vw; padding: 0 1rem 0 1rem" />
   </PageWrapper>
 </template>
 <script lang="ts" setup>
   import { PageWrapper } from '/@/components/Page'
+  import Ptz from '/@/views/common/ptz/index.vue'
+
+  const ptzCamera = (comond: string, speed: number) => {}
 </script>

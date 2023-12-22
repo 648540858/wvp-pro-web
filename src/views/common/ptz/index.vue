@@ -1,40 +1,67 @@
 <template>
-  <div style="width: 100%; display: flex; justify-content: center">
-    <div class="control-wrapper">
-      <div class="control-zoom">
-        <div class="control-zoom-in" @mousedown="ptzCamera('zoomin')" @mouseup="ptzCamera('stop')">
-          <Icon icon="ic:twotone-add" class="control-btn" :size="20" />
-        </div>
-        <div
-          class="control-zoom-out"
-          @mousedown="ptzCamera('zoomout')"
-          @mouseup="ptzCamera('stop')"
-        >
-          <Icon icon="ic:twotone-horizontal-rule" class="control-btn" :size="20" />
-        </div>
-      </div>
-      <div class="control-ptz">
-        <div class="control-ptz-top" @mousedown="ptzCamera('up')" @mouseup="ptzCamera('stop')">
-          <Icon icon="fa6-solid:chevron-up" class="control-btn" :size="ptzIconSize" />
-        </div>
-        <div class="control-ptz-left-right">
-          <div class="control-ptz-left" @mousedown="ptzCamera('left')" @mouseup="ptzCamera('stop')">
-            <Icon icon="fa6-solid:chevron-left" class="control-btn" :size="ptzIconSize"
-          /></div>
-          <div
-            class="control-ptz-right"
-            @mousedown="ptzCamera('right')"
-            @mouseup="ptzCamera('stop')"
-            ><Icon icon="fa6-solid:chevron-right" class="control-btn" :size="ptzIconSize"
-          /></div>
-        </div>
-        <div class="control-ptz-bottom" @mousedown="ptzCamera('down')" @mouseup="ptzCamera('stop')"
-          ><Icon icon="fa6-solid:chevron-down" class="control-btn" :size="ptzIconSize"
-        /></div>
-      </div>
-      <div class="control-speed">
-        <a-slider id="test" v-model:value="speed" :min="0" :max="255" vertical />
-      </div>
+  <div class="ptz-box">
+    <div class="ptz-item-box ptz-item-box-zoom-in">
+      <Icon
+        icon="ic:twotone-add"
+        class="control-btn"
+        :size="20"
+        @mousedown="ptzCamera('zoomin')"
+        @mouseup="ptzCamera('stop')"
+      />
+    </div>
+    <div class="ptz-item-box"></div>
+    <div class="ptz-item-box ptz-item-box-center">
+      <Icon
+        icon="fa6-solid:chevron-up"
+        class="control-btn"
+        :size="ptzIconSize"
+        @mousedown="ptzCamera('up')"
+        @mouseup="ptzCamera('stop')"
+      />
+    </div>
+    <div class="ptz-item-box"></div>
+    <div class="ptz-item-box"></div>
+    <div class="ptz-item-box ptz-item-box-center">
+      <Icon
+        icon="fa6-solid:chevron-left"
+        class="control-btn"
+        :size="ptzIconSize"
+        @mousedown="ptzCamera('left')"
+        @mouseup="ptzCamera('stop')"
+      />
+    </div>
+    <div class="ptz-item-box"></div>
+    <div class="ptz-item-box ptz-item-box-center">
+      <Icon
+        icon="fa6-solid:chevron-right"
+        class="control-btn"
+        :size="ptzIconSize"
+        @mousedown="ptzCamera('right')"
+        @mouseup="ptzCamera('stop')"
+      />
+    </div>
+    <div class="ptz-item-box ptz-item-box-top-right">
+      <Icon
+        icon="ic:twotone-horizontal-rule"
+        class="control-btn"
+        :size="20"
+        @mousedown="ptzCamera('zoomout')"
+        @mouseup="ptzCamera('stop')"
+      />
+    </div>
+    <div class="ptz-item-box"></div>
+    <div class="ptz-item-box ptz-item-box-center">
+      <Icon
+        icon="fa6-solid:chevron-down"
+        class="control-btn"
+        :size="ptzIconSize"
+        @mousedown="ptzCamera('down')"
+        @mouseup="ptzCamera('stop')"
+      />
+    </div>
+    <div class="ptz-item-box"></div>
+    <div class="ptz-item-box ptz-item-box-11">
+      <a-slider id="test" v-model:value="speed" :min="0" :max="255" vertical />
     </div>
   </div>
 </template>
@@ -133,5 +160,39 @@
 
   .control-btn i:hover {
     cursor: pointer;
+  }
+  .ptz-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .ptz-item-box {
+    display: grid;
+  }
+  .ptz-item-box-bottom-left {
+    display: grid;
+    justify-content: start;
+    align-items: end;
+  }
+  .ptz-item-box-zoom-in {
+    display: grid;
+    justify-content: end;
+    align-items: end;
+  }
+  .ptz-item-box-top-right {
+    display: grid;
+    justify-content: end;
+    align-items: start;
+  }
+  .ptz-item-box-center {
+    justify-content: center;
+    align-items: center;
+  }
+  .ptz-item-box-11 {
+    grid-column-start: 5;
+    grid-row: 1/4;
+    align-items: start;
+    padding: 60% 0;
   }
 </style>
