@@ -34,7 +34,8 @@
                 <a-select-option value="1">预置位</a-select-option>
                 <a-select-option value="2">巡航组</a-select-option>
                 <a-select-option value="3">水平扫描</a-select-option>
-                <a-select-option value="4">辅助开关</a-select-option>
+                <a-select-option value="4">雨刷</a-select-option>
+                <a-select-option value="5">辅助开关</a-select-option>
               </a-select>
               <div v-if="ptzControlType == 1">
                 <a-input-number
@@ -51,6 +52,8 @@
               <div v-if="ptzControlType == 2">
                 <a-input-number
                   v-model:value="ptzCruiseId"
+                  min="1"
+                  max="255"
                   style="width: 10vw !important; margin: 1rem 10px 1rem 0"
                 />
                 <span style="width: 5vw; font-size: 13px">(1-255)</span>
@@ -59,9 +62,17 @@
                   <a-button @click="addCruise()" title="添加预置位">添加</a-button>
                   <a-button @click="delCruise()" title="删除巡航组">删除</a-button>
                 </a-button-group>
+                <a-button-group>
+                  <a-button @click="setCruiseSpeed()" title="设置巡航速度">设置巡航速度</a-button>
+                  <a-button @click="setCruiseStay()" title="设置巡航停留时间">
+                    设置巡航停留时间
+                  </a-button>
+                </a-button-group>
                 <div v-if="addCruiseSwitch">
                   <a-input-number
                     size="small"
+                    min="1"
+                    max="255"
                     v-model:value="ptzPresetIdForCruise"
                     style="width: 10vw !important; margin: 1rem 10px 1rem 0"
                   />
@@ -71,23 +82,83 @@
                     <a-button @click="delPresetForCruise()" title="删除预置位">删除预置位</a-button>
                   </a-button-group>
                 </div>
+                <div v-if="setCruiseSpeedSwitch">
+                  <a-input-number
+                    size="small"
+                    min="1"
+                    max="4095"
+                    v-model:value="ptzCruiseSpeed"
+                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  />
+                  <span style="width: 5vw; font-size: 12px">(1-4095)</span>
+                  <a-button-group size="small">
+                    <a-button @click="setCruiseSpeedForSave()" title="设置巡航速度">保存</a-button>
+                  </a-button-group>
+                </div>
+                <div v-if="setCruiseStaySwitch">
+                  <a-input-number
+                    size="small"
+                    min="1"
+                    max="4095"
+                    v-model:value="ptzCruiseStay"
+                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  />
+                  <span style="width: 5vw; font-size: 12px">秒 (1-4095)</span>
+                  <a-button-group size="small">
+                    <a-button @click="setCruiseStayForSave()" title="设置巡航停留时间">
+                      保存
+                    </a-button>
+                  </a-button-group>
+                </div>
               </div>
               <div v-if="ptzControlType == 3">
-                <a-button-group style="margin: 1rem 10px 1rem 0">
+                <a-input-number
+                  size="small"
+                  min="1"
+                  max="255"
+                  v-model:value="ptzScanId"
+                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                />
+                <span style="width: 5vw; font-size: 12px">(1-255)</span>
+                <a-button-group style="width: 100%; margin: 1rem 10px 1rem 0">
                   <a-button @click="startScan()" title="开始扫描">开始</a-button>
                   <a-button @click="setScan()" title="设置扫描">设置</a-button>
+                  <a-button @click="setScanAutoSpeed()" title="设置自动扫描速度">
+                    设置自动扫描速度
+                  </a-button>
                 </a-button-group>
                 <a-button-group size="small" v-if="setScanSwitch">
                   <a-button @click="setScanLeft()" title="设置左边界">左边界</a-button>
                   <a-button @click="setScanRight()" title="设置右边界">右边界</a-button>
                 </a-button-group>
+                <div v-if="setScanAutoSpeedSwitch">
+                  <a-input-number
+                    size="small"
+                    v-model:value="scanAutoSpeed"
+                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  />
+                  <span style="width: 5vw; font-size: 12px">(1-4095)</span>
+                  <a-button-group size="small">
+                    <a-button @click="setScanAutoSpeedSwitchSave()" title="设置自动扫描速度">
+                      保存
+                    </a-button>
+                  </a-button-group>
+                </div>
               </div>
               <div v-if="ptzControlType == 4">
+                <a-button-group style="width: 10vw !important; margin: 1rem 10px 1rem 0">
+                  <a-button @click="startWiper()" title="开启雨刷">开启雨刷</a-button>
+                  <a-button @click="stopWiper()" title="关闭雨刷">关闭雨刷</a-button>
+                </a-button-group>
+              </div>
+              <div v-if="ptzControlType == 5">
                 <a-input-number
+                  min="2"
+                  max="255"
                   v-model:value="ptzAuxiliarySwitchId"
                   style="width: 10vw !important; margin: 1rem 10px 1rem 0"
                 />
-                <span style="width: 5vw; font-size: 13px">(1-255)</span>
+                <span style="width: 5vw; font-size: 13px">(2-255)</span>
                 <a-button-group>
                   <a-button @click="startAuxiliarySwitch()" title="开启辅助开关">开启</a-button>
                   <a-button @click="stopAuxiliarySwitch()" title="关闭辅助开关">关闭</a-button>
@@ -129,14 +200,6 @@
               <a-descriptions-item label="丢包率">{{ audioTrack.loss }}</a-descriptions-item>
             </a-descriptions>
           </a-tab-pane>
-
-          <a-tab-pane
-            key="3"
-            tab="其他控制"
-            style="padding: 0 1rem 0 1rem; height: 25vw; overflow: scroll"
-          >
-            11
-          </a-tab-pane>
         </a-tabs>
       </a-col>
     </a-row>
@@ -165,7 +228,6 @@
   import { getMediaInfoApi } from '/@/api/resource/gbResource'
   import Ptz from '../ptz/index.vue'
   import { PresetItem } from '/@/api/resource/model/gbResourceModel'
-  import { presetColumns } from '/@/views/common/player/columns'
 
   const open = ref<boolean>(false)
   const playerType = ref<any>('1')
@@ -173,8 +235,12 @@
   let ptzControlType = ref<String>('1')
   let ptzPresetId = ref<String>('1')
   let ptzCruiseId = ref<String>('1')
+  let ptzScanId = ref<String>('1')
   let ptzPresetIdForCruise = ref<String>('1')
-  let ptzAuxiliarySwitchId = ref<String>('1')
+  let ptzCruiseSpeed = ref<String>('1')
+  let ptzCruiseStay = ref<String>('1')
+  let scanAutoSpeed = ref<String>('1')
+  let ptzAuxiliarySwitchId = ref<String>('2')
   let videoTrack = ref<Track>()
   let audioTrack = ref<Track>()
   let title = ref<String>()
@@ -184,10 +250,10 @@
   let presetLoading = ref<boolean>(true)
   let addCruiseSwitch = ref<boolean>(false)
   let setScanSwitch = ref<boolean>(false)
+  let setCruiseSpeedSwitch = ref<boolean>(false)
+  let setCruiseStaySwitch = ref<boolean>(false)
+  let setScanAutoSpeedSwitch = ref<boolean>(false)
   const presetList = ref<PresetItem[]>()
-
-  const columns = presetColumns()
-
   const play = (streamInfoParam: StreamInfo, name: string) => {
     title.value = name
     streamInfo = streamInfoParam
@@ -215,7 +281,14 @@
       presetList.value = presetItemList
     }
   }
-  const emit = defineEmits(['ptzCamera', 'presetControl'])
+  const emit = defineEmits([
+    'ptzCamera',
+    'presetControl',
+    'cruiseControl',
+    'scanControl',
+    'wiperControl',
+    'auxiliaryControl',
+  ])
   const ptzCamera = (comond: string, speed: number) => {
     emit('ptzCamera', comond, speed)
   }
@@ -228,22 +301,91 @@
   const delPreset = () => {
     emit('presetControl', ptzPresetId.value, 'delete')
   }
-  const startCruise = () => {}
+  const startCruise = () => {
+    emit('cruiseControl', ptzCruiseId.value, 'start')
+  }
   const addCruise = () => {
     addCruiseSwitch.value = !addCruiseSwitch.value
+    setScanSwitch.value = false
+    setCruiseSpeedSwitch.value = false
+    setCruiseStaySwitch.value = false
   }
-  const delCruise = () => {}
-  const addPresetForCruise = () => {}
-  const delPresetForCruise = () => {}
-  const startScan = () => {}
+  const delCruise = () => {
+    emit('cruiseControl', ptzCruiseId.value, 'delete')
+  }
+  const setCruiseSpeed = () => {
+    setCruiseSpeedSwitch.value = !setCruiseSpeedSwitch.value
+    addCruiseSwitch.value = false
+    setScanSwitch.value = false
+    setCruiseStaySwitch.value = false
+  }
+  const setCruiseStay = () => {
+    setCruiseStaySwitch.value = !setCruiseStaySwitch.value
+    addCruiseSwitch.value = false
+    setScanSwitch.value = false
+    setCruiseSpeedSwitch.value = false
+  }
+  const addPresetForCruise = () => {
+    emit(
+      'cruiseControl',
+      ptzCruiseId.value,
+      'add',
+      ptzPresetIdForCruise.value,
+      undefined,
+      undefined,
+    )
+  }
+  const delPresetForCruise = () => {
+    emit(
+      'cruiseControl',
+      ptzCruiseId.value,
+      'delete',
+      ptzPresetIdForCruise.value,
+      undefined,
+      undefined,
+    )
+  }
+  const setCruiseSpeedForSave = () => {
+    emit('cruiseControl', ptzCruiseId.value, 'setSpeed', undefined, ptzCruiseSpeed.value, undefined)
+  }
+  const setCruiseStayForSave = () => {
+    emit('cruiseControl', ptzCruiseId.value, 'setStay', undefined, undefined, ptzCruiseStay.value)
+  }
+  const startScan = () => {
+    emit('scanControl', 'start', ptzScanId.value, undefined)
+  }
 
   const setScan = () => {
     setScanSwitch.value = !setScanSwitch.value
+    setScanAutoSpeedSwitch.value = false
   }
-  const setScanLeft = () => {}
-  const setScanRight = () => {}
-  const startAuxiliarySwitch = () => {}
-  const stopAuxiliarySwitch = () => {}
+
+  const setScanAutoSpeed = () => {
+    setScanAutoSpeedSwitch.value = !setScanAutoSpeedSwitch.value
+    setScanSwitch.value = false
+  }
+
+  const setScanAutoSpeedSwitchSave = () => {
+    emit('scanControl', 'setSpeed', ptzScanId.value, scanAutoSpeed.value)
+  }
+  const setScanLeft = () => {
+    emit('scanControl', 'setLeft', ptzScanId.value, undefined)
+  }
+  const setScanRight = () => {
+    emit('scanControl', 'setRight', ptzScanId.value, undefined)
+  }
+  const startWiper = () => {
+    emit('wiperControl', 'on')
+  }
+  const stopWiper = () => {
+    emit('wiperControl', 'off')
+  }
+  const startAuxiliarySwitch = () => {
+    emit('auxiliaryControl', 'on', ptzAuxiliarySwitchId.value)
+  }
+  const stopAuxiliarySwitch = () => {
+    emit('auxiliaryControl', 'off', ptzAuxiliarySwitchId.value)
+  }
   // 存活时间，单位秒
   let aliveSecond = ref<number>(0)
   // 观看总人数

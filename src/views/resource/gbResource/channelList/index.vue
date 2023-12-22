@@ -123,20 +123,31 @@
         </a-table>
       </Transition>
     </PageWrapper>
-    <Player ref="playRef" @ptzCamera="ptzCamera" @presetControl="presetControl" />
+    <Player
+      ref="playRef"
+      @ptzCamera="ptzCamera"
+      @presetControl="presetControl"
+      @cruiseControl="cruiseControl"
+      @scanControl="scanControl"
+      @wiperControl="wiperControl"
+      @auxiliaryControl="auxiliaryControl"
+    />
   </div>
 </template>
 <script lang="ts" setup>
   import { deviceChannelColumns } from '/@/views/resource/gbResource/channelList/columns'
   import {
+    auxiliaryControlApi,
+    cruiseControlApi,
     deviceChannelListApi,
     deviceSubChannelListApi,
     playApi,
     presetControlApi,
     presetQueryApi,
     ptzCameraApi,
+    scanControlApi,
     stopPlayApi,
-    updateDeviceChannelApi,
+    updateDeviceChannelApi, wiperControlApi,
   } from '/@/api/resource/gbResource'
   import { DeviceChannel } from '/@/api/resource/model/gbResourceModel'
   import { computed, ref } from 'vue'
@@ -327,6 +338,32 @@
   }
   function presetControl(presetId: number, command: string): void {
     presetControlApi(playChannel, command, presetId).catch((e) => {
+      message.error(e)
+    })
+  }
+  function cruiseControl(
+    cruiseId: number,
+    command: string,
+    presetId: number | undefined,
+    speed: number | undefined,
+    stay: number | undefined,
+  ): void {
+    cruiseControlApi(playChannel, cruiseId, command, presetId, speed, stay).catch((e) => {
+      message.error(e)
+    })
+  }
+  function scanControl(command: string, scanId: number, speed: number | undefined): void {
+    scanControlApi(playChannel, scanId, command, speed).catch((e) => {
+      message.error(e)
+    })
+  }
+  function wiperControl(command: string): void {
+    wiperControlApi(playChannel, command).catch((e) => {
+      message.error(e)
+    })
+  }
+  function auxiliaryControl(command: string, auxiliaryId: number): void {
+    auxiliaryControlApi(playChannel, command, auxiliaryId).catch((e) => {
       message.error(e)
     })
   }

@@ -26,6 +26,10 @@ enum Api {
   SYNC_28181 = '/api/channel/sync/device',
   PRESET_QUERY = '/api/ptz/preset/query/{deviceId}/{channelId}',
   PRESET_CONTROL = '/api/ptz/preset/control/{deviceId}/{channelId}',
+  CRUISE_CONTROL = '/api/ptz/cruise/control/{deviceId}/{channelId}',
+  SCAN_CONTROL = '/api/ptz/scan/control/{deviceId}/{channelId}',
+  WIPER_CONTROL = '/api/ptz/wiper/control/{deviceId}/{channelId}',
+  AUXILIARY_CONTROL = '/api/ptz/auxiliary/control/{deviceId}/{channelId}',
 }
 
 /**
@@ -215,5 +219,88 @@ export const presetControlApi = (deviceChannel: DeviceChannel, command: string, 
     params: {
       command: command,
       presetId: presetId,
+    },
+  })
+
+export const cruiseControlApi = (
+  deviceChannel: DeviceChannel,
+  cruiseId: number,
+  command: string,
+  presetId: number | undefined,
+  speed: number | undefined,
+  stay: number | undefined,
+) =>
+  defHttp.get<void>({
+    url: Api.CRUISE_CONTROL.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      cruiseId: cruiseId,
+      command: command,
+      presetId: presetId,
+      speed: speed,
+      stay: stay,
+    },
+  })
+
+export const scanControlApi = (
+  deviceChannel: DeviceChannel,
+  scanId: number,
+  command: string,
+  speed: number | undefined,
+) =>
+  defHttp.get<void>({
+    url: Api.SCAN_CONTROL.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      scanId: scanId,
+      command: command,
+      speed: speed,
+    },
+  })
+
+export const wiperControlApi = (deviceChannel: DeviceChannel, command: string) =>
+  defHttp.get<void>({
+    url: Api.WIPER_CONTROL.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
+    },
+  })
+
+export const auxiliaryControlApi = (
+  deviceChannel: DeviceChannel,
+  command: string,
+  auxiliaryId: number,
+) =>
+  defHttp.get<void>({
+    url: Api.AUXILIARY_CONTROL.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
+      auxiliaryId: auxiliaryId,
     },
   })
