@@ -241,6 +241,9 @@
 
   const play = (url: string) => {
     console.log(url)
+    if (!url) {
+      return
+    }
     if (jessibuca) {
       destroy()
     }

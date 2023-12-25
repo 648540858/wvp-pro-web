@@ -143,11 +143,11 @@
     deviceSubChannelListApi,
     playApi,
     presetControlApi,
-    presetQueryApi,
     ptzCameraApi,
     scanControlApi,
     stopPlayApi,
-    updateDeviceChannelApi, wiperControlApi,
+    updateDeviceChannelApi,
+    wiperControlApi,
   } from '/@/api/resource/gbResource'
   import { DeviceChannel } from '/@/api/resource/model/gbResourceModel'
   import { computed, ref } from 'vue'
@@ -303,13 +303,13 @@
         console.log(streamInfo)
         _deviceChannel.streamId = streamInfo.stream
         playRef.value.play(streamInfo, _deviceChannel.name)
-        presetQueryApi(playChannel)
-          .then((presetItemlist) => {
-            playRef.value.presetQuery(presetItemlist)
-          })
-          .catch((e) => {
-            message.error(e)
-          })
+        // presetQueryApi(playChannel)
+        //   .then((presetItemlist) => {
+        //     playRef.value.presetQuery(presetItemlist)
+        //   })
+        //   .catch((e) => {
+        //     message.error(e)
+        //   })
       })
       .finally(() => {
         loading.value = false

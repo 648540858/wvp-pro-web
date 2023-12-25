@@ -13,23 +13,31 @@
         <div style="width: 100%; height: 32vw">
           <a-radio-group
             v-model:value="playerType"
+            @change="playerTypeChange"
             style="width: 100%; height: 1.625vw; padding: 0 2px; min-height: 34px"
           >
             <a-radio-button value="1">Jessibuca</a-radio-button>
             <a-radio-button value="2">WebRTC</a-radio-button>
             <a-radio-button value="3">Video标签</a-radio-button>
-            <a-radio-button value="4">HLS</a-radio-button>
           </a-radio-group>
           <div v-if="playerType == 1" style="width: 100%; height: 30.375vw">
             <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="false" />
           </div>
+          <div v-if="playerType == 2" style="width: 100%; height: 30.375vw">
+            <RtcPlayer ref="rtcPlayer" :play-url="playUrl" :hasAudio="false" />
+          </div>
+          <div v-if="playerType == 3" style="width: 100%; height: 30.375vw">
+            <video controls autoplay style="width: 100%; height: 30.375vw">
+              <source :src="playUrl" type="video/mp4" />
+            </video>
+          </div>
         </div>
       </a-col>
-      <a-col style="width: 16vw; height: 30vw">
+      <a-col style="width: 16vw; height: 32vw; overflow: auto">
         <a-tabs style="width: 100%" size="small" type="card">
           <a-tab-pane key="1" tab="云台控制">
             <ptz @ptz-camera="ptzCamera" style="width: 15vw; height: 9vw; padding: 0 1rem 0 1rem" />
-            <div style="height: 21vw; padding: 0 1rem">
+            <div style="height: 23vw; padding: 0 1rem">
               <a-select ref="select" v-model:value="ptzControlType" style="width: 100%">
                 <a-select-option value="1">预置位</a-select-option>
                 <a-select-option value="2">巡航组</a-select-option>
@@ -167,6 +175,42 @@
             </div>
           </a-tab-pane>
           <a-tab-pane key="2" tab="信息" style="padding: 0 1rem 0 1rem">
+            <a-descriptions :column="1" title="资源地址" :labelStyle="{ fontsize: '12px' }">
+              <a-descriptions-item>{{ playUrl }}</a-descriptions-item>
+              <a-descriptions-item>
+                <a-button size="small" @click="showMoreUrlHandler">更多地址</a-button>
+              </a-descriptions-item>
+            </a-descriptions>
+            <a-descriptions :column="1" v-if="showMoreUrl" :labelStyle="{ fontsize: '12px' }">
+              <a-descriptions-item label="FLV">{{ streamInfo.flv }}</a-descriptions-item>
+              <a-descriptions-item label="FLV(https)">{{
+                streamInfo.https_flv
+              }}</a-descriptions-item>
+              <a-descriptions-item label="FLV(ws)">{{ streamInfo.ws_flv }}</a-descriptions-item>
+              <a-descriptions-item label="FLV(wss)">{{ streamInfo.wss_flv }}</a-descriptions-item>
+              <a-descriptions-item label="FMP4">{{ streamInfo.fmp4 }}</a-descriptions-item>
+              <a-descriptions-item label="FMP4(https)">{{
+                streamInfo.https_fmp4
+              }}</a-descriptions-item>
+              <a-descriptions-item label="FMP4(ws)">{{ streamInfo.ws_fmp4 }}</a-descriptions-item>
+              <a-descriptions-item label="FMP4(wss)">{{ streamInfo.wss_fmp4 }}</a-descriptions-item>
+              <a-descriptions-item label="HLS">{{ streamInfo.hls }}</a-descriptions-item>
+              <a-descriptions-item label="HLS(https)">{{
+                streamInfo.https_hls
+              }}</a-descriptions-item>
+              <a-descriptions-item label="HLS(ws)">{{ streamInfo.ws_hls }}</a-descriptions-item>
+              <a-descriptions-item label="HLS(wss)">{{ streamInfo.wss_hls }}</a-descriptions-item>
+              <a-descriptions-item label="TS">{{ streamInfo.ts }}</a-descriptions-item>
+              <a-descriptions-item label="TS(https)">{{ streamInfo.https_ts }}</a-descriptions-item>
+              <a-descriptions-item label="TS(ws)">{{ streamInfo.ws_ts }}</a-descriptions-item>
+              <a-descriptions-item label="TS(wss)">{{ streamInfo.wss_ts }}</a-descriptions-item>
+              <a-descriptions-item label="RTC">{{ streamInfo.rtc }}</a-descriptions-item>
+              <a-descriptions-item label="RTCS">{{ streamInfo.rtcs }}</a-descriptions-item>
+              <a-descriptions-item label="RTMP">{{ streamInfo.rtmp }}</a-descriptions-item>
+              <a-descriptions-item label="RTMPS">{{ streamInfo.rtmps }}</a-descriptions-item>
+              <a-descriptions-item label="RTSP">{{ streamInfo.rtsp }}</a-descriptions-item>
+              <a-descriptions-item label="RTSPS">{{ streamInfo.rtsps }}</a-descriptions-item>
+            </a-descriptions>
             <a-descriptions :column="2" title="概况" :labelStyle="{ fontsize: '12px' }">
               <a-descriptions-item label="观看人数">{{ totalReaderCount }}</a-descriptions-item>
               <a-descriptions-item label="网络">{{ formatByteSpeed() }}</a-descriptions-item>
@@ -225,13 +269,15 @@
     Button as AButton,
   } from 'ant-design-vue'
   import Jessibuca from './module/jessibuca.vue'
+  import RtcPlayer from './module/rtcPlayer.vue'
   import { getMediaInfoApi } from '/@/api/resource/gbResource'
   import Ptz from '../ptz/index.vue'
   import { PresetItem } from '/@/api/resource/model/gbResourceModel'
 
   const open = ref<boolean>(false)
+  const showMoreUrl = ref<boolean>(false)
   const playerType = ref<any>('1')
-  let playUrl = ref<String>()
+  let playUrl = ref<String>('')
   let ptzControlType = ref<String>('1')
   let ptzPresetId = ref<String>('1')
   let ptzCruiseId = ref<String>('1')
@@ -245,8 +291,9 @@
   let audioTrack = ref<Track>()
   let title = ref<String>()
   let timer = 0
-  let streamInfo: StreamInfo
+  let streamInfo = ref<StreamInfo | null>(null)
   const jessibuca = ref()
+  const rtcPlayer = ref()
   let presetLoading = ref<boolean>(true)
   let addCruiseSwitch = ref<boolean>(false)
   let setScanSwitch = ref<boolean>(false)
@@ -256,7 +303,7 @@
   const presetList = ref<PresetItem[]>()
   const play = (streamInfoParam: StreamInfo, name: string) => {
     title.value = name
-    streamInfo = streamInfoParam
+    streamInfo.value = streamInfoParam
     if (streamInfoParam.tracks.length > 0) {
       for (let i = 0; i < streamInfoParam.tracks.length; i++) {
         if (streamInfoParam.tracks[i].codec_type == 0) {
@@ -266,13 +313,37 @@
         }
       }
     }
-    playUrl.value = streamInfoParam.ws_flv
+    playerTypeChange()
     open.value = true
     timer = window.setInterval(() => {
       refreshStreamInfo()
     }, 1000)
   }
 
+  const playerTypeChange = () => {
+    if (streamInfo.value == null) {
+      return
+    }
+    if (playerType.value == 1) {
+      if (location.protocol === 'https:') {
+        playUrl.value = streamInfo.value.wss_flv
+      } else {
+        playUrl.value = streamInfo.value.ws_flv
+      }
+    } else if (playerType.value == 2) {
+      if (location.protocol === 'https:') {
+        playUrl.value = streamInfo.value.rtcs
+      } else {
+        playUrl.value = streamInfo.value.rtc
+      }
+    } else if (playerType.value == 3) {
+      if (location.protocol === 'https:') {
+        playUrl.value = streamInfo.value.https_fmp4
+      } else {
+        playUrl.value = streamInfo.value.fmp4
+      }
+    }
+  }
   const presetQuery = (presetItemList: PresetItem[]) => {
     presetLoading.value = false
     if (presetItemList.length > 255) {
@@ -400,6 +471,7 @@
     videoTrack.value = undefined
     audioTrack.value = undefined
     jessibuca.value = undefined
+    rtcPlayer.value = undefined
     aliveSecond.value = 0
     totalReaderCount.value = 0
     bytesSpeed.value = 0
@@ -407,23 +479,24 @@
   }
 
   const refreshStreamInfo = () => {
-    getMediaInfoApi(streamInfo.mediaServerId, streamInfo.app, streamInfo.stream)
+    if (streamInfo.value == null) {
+      return
+    }
+    getMediaInfoApi(streamInfo.value.mediaServerId, streamInfo.value.app, streamInfo.value.stream)
       .then((result) => {
-        if (result.code === 0) {
-          let streamInfoParam = result as StreamInfo
-          if (streamInfoParam.tracks.length > 0) {
-            for (let i = 0; i < streamInfoParam.tracks.length; i++) {
-              if (streamInfoParam.tracks[i].codec_type == 0) {
-                videoTrack.value = streamInfoParam.tracks[i]
-              } else {
-                audioTrack.value = streamInfoParam.tracks[i]
-              }
+        let streamInfoParam = result as StreamInfo
+        if (streamInfoParam.tracks.length > 0) {
+          for (let i = 0; i < streamInfoParam.tracks.length; i++) {
+            if (streamInfoParam.tracks[i].codec_type == 0) {
+              videoTrack.value = streamInfoParam.tracks[i]
+            } else {
+              audioTrack.value = streamInfoParam.tracks[i]
             }
           }
-          aliveSecond.value = streamInfoParam.aliveSecond
-          totalReaderCount.value = streamInfoParam.totalReaderCount
-          bytesSpeed.value = streamInfoParam.bytesSpeed
         }
+        aliveSecond.value = streamInfoParam.aliveSecond
+        totalReaderCount.value = streamInfoParam.totalReaderCount
+        bytesSpeed.value = streamInfoParam.bytesSpeed
       })
       .catch((e) => {
         console.error(e)
@@ -451,6 +524,10 @@
     return `${hours > 0 ? `${hours}小时` : ''}${minute < 10 ? '0' + minute : minute}分${
       formatSecond < 10 ? '0' + formatSecond : formatSecond
     }秒`
+  }
+
+  const showMoreUrlHandler = () => {
+    showMoreUrl.value = !showMoreUrl.value
   }
 
   defineExpose({ play, presetQuery })

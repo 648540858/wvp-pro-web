@@ -3,7 +3,10 @@ import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 /**
  * @description: 查询Device列表的参数
  */
-export type DeviceListParams = BasicPageParams
+export interface DeviceListParams extends BasicPageParams {
+  query: string | null | undefined
+  online: string | null | undefined
+}
 
 export interface Device extends RcTableProps {
   deviceId: string

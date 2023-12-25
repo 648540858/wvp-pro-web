@@ -11,7 +11,7 @@ import {
 import { StreamInfo } from '/@/api/model/baseModel'
 
 enum Api {
-  DEVICE_LIST = '/api/device/query/devices',
+  DEVICE_LIST = '/api/device/query/device/list',
   DEVICE_DELETE = '/api/device/query/devices/{deviceId}/delete',
   DEVICE_CHANNEL_LIST = '/api/device/query/devices/{deviceId}/channels',
   DEVICE_SUB_CHANNEL_LIST = '/api/device/query/sub_channels/{deviceId}/{parentChannelId}/channels',
@@ -21,7 +21,7 @@ enum Api {
   DEVICE_CHANGE_UPDATE = '/api/device/query/channel/update/{deviceId}',
   PLAY = '/api/play/start/{deviceId}/{channelId}',
   STOP_PLAY = '/api/play/stop/{deviceId}/{channelId}',
-  GET_MEDIA_INFO = '/zlm/{mediaServerId}/index/api/getMediaInfo',
+  GET_MEDIA_INFO = '/api/server/media_server/getMediaInfo',
   PTZ = '/api/ptz/control/{deviceId}/{channelId}',
   SYNC_28181 = '/api/channel/sync/device',
   PRESET_QUERY = '/api/ptz/preset/query/{deviceId}/{channelId}',
@@ -142,7 +142,7 @@ export const stopPlayApi = (channel: DeviceChannel) =>
   })
 export const getMediaInfoApi = (mediaServerId: string, app: string, stream: string) =>
   defHttp.get<any>({
-    url: Api.GET_MEDIA_INFO.replace('{mediaServerId}', mediaServerId),
+    url: Api.GET_MEDIA_INFO,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
@@ -150,8 +150,7 @@ export const getMediaInfoApi = (mediaServerId: string, app: string, stream: stri
     params: {
       app: app,
       stream: stream,
-      schema: 'rtsp',
-      vhost: '__defaultVhost__',
+      mediaServerId: mediaServerId,
     },
   })
 export const ptzCameraApi = (

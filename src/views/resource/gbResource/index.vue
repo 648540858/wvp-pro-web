@@ -49,16 +49,40 @@
             >
               <a-button :id="record.id" type="link" danger size="small">删除</a-button>
             </a-popconfirm>
-            <a-button type="link" size="small" @click="syncResource(record)">加入资源库</a-button>
           </template>
         </template>
         <template #title>
           <div style="width: 100%; display: flex">
             <BasicTitle>国标设备</BasicTitle>
-            <div style="margin-left: auto">
-              <a-button type="primary" preIcon="ant-design:reload-outlined" size="small"
-                >添加</a-button
-              >
+            <div style="margin-left: auto; display: inline-flex">
+              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                <span style="width: 3rem">搜索:</span>
+                <a-input
+                  size="small"
+                  v-model:value="searchSrt"
+                  placeholder="请输入搜索内容"
+                  @change="getDeviceList"
+                />
+              </div>
+              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                <span style="width: 5rem">在线状态:</span>
+                <a-select
+                  v-model:value="online"
+                  placeholder="请选择"
+                  size="small"
+                  @change="getDeviceList"
+                  style="width: 5rem"
+                >
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="true">在线</a-select-option>
+                  <a-select-option value="false">离线</a-select-option>
+                </a-select>
+              </div>
+              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                <a-button type="primary" preIcon="ant-design:reload-outlined" size="small">
+                  添加
+                </a-button>
+              </div>
             </div>
           </div>
         </template>
@@ -72,7 +96,6 @@
       :deviceOnline="deviceOnlineForChannelList"
       @close-device-channel="closeDeviceChannel"
     />
-    <SyncResourceForm ref="syncResourceFormRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -97,7 +120,6 @@
   } from 'ant-design-vue'
   import RefreshChanel from './refreshChanel/index.vue'
   import ChannelList from './channelList/index.vue'
-  import SyncResourceForm from './syncResourceForm/index.vue'
 
   /**
    * 定义变量
@@ -109,7 +131,9 @@
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
   let deviceIdForChannelList = ref('')
+  let searchSrt = ref('')
   let deviceOnlineForChannelList = ref(true)
+  let online = ref<string>('')
   const pagination = computed(() => ({
     // 表格分页的配置
     current: tablePage.value,
@@ -124,7 +148,6 @@
     onChange: pageChange,
   }))
   const refreshChanel = ref()
-  const syncResourceFormRef = ref()
 
   /**
    * 定义方法
@@ -133,6 +156,8 @@
     deviceListApi({
       page: tablePage.value,
       count: tablePageSize.value,
+      query: searchSrt.value,
+      online: online.value,
     })
       .then((result) => {
         console.log(result)
@@ -183,9 +208,6 @@
   function editDevice(_device: Device): void {
     console.log(_device)
     console.log(_device.deviceId)
-  }
-  const syncResource = (_device: Device) => {
-    syncResourceFormRef.value.show(_device.deviceId)
   }
   // 初始化获取数据
   getDeviceList()
