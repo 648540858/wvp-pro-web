@@ -14,6 +14,7 @@ export interface Device extends RcTableProps {
   manufacturer: string
   model: string
   firmware: string
+  mediaServerId: string
   transport: string
   streamMode: string
   hostAddress: string

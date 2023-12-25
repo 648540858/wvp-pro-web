@@ -47,12 +47,26 @@
       >
         <a-input v-model:value="form.sdpIp" style="width: 20rem" />
       </a-form-item>
-      <a-form-item
-        label="流媒体ID"
-        name="mediaServerId"
-        :rules="[{ required: false, message: '请输入收流IP，置空则使用统一收流IP' }]"
-      >
+      <a-form-item label="流媒体ID" name="mediaServerId">
         <a-input v-model:value="form.mediaServerId" style="width: 20rem" />
+        <a-select
+          size="mini"
+          v-model:value="form.mediaServerId"
+          placeholder="请选择流媒体ID"
+          style="width: 120px"
+        >
+          <a-select-option key="auto" title="自动负载最小" value="auto">
+            自动负载最小
+          </a-select-option>
+          <a-select-option
+            v-for="item in mediaServerList"
+            :key="item.id"
+            :label="item.id"
+            :value="item.id"
+          >
+            {{ item.id }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
     </a-form>
     <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd" />
@@ -65,11 +79,13 @@
     Form as AForm,
     FormItem as AFormItem,
     Button as AButton,
+    Select as ASelect,
+    SelectOption as ASelectOption,
   } from 'ant-design-vue'
   import { Group } from '/@/api/resource/model/groupModel'
   import { addGroupApi, updateGroupApi } from '/@/api/resource/group'
   import ChannelCode from '../ChannelCode/index.vue'
-  import {Device} from "/@/api/resource/model/gbResourceModel";
+  import { Device } from '/@/api/resource/model/gbResourceModel'
 
   const open = ref<boolean>(false)
   const title = ref<string>('')
@@ -77,6 +93,7 @@
     deviceId: '',
     name: '',
     manufacturer: '',
+    mediaServerId: '',
     model: '',
     firmware: '',
     transport: '',
@@ -100,6 +117,7 @@
     sdpIp: '',
     asMessageChannel: false,
   })
+  let mediaServerList = ref<MediaServer[]>()
 
   let isEdit = ref(false)
   const deviceIdType = ref('')
