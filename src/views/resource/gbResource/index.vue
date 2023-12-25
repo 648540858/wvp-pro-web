@@ -7,6 +7,47 @@
         :loading="loading"
         :pagination="pagination"
       >
+        <template #title>
+          <div style="width: 100%; display: flex">
+            <div style="margin-right: auto; display: inline-flex">
+              <div style="display: inline-flex; align-items: center">
+                <a-button
+                  type="primary"
+                  preIcon="ant-design:reload-outlined"
+                  size="small"
+                  @click="addDeviceEvent"
+                >
+                  添加
+                </a-button>
+              </div>
+            </div>
+            <div style="margin-left: auto; display: inline-flex">
+              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                <span style="width: 3rem">搜索:</span>
+                <a-input
+                  size="small"
+                  v-model:value="searchSrt"
+                  placeholder="请输入搜索内容"
+                  @change="getDeviceList"
+                />
+              </div>
+              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                <span style="width: 5rem">在线状态:</span>
+                <a-select
+                  v-model:value="online"
+                  placeholder="请选择"
+                  size="small"
+                  @change="getDeviceList"
+                  style="width: 5rem"
+                >
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="true">在线</a-select-option>
+                  <a-select-option value="false">离线</a-select-option>
+                </a-select>
+              </div>
+            </div>
+          </div>
+        </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.dataIndex === 'hostAddress'">
             <a-tag>{{ record.hostAddress }}</a-tag>
@@ -51,41 +92,6 @@
             </a-popconfirm>
           </template>
         </template>
-        <template #title>
-          <div style="width: 100%; display: flex">
-            <BasicTitle>国标设备</BasicTitle>
-            <div style="margin-left: auto; display: inline-flex">
-              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
-                <span style="width: 3rem">搜索:</span>
-                <a-input
-                  size="small"
-                  v-model:value="searchSrt"
-                  placeholder="请输入搜索内容"
-                  @change="getDeviceList"
-                />
-              </div>
-              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
-                <span style="width: 5rem">在线状态:</span>
-                <a-select
-                  v-model:value="online"
-                  placeholder="请选择"
-                  size="small"
-                  @change="getDeviceList"
-                  style="width: 5rem"
-                >
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="true">在线</a-select-option>
-                  <a-select-option value="false">离线</a-select-option>
-                </a-select>
-              </div>
-              <div style="display: inline-flex; margin-left: 2rem; align-items: center">
-                <a-button type="primary" preIcon="ant-design:reload-outlined" size="small">
-                  添加
-                </a-button>
-              </div>
-            </div>
-          </div>
-        </template>
       </a-table>
     </PageWrapper>
     <RefreshChanel ref="refreshChanel" />
@@ -96,6 +102,7 @@
       :deviceOnline="deviceOnlineForChannelList"
       @close-device-channel="closeDeviceChannel"
     />
+    <EditDevice ref="editDeviceRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -106,6 +113,7 @@
     deviceListApi,
   } from '/@/api/resource/gbResource'
   import { Device } from '/@/api/resource/model/gbResourceModel'
+  import EditDevice from '../../common/editDevice/index.vue'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
   import { BasicTitle } from '/@/components/Basic'
@@ -148,7 +156,7 @@
     onChange: pageChange,
   }))
   const refreshChanel = ref()
-
+  const editDeviceRef = ref()
   /**
    * 定义方法
    */
@@ -206,8 +214,10 @@
     deviceOnlineForChannelList.value = true
   }
   function editDevice(_device: Device): void {
-    console.log(_device)
-    console.log(_device.deviceId)
+    editDeviceRef.value.openModel(_device)
+  }
+  function addDeviceEvent(): void {
+    editDeviceRef.value.openModel()
   }
   // 初始化获取数据
   getDeviceList()

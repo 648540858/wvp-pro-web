@@ -23,7 +23,6 @@
         <a-input-group compact>
           <a-input v-if="isEdit" v-model:value="form.deviceId" disabled />
           <a-input v-if="!isEdit" v-model:value="form.deviceId" clearable />
-          <a-button v-if="!isEdit" style="width: 4rem" @click="getChannelCode">生成</a-button>
         </a-input-group>
       </a-form-item>
       <a-form-item
@@ -48,7 +47,6 @@
         <a-input v-model:value="form.sdpIp" style="width: 20rem" />
       </a-form-item>
       <a-form-item label="流媒体ID" name="mediaServerId">
-        <a-input v-model:value="form.mediaServerId" style="width: 20rem" />
         <a-select
           size="mini"
           v-model:value="form.mediaServerId"
@@ -68,8 +66,60 @@
           </a-select-option>
         </a-select>
       </a-form-item>
+      <a-form-item label="字符集" name="charset">
+        <a-select
+          size="mini"
+          v-model:value="form.charset"
+          placeholder="请选择字符集"
+          style="width: 120px"
+        >
+          <a-select-option key="GB2312" title="GB2312" value="GB2312"> GB2312 </a-select-option>
+          <a-select-option key="UTF-8" title="UTF-8" value="UTF-8"> GB2312 </a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label="地理坐标系" name="geoCoordSys">
+        <a-select
+          size="mini"
+          v-model:value="form.geoCoordSys"
+          placeholder="请选择地理坐标系"
+          style="width: 120px"
+        >
+          <a-select-option key="WGS84" title="WGS84" value="WGS84"> WGS84 </a-select-option>
+          <a-select-option key="GCJ02" title="GCJ02" value="GCJ02"> GB2312 </a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label="目录订阅" name="subscribeCycleForCatalog">
+        <a-switch
+          checked-children="开"
+          un-checked-children="关"
+          @change="subscribeCatalogSwitchChange"
+        />
+      </a-form-item>
+      <a-form-item label="移动位置订阅" name="subscribeCycleForMobilePosition">
+        <a-switch
+          checked-children="开"
+          un-checked-children="关"
+          @change="subscribeMobilePositionSwitchChange"
+        />
+      </a-form-item>
+      <a-form-item label="子码流" name="switchPrimarySubStream">
+        <a-switch
+          checked-children="开"
+          un-checked-children="关"
+          v-model:checked="form.switchPrimarySubStream"
+        />
+      </a-form-item>
+      <a-form-item label="SSRC校验" name="ssrcCheck">
+        <a-switch checked-children="开" un-checked-children="关" v-model:checked="form.ssrcCheck" />
+      </a-form-item>
+      <a-form-item label="作为消息通道" name="asMessageChannel">
+        <a-switch
+          checked-children="开"
+          un-checked-children="关"
+          v-model:checked="form.asMessageChannel"
+        />
+      </a-form-item>
     </a-form>
-    <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd" />
   </a-modal>
 </template>
 <script lang="ts" setup>
@@ -78,75 +128,86 @@
     Modal as AModal,
     Form as AForm,
     FormItem as AFormItem,
-    Button as AButton,
     Select as ASelect,
     SelectOption as ASelectOption,
+    Switch as ASwitch,
   } from 'ant-design-vue'
-  import { Group } from '/@/api/resource/model/groupModel'
-  import { addGroupApi, updateGroupApi } from '/@/api/resource/group'
-  import ChannelCode from '../ChannelCode/index.vue'
   import { Device } from '/@/api/resource/model/gbResourceModel'
+  import { MediaServer } from '/@/api/resource/model/MediaServer'
+  import { addDeviceApi, updateDeviceApi } from '/@/api/resource/gbResource'
 
   const open = ref<boolean>(false)
   const title = ref<string>('')
-  const form = ref<Device>({
-    deviceId: '',
-    name: '',
-    manufacturer: '',
-    mediaServerId: '',
-    model: '',
-    firmware: '',
-    transport: '',
-    streamMode: '',
-    hostAddress: '',
-    onLine: false,
-    registerTime: '',
-    keepaliveTime: '',
-    createTime: '',
-    updateTime: '',
-    charset: '',
-    subscribeCycleForCatalog: 0,
-    subscribeCycleForMobilePosition: 0,
-    subscribeCycleForAlarm: 0,
-    keepaliveIntervalTime: '',
-    channelCount: 0,
-    expires: 0,
-    ssrcCheck: false,
-    geoCoordSys: '',
-    password: '',
-    sdpIp: '',
-    asMessageChannel: false,
-  })
+  const clearForm = (): Device => {
+    return {
+      id: 0,
+      deviceId: '',
+      name: '',
+      manufacturer: '',
+      mediaServerId: '',
+      model: '',
+      firmware: '',
+      transport: '',
+      streamMode: '',
+      hostAddress: '',
+      onLine: false,
+      registerTime: '',
+      keepaliveTime: '',
+      createTime: '',
+      updateTime: '',
+      charset: '',
+      subscribeCycleForCatalog: 0,
+      subscribeCycleForMobilePosition: 0,
+      mobilePositionSubmissionInterval: 0,
+      subscribeCycleForAlarm: 0,
+      switchPrimarySubStream: false,
+      keepaliveIntervalTime: '',
+      channelCount: 0,
+      expires: 0,
+      ssrcCheck: false,
+      geoCoordSys: '',
+      password: '',
+      sdpIp: '',
+      asMessageChannel: false,
+    }
+  }
+  let device = clearForm()
+  const form = ref<Device>(device)
   let mediaServerList = ref<MediaServer[]>()
 
   let isEdit = ref(false)
-  const deviceIdType = ref('')
-  const deviceIdSuffix = ref('')
-  const channelCodeRef = ref()
   let endFnCallback: Function
-  const openModel = (groupParam: Group, endFn: Function) => {
+  const openModel = (device: Device, endFn: Function) => {
     open.value = true
     endFnCallback = endFn
-    if (groupParam.commonGroupId > 0) {
+    if (device.id > 0) {
       title.value = '编辑'
-      deviceIdPrefix.value = groupParam.commonGroupDeviceId.substring(0, 10)
-      deviceIdType.value = groupParam.commonGroupDeviceId.substring(10, 13)
-      deviceIdSuffix.value = groupParam.commonGroupDeviceId.substring(13, 20)
-      group.value = groupParam
+      form.value = device
     } else {
       title.value = '添加'
-      group.value.commonGroupId = -1
-      group.value.commonGroupDeviceId = ''
-      group.value.commonGroupName = ''
-      group.value.commonGroupParentId = groupParam.commonGroupParentId
-      group.value.commonGroupTopId = groupParam.commonGroupTopId
-      deviceIdPrefix.value = ''
-      deviceIdSuffix.value = ''
-      if (groupParam.commonGroupParentId === '') {
-        deviceIdType.value = '215'
-      } else {
-        deviceIdType.value = '216'
-      }
+      form.value = clearForm()
+    }
+  }
+  const subscribeCatalogSwitchChange = (checked: Boolean) => {
+    if (form.value == null) {
+      return
+    }
+    if (checked) {
+      form.value.subscribeCycleForCatalog = 60
+    } else {
+      form.value.subscribeCycleForCatalog = 0
+    }
+  }
+  const subscribeMobilePositionSwitchChange = (checked: Boolean) => {
+    if (form.value == null) {
+      return
+    }
+    if (checked) {
+      form.value.subscribeCycleForMobilePosition = 60
+      form.value.mobilePositionSubmissionInterval = 5
+    } else {
+      form.value.subscribeCycleForMobilePosition = 0
+      form.value.mobilePositionSubmissionInterval = 0
     }
   }
   const closeModel = () => {
@@ -155,11 +216,11 @@
     title.value = ''
   }
   const handleOk = () => {
-    console.log('onBeforeUnmount')
-    group.value.commonGroupDeviceId =
-      deviceIdPrefix.value + deviceIdType.value + deviceIdSuffix.value
-    if (group.value.commonGroupId > 0) {
-      updateGroupApi(group.value)
+    if (form.value == null) {
+      return
+    }
+    if (form.value.id > 0) {
+      updateDeviceApi(form.value)
         .then((result) => {
           console.log(result)
         })
@@ -168,10 +229,10 @@
         })
         .finally(() => {
           open.value = false
-          endFnCallback(group.value)
+          endFnCallback(form.value)
         })
     } else {
-      addGroupApi(group.value)
+      addDeviceApi(form.value)
         .then((result) => {
           console.log(result)
         })
@@ -180,21 +241,9 @@
         })
         .finally(() => {
           open.value = false
-          endFnCallback(group.value)
+          endFnCallback(form.value)
         })
     }
   }
-  const getChannelCode = () => {
-    channelCodeRef.value.openModel(
-      deviceIdPrefix.value + deviceIdType.value + deviceIdSuffix.value,
-      5,
-      deviceIdType.value,
-    )
-  }
-  const getChannelCodeEnd = (code: string) => {
-    deviceIdPrefix.value = code.substring(0, 10)
-    deviceIdSuffix.value = code.substring(13, 20)
-  }
-
   defineExpose({ openModel })
 </script>

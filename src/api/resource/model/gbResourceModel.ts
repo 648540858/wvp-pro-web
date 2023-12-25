@@ -9,6 +9,7 @@ export interface DeviceListParams extends BasicPageParams {
 }
 
 export interface Device extends RcTableProps {
+  id: number
   deviceId: string
   name: string
   manufacturer: string
@@ -26,6 +27,8 @@ export interface Device extends RcTableProps {
   charset: string
   subscribeCycleForCatalog: number
   subscribeCycleForMobilePosition: number
+  mobilePositionSubmissionInterval: number
+  switchPrimarySubStream: boolean
   subscribeCycleForAlarm: number
   keepaliveIntervalTime: string
   channelCount: number

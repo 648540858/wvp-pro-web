@@ -6,13 +6,15 @@ import {
   DeviceChannelListResultModel,
   SyncStatusResultModel,
   DeviceChannel,
-  PresetItem,
+  PresetItem, Device,
 } from '/@/api/resource/model/gbResourceModel'
 import { StreamInfo } from '/@/api/model/baseModel'
 
 enum Api {
   DEVICE_LIST = '/api/device/query/device/list',
   DEVICE_DELETE = '/api/device/query/devices/{deviceId}/delete',
+  DEVICE_UPDATE = '/api/device/query/update',
+  DEVICE_ADD = '/api/device/query/devices/add',
   DEVICE_CHANNEL_LIST = '/api/device/query/devices/{deviceId}/channels',
   DEVICE_SUB_CHANNEL_LIST = '/api/device/query/sub_channels/{deviceId}/{parentChannelId}/channels',
   DEVICE_CHANGE_TRANSPORT = '/api/device/query/transport/{deviceId}/{transport}',
@@ -301,5 +303,29 @@ export const auxiliaryControlApi = (
     params: {
       command: command,
       auxiliaryId: auxiliaryId,
+    },
+  })
+
+export const addDeviceApi = (device: Device) =>
+  defHttp.post<void>({
+    url: Api.DEVICE_ADD,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      device: device,
+    },
+  })
+
+export const updateDeviceApi = (device: Device) =>
+  defHttp.post<void>({
+    url: Api.DEVICE_UPDATE,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      device: device,
     },
   })
