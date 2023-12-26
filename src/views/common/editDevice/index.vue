@@ -241,6 +241,8 @@
     console.log('onBeforeUnmount')
     open.value = false
     title.value = ''
+    switchForCatalogSubscribe.value = false
+    switchForMobilePositionSubscribe.value = false
   }
   const handleOk = () => {
     if (form.value == null) {
