@@ -1,5 +1,5 @@
 import { BasicPageParams, BasicFetchResult } from '/@/api/model/baseModel'
-import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
+import { TableProps } from 'ant-design-vue/lib/vc-table/Table'
 /**
  * @description: 查询Device列表的参数
  */
@@ -8,8 +8,8 @@ export interface DeviceListParams extends BasicPageParams {
   online: string | null | undefined
 }
 
-export interface Device extends RcTableProps {
-  id: number
+// 此处报错是因为TableProps里定义ID字段且类型为string
+export interface Device extends TableProps {
   deviceId: string
   name: string
   manufacturer: string

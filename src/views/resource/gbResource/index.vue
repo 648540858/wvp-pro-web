@@ -116,7 +116,6 @@
   import EditDevice from '../../common/editDevice/index.vue'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
-  import { BasicTitle } from '/@/components/Basic'
   import {
     Table as ATable,
     Tag as ATag,

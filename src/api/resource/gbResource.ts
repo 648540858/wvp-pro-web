@@ -6,7 +6,8 @@ import {
   DeviceChannelListResultModel,
   SyncStatusResultModel,
   DeviceChannel,
-  PresetItem, Device,
+  PresetItem,
+  Device,
 } from '/@/api/resource/model/gbResourceModel'
 import { StreamInfo } from '/@/api/model/baseModel'
 
