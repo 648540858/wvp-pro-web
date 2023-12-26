@@ -49,7 +49,7 @@
   } from 'ant-design-vue'
   import { Group } from '/@/api/resource/model/groupModel'
   import { addGroupApi, updateGroupApi } from '/@/api/resource/group'
-  import ChannelCode from '../ChannelCode/index.vue'
+  import ChannelCode from '/@/views/common/ChannelCode/index.vue'
 
   const open = ref<boolean>(false)
   const title = ref<string>('')

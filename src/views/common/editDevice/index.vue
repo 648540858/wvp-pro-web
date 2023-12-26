@@ -15,7 +15,7 @@
         name="basic"
         :label-col="{ span: 8 }"
         autocomplete="off"
-        style="padding: 10px 20px 0 0"
+        style="padding: 10px 1vw 0 0"
       >
         <a-row :gutter="24">
           <a-col :span="12">
@@ -24,9 +24,16 @@
               name="deviceId"
               :rules="[{ required: true, message: '请输入设备编号' }]"
             >
-              <a-input-group compact>
-                <a-input v-if="isEdit" v-model:value="form.deviceId" disabled />
-                <a-input v-if="!isEdit" v-model:value="form.deviceId" clearable />
+              <a-input v-if="isEdit" v-model:value="form.deviceId" disabled />
+              <a-input-group compact v-if="!isEdit">
+                <a-input
+                  v-if="!isEdit"
+                  v-model:value="form.deviceId"
+                  clearable
+                  placeholder="设备编号"
+                  style="width: calc(100% - 63px)"
+                />
+                <a-button @click="getChannelCode">生成</a-button>
               </a-input-group>
             </a-form-item>
           </a-col>
@@ -36,7 +43,7 @@
               name="name"
               :rules="[{ required: true, message: '请输入设备名称' }]"
             >
-              <a-input v-model:value="form.name" />
+              <a-input v-model:value="form.name" placeholder="设备名称" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -45,7 +52,7 @@
               name="password"
               :rules="[{ required: false, message: '请输入注册密码，置空则使用统一密码' }]"
             >
-              <a-input v-model:value="form.password" />
+              <a-input v-model:value="form.password" placeholder="注册密码，置空则使用统一密码" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -54,7 +61,7 @@
               name="sdpIp"
               :rules="[{ required: false, message: '请输入收流IP，置空则使用统一收流IP' }]"
             >
-              <a-input v-model:value="form.sdpIp" />
+              <a-input v-model:value="form.sdpIp" placeholder="收流IP，置空则使用统一收流IP" />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -80,7 +87,7 @@
                 <a-select-option key="GB2312" title="GB2312" value="GB2312">
                   GB2312
                 </a-select-option>
-                <a-select-option key="UTF-8" title="UTF-8" value="UTF-8"> GB2312 </a-select-option>
+                <a-select-option key="UTF-8" title="UTF-8" value="UTF-8"> UTF-8 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -88,28 +95,33 @@
             <a-form-item label="地理坐标系" name="geoCoordSys">
               <a-select v-model:value="form.geoCoordSys" placeholder="请选择地理坐标系">
                 <a-select-option key="WGS84" title="WGS84" value="WGS84"> WGS84 </a-select-option>
-                <a-select-option key="GCJ02" title="GCJ02" value="GCJ02"> GB2312 </a-select-option>
+                <a-select-option key="GCJ02" title="GCJ02" value="GCJ02"> GCJ02 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
+          <a-col :span="12" />
           <a-col :span="12">
-            <a-form-item label="目录订阅" name="subscribeCycleForCatalog">
-              <a-switch
-                v-model:checked="switchForCatalogSubscribe"
-                checked-children="开"
-                un-checked-children="关"
-                @change="subscribeCatalogSwitchChange"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="移动位置订阅" name="subscribeCycleForMobilePosition">
-              <a-switch
-                v-model:checked="switchForMobilePositionSubscribe"
-                checked-children="开"
-                un-checked-children="关"
-                @change="subscribeMobilePositionSwitchChange"
-              />
+            <a-form-item label="订阅" name="subscribeCycleForMobilePosition">
+              <div style="display: inline-flex; align-items: center">
+                <div style="margin-right: 10px; display: inline-flex; align-items: center">
+                  <span style="margin-right: 5px">移动位置</span>
+                  <a-switch
+                    v-model:checked="switchForMobilePositionSubscribe"
+                    checked-children="开"
+                    un-checked-children="关"
+                    @change="subscribeMobilePositionSwitchChange"
+                  />
+                </div>
+                <div style="margin-right: 10px; display: inline-flex; align-items: center">
+                  <span style="margin-right: 5px">目录订阅</span>
+                  <a-switch
+                    v-model:checked="switchForCatalogSubscribe"
+                    checked-children="开"
+                    un-checked-children="关"
+                    @change="subscribeCatalogSwitchChange"
+                  />
+                </div>
+              </div>
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -131,7 +143,7 @@
             </a-form-item>
           </a-col>
           <a-col :span="12">
-            <a-form-item label="作为消息通道" name="asMessageChannel">
+            <a-form-item label="消息通道" name="asMessageChannel">
               <a-switch
                 checked-children="开"
                 un-checked-children="关"
@@ -142,6 +154,7 @@
         </a-row>
       </a-form>
     </div>
+    <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd" />
   </a-modal>
 </template>
 <script lang="ts" setup>
@@ -155,32 +168,36 @@
     Switch as ASwitch,
     Row as ARow,
     Col as ACol,
+    Input as AInput,
+    InputGroup as AInputGroup,
   } from 'ant-design-vue'
   import { Device } from '/@/api/resource/model/gbResourceModel'
   import { MediaServer } from '/@/api/resource/model/MediaServer'
   import { addDeviceApi, updateDeviceApi } from '/@/api/resource/gbResource'
+  import ChannelCode from '/@/views/common/ChannelCode/index.vue'
 
   const open = ref<boolean>(false)
   const switchForMobilePositionSubscribe = ref<boolean>(false)
   const switchForCatalogSubscribe = ref<boolean>(false)
   const title = ref<string>('')
+  const channelCodeRef = ref()
   const clearForm = (): Device => {
     return {
       deviceId: '',
       name: '',
       manufacturer: '',
-      mediaServerId: '',
+      mediaServerId: 'auto',
       model: '',
       firmware: '',
-      transport: '',
-      streamMode: '',
+      transport: 'UDP',
+      streamMode: 'UDP',
       hostAddress: '',
       onLine: false,
       registerTime: '',
       keepaliveTime: '',
       createTime: '',
       updateTime: '',
-      charset: '',
+      charset: 'GB2312',
       subscribeCycleForCatalog: 0,
       subscribeCycleForMobilePosition: 0,
       mobilePositionSubmissionInterval: 0,
@@ -190,7 +207,7 @@
       channelCount: 0,
       expires: 0,
       ssrcCheck: false,
-      geoCoordSys: '',
+      geoCoordSys: 'GCJ02',
       password: '',
       sdpIp: '',
       asMessageChannel: false,
@@ -214,6 +231,12 @@
       title.value = '添加'
       form.value = clearForm()
     }
+  }
+  const getChannelCode = () => {
+    channelCodeRef.value.openModel()
+  }
+  const getChannelCodeEnd = (code: string) => {
+    form.value.deviceId = code
   }
   const subscribeCatalogSwitchChange = (checked: Boolean) => {
     if (form.value == null) {

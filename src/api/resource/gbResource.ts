@@ -14,8 +14,8 @@ import { StreamInfo } from '/@/api/model/baseModel'
 enum Api {
   DEVICE_LIST = '/api/device/query/device/list',
   DEVICE_DELETE = '/api/device/query/devices/{deviceId}/delete',
-  DEVICE_UPDATE = '/api/device/query/update',
-  DEVICE_ADD = '/api/device/query/devices/add',
+  DEVICE_UPDATE = '/api/device/query/device/update',
+  DEVICE_ADD = '/api/device/query/device/add',
   DEVICE_CHANNEL_LIST = '/api/device/query/devices/{deviceId}/channels',
   DEVICE_SUB_CHANNEL_LIST = '/api/device/query/sub_channels/{deviceId}/{parentChannelId}/channels',
   DEVICE_CHANGE_TRANSPORT = '/api/device/query/transport/{deviceId}/{transport}',
@@ -314,9 +314,7 @@ export const addDeviceApi = (device: Device) =>
       // @ts-ignore
       ignoreCancelToken: true,
     },
-    params: {
-      device: device,
-    },
+    params: device,
   })
 
 export const updateDeviceApi = (device: Device) =>
@@ -326,7 +324,5 @@ export const updateDeviceApi = (device: Device) =>
       // @ts-ignore
       ignoreCancelToken: true,
     },
-    params: {
-      device: device,
-    },
+    params: device,
   })
