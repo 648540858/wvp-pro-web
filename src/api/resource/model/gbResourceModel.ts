@@ -98,6 +98,12 @@ export interface PresetItem {
   presetName: string
 }
 
+export interface ResetAlarmParam {
+  deviceId: string
+  alarmMethod: number
+  alarmType: number
+}
+
 /**
  * @description: 通道列表的查询结果
  */

@@ -35,6 +35,10 @@ enum Api {
   AUXILIARY_CONTROL = '/api/ptz/auxiliary/control/{deviceId}/{channelId}',
   FORCE_I_FRAME_CONTROL = '/api/device/control/i_frame/{deviceId}/{channelId}',
   HOME_POSITION_CONTROL = '/api/device/control/home_position/{deviceId}',
+  TELEBOOT_CONTROL = '/api/device/control/teleboot/{deviceId}',
+  RECORD_CONTROL = '/api/device/control/record/{deviceId}/{channelId}',
+  GUARD_CONTROL = '/api/device/control/guard/{deviceId}',
+  RESET_ALARM_CONTROL = '/api/device/control/reset_alarm/{deviceId}',
 }
 
 /**
@@ -338,6 +342,52 @@ export const homePositionControlApi = (
       channelId: deviceChannel.channelId,
       presetId: presetId,
       resetTime: resetTime,
+    },
+  })
+
+export const telebootControlApi = (deviceId: string) =>
+  defHttp.get<void>({
+    url: Api.TELEBOOT_CONTROL.replace('{deviceId}', deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+// 布防/撤防命令
+export const guardControlApi = (deviceId: string, command: string) =>
+  defHttp.get<void>({
+    url: Api.GUARD_CONTROL.replace('{deviceId}', deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
+    },
+  })
+// 报警复位
+export const resetAlarmControlApi = (deviceId: string, alarmMethod: number, alarmType: number) =>
+  defHttp.get<void>({
+    url: Api.RESET_ALARM_CONTROL.replace('{deviceId}', deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      alarmMethod: alarmMethod,
+      alarmType: alarmType,
+    },
+  })
+
+export const recordControlApi = (deviceId: string, command: string) =>
+  defHttp.get<void>({
+    url: Api.RECORD_CONTROL.replace('{deviceId}', deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
     },
   })
 

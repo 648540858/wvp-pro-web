@@ -75,7 +75,7 @@
             <div style="width: 100%; display: inline-flex">
               <a-button type="link" size="small" @click="back()" style="color: #000">
                 <template #icon>
-                  <ArrowLeftOutlined />
+                  <Icon icon="material-symbols:arrow-back" />
                 </template>
               </a-button>
               <BasicTitle>国标通道</BasicTitle>
@@ -167,8 +167,8 @@
     Switch as ASwitch,
     message,
   } from 'ant-design-vue'
-  import { ArrowLeftOutlined } from '@ant-design/icons-vue'
   import Player from '/@/views/common/player/index.vue'
+  import Icon from '/@/components/Icon'
 
   const playRef = ref()
   /**

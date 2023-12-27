@@ -90,6 +90,21 @@
             >
               <a-button :id="record.id" type="link" danger size="small">删除</a-button>
             </a-popconfirm>
+            <a-dropdown :trigger="['click']">
+              <a class="ant-dropdown-link" @click.prevent>控制</a>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item key="0" @click="telebootControl(record)">远程启动</a-menu-item>
+                  <a-menu-item key="1" @click="recordControl(record, 'start')">
+                    开始录像
+                  </a-menu-item>
+                  <a-menu-item key="1" @click="recordControl(record, 'stop')">停止录像</a-menu-item>
+                  <a-menu-item key="3" @click="setGuardControl(record)">报警布防</a-menu-item>
+                  <a-menu-item key="3" @click="resetGuardControl(record)">报警撤防</a-menu-item>
+                  <a-menu-item key="4" @click="resetAlarmControl(record)">报警复位</a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
           </template>
         </template>
       </a-table>
@@ -103,6 +118,7 @@
       @close-device-channel="closeDeviceChannel"
     />
     <EditDevice ref="editDeviceRef" />
+    <ResetAlarm ref="resetAlarmRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -111,9 +127,13 @@
     changeDeviceStreamTransportApi,
     deleteDeviceApi,
     deviceListApi,
+    guardControlApi,
+    recordControlApi,
+    telebootControlApi,
   } from '/@/api/resource/gbResource'
   import { Device } from '/@/api/resource/model/gbResourceModel'
   import EditDevice from '../../common/editDevice/index.vue'
+  import ResetAlarm from '../../common/resetAlarm/index.vue'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
   import {
@@ -124,6 +144,9 @@
     SelectOption as ASelectOption,
     message,
     Popconfirm as APopconfirm,
+    Dropdown as ADropdown,
+    Menu as AMenu,
+    MenuItem as AMenuItem,
   } from 'ant-design-vue'
   import RefreshChanel from './refreshChanel/index.vue'
   import ChannelList from './channelList/index.vue'
@@ -156,6 +179,7 @@
   }))
   const refreshChanel = ref()
   const editDeviceRef = ref()
+  const resetAlarmRef = ref()
   /**
    * 定义方法
    */
@@ -217,6 +241,38 @@
   }
   function addDeviceEvent(): void {
     editDeviceRef.value.openModel()
+  }
+  function telebootControl(device: Device): void {
+    telebootControlApi(device.deviceId)
+      .then(() => {
+        message.info('发送成功')
+      })
+      .catch((e) => [message.error(e)])
+  }
+  function recordControl(device: Device, command: string): void {
+    recordControlApi(device.deviceId, command)
+      .then(() => {
+        message.info('发送成功')
+      })
+      .catch((e) => [message.error(e)])
+  }
+  function setGuardControl(device: Device): void {
+    guardControlApi(device.deviceId, 'set')
+      .then(() => {
+        message.info('发送成功')
+      })
+      .catch((e) => [message.error(e)])
+  }
+  function resetGuardControl(device: Device): void {
+    guardControlApi(device.deviceId, 'reset')
+      .then(() => {
+        message.info('发送成功')
+      })
+      .catch((e) => [message.error(e)])
+  }
+  function resetAlarmControl(device: Device): void {
+    console.log(resetAlarmRef)
+    resetAlarmRef.value.openModal(device.deviceId)
   }
   // 初始化获取数据
   getDeviceList()
