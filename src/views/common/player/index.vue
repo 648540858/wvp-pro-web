@@ -35,22 +35,32 @@
       </a-col>
       <a-col style="width: 16vw; height: 32vw; overflow: auto">
         <a-tabs style="width: 100%" size="small" type="card">
-          <a-tab-pane key="1" tab="云台控制">
+          <a-tab-pane key="1" tab="控制">
             <ptz @ptz-camera="ptzCamera" style="width: 15vw; height: 9vw; padding: 0 1rem 0 1rem" />
             <div style="height: 23vw; padding: 0 1rem">
-              <a-select ref="select" v-model:value="ptzControlType" style="width: 100%">
+              <a-select
+                ref="select"
+                v-model:value="ptzControlType"
+                class="ptz-space"
+              >
                 <a-select-option value="1">预置位</a-select-option>
                 <a-select-option value="2">巡航组</a-select-option>
                 <a-select-option value="3">水平扫描</a-select-option>
                 <a-select-option value="4">雨刷</a-select-option>
                 <a-select-option value="5">辅助开关</a-select-option>
+                <a-select-option value="6">强制关键帧</a-select-option>
+                <a-select-option value="7">看守位控制</a-select-option>
               </a-select>
               <div v-if="ptzControlType == 1">
                 <a-input-number
+                  min="1"
+                  max="255"
                   v-model:value="ptzPresetId"
-                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  placeholder="预置位编号"
+                  addonBefore="预置位编号"
+                  addonAfter="(1-255)"
+                  class="ptz-space"
                 />
-                <span style="width: 5vw; font-size: 13px">(1-255)</span>
                 <a-button-group>
                   <a-button @click="gotoPreset()" title="移动镜头到预置位">查看</a-button>
                   <a-button @click="setPreset()" title="设置当前镜头为此预置位">添加</a-button>
@@ -62,15 +72,17 @@
                   v-model:value="ptzCruiseId"
                   min="1"
                   max="255"
-                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  addonBefore="巡航组编号"
+                  addonAfter="(1-255)"
+                  placeholder="巡航组编号"
+                  class="ptz-space"
                 />
-                <span style="width: 5vw; font-size: 13px">(1-255)</span>
-                <a-button-group>
+                <a-button-group class="ptz-space">
                   <a-button @click="startCruise()" title="开始巡航">开始</a-button>
                   <a-button @click="addCruise()" title="添加预置位">添加</a-button>
                   <a-button @click="delCruise()" title="删除巡航组">删除</a-button>
                 </a-button-group>
-                <a-button-group>
+                <a-button-group class="ptz-space">
                   <a-button @click="setCruiseSpeed()" title="设置巡航速度">设置巡航速度</a-button>
                   <a-button @click="setCruiseStay()" title="设置巡航停留时间">
                     设置巡航停留时间
@@ -81,10 +93,12 @@
                     size="small"
                     min="1"
                     max="255"
+                    placeholder="预置位编号"
+                    addonBefore="预置位编号"
+                    addonAfter="(1-255)"
                     v-model:value="ptzPresetIdForCruise"
-                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                    style="width: 100% !important; margin: 1rem 10px 1rem 0"
                   />
-                  <span style="width: 5vw; font-size: 12px">(1-255)</span>
                   <a-button-group size="small">
                     <a-button @click="addPresetForCruise()" title="添加预置位">添加预置位</a-button>
                     <a-button @click="delPresetForCruise()" title="删除预置位">删除预置位</a-button>
@@ -95,23 +109,25 @@
                     size="small"
                     min="1"
                     max="4095"
+                    placeholder="巡航速度"
+                    addonBefore="巡航速度"
+                    addonAfter="(1-4095)"
+                    class="ptz-space"
                     v-model:value="ptzCruiseSpeed"
-                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
                   />
-                  <span style="width: 5vw; font-size: 12px">(1-4095)</span>
-                  <a-button-group size="small">
-                    <a-button @click="setCruiseSpeedForSave()" title="设置巡航速度">保存</a-button>
-                  </a-button-group>
+                  <a-button @click="setCruiseSpeedForSave()" title="设置巡航速度">保存</a-button>
                 </div>
                 <div v-if="setCruiseStaySwitch">
                   <a-input-number
                     size="small"
                     min="1"
                     max="4095"
+                    placeholder="巡航停留时间"
+                    addonBefore="巡航停留时间"
+                    addonAfter="(1-4095)秒"
                     v-model:value="ptzCruiseStay"
-                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                    class="ptz-space"
                   />
-                  <span style="width: 5vw; font-size: 12px">秒 (1-4095)</span>
                   <a-button-group size="small">
                     <a-button @click="setCruiseStayForSave()" title="设置巡航停留时间">
                       保存
@@ -124,11 +140,13 @@
                   size="small"
                   min="1"
                   max="255"
+                  placeholder="扫描组编号"
+                  addonBefore="扫描组编号"
+                  addonAfter="(1-255)"
                   v-model:value="ptzScanId"
-                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  class="ptz-space"
                 />
-                <span style="width: 5vw; font-size: 12px">(1-255)</span>
-                <a-button-group style="width: 100%; margin: 1rem 10px 1rem 0">
+                <a-button-group class="ptz-space">
                   <a-button @click="startScan()" title="开始扫描">开始</a-button>
                   <a-button @click="setScan()" title="设置扫描">设置</a-button>
                   <a-button @click="setScanAutoSpeed()" title="设置自动扫描速度">
@@ -143,18 +161,21 @@
                   <a-input-number
                     size="small"
                     v-model:value="scanAutoSpeed"
-                    style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                    placeholder="自动扫描速度"
+                    addonBefore="自动扫描速度"
+                    class="ptz-space"
                   />
-                  <span style="width: 5vw; font-size: 12px">(1-4095)</span>
-                  <a-button-group size="small">
-                    <a-button @click="setScanAutoSpeedSwitchSave()" title="设置自动扫描速度">
-                      保存
-                    </a-button>
-                  </a-button-group>
+                  <a-button
+                    size="small"
+                    @click="setScanAutoSpeedSwitchSave()"
+                    title="设置自动扫描速度"
+                  >
+                    保存
+                  </a-button>
                 </div>
               </div>
               <div v-if="ptzControlType == 4">
-                <a-button-group style="width: 10vw !important; margin: 1rem 10px 1rem 0">
+                <a-button-group class="ptz-space">
                   <a-button @click="startWiper()" title="开启雨刷">开启雨刷</a-button>
                   <a-button @click="stopWiper()" title="关闭雨刷">关闭雨刷</a-button>
                 </a-button-group>
@@ -163,13 +184,46 @@
                 <a-input-number
                   min="2"
                   max="255"
+                  placeholder="预置位编号"
+                  addonBefore="预置位编号"
+                  addonAfter="2-255"
                   v-model:value="ptzAuxiliarySwitchId"
-                  style="width: 10vw !important; margin: 1rem 10px 1rem 0"
+                  class="ptz-space"
                 />
-                <span style="width: 5vw; font-size: 13px">(2-255)</span>
                 <a-button-group>
                   <a-button @click="startAuxiliarySwitch()" title="开启辅助开关">开启</a-button>
                   <a-button @click="stopAuxiliarySwitch()" title="关闭辅助开关">关闭</a-button>
+                </a-button-group>
+              </div>
+              <div v-if="ptzControlType == 6">
+                <a-button
+                  @click="startForceKeyframe()"
+                  title="发送强制关键帧"
+                  >发送</a-button
+                >
+              </div>
+              <div v-if="ptzControlType == 7">
+                <a-input-number
+                  size="small"
+                  min="1"
+                  max="255"
+                  placeholder="预置位编号"
+                  addonBefore="预置位编号"
+                  addonAfter="(1-255)"
+                  v-model:value="ptzPresetIdForHomePosition"
+                  class="ptz-space"
+                />
+                <a-input-number
+                  size="small"
+                  v-model:value="resetTime"
+                  placeholder="自动归位时间间隔"
+                  addonBefore="自动归位时间间隔"
+                  addonAfter="(秒)"
+                  class="ptz-space"
+                />
+                <a-button-group>
+                  <a-button @click="setHomePositionStart()">启用</a-button>
+                  <a-button @click="setHomePositionStop()">停用</a-button>
                 </a-button-group>
               </div>
             </div>
@@ -287,6 +341,8 @@
   let ptzCruiseStay = ref<String>('1')
   let scanAutoSpeed = ref<String>('1')
   let ptzAuxiliarySwitchId = ref<String>('2')
+  let ptzPresetIdForHomePosition = ref<String>('1')
+  let resetTime = ref<String>('1')
   let videoTrack = ref<Track>()
   let audioTrack = ref<Track>()
   let title = ref<String>()
@@ -359,6 +415,8 @@
     'scanControl',
     'wiperControl',
     'auxiliaryControl',
+    'forceIframeControl',
+    'homePositionControl',
   ])
   const ptzCamera = (comond: string, speed: number) => {
     emit('ptzCamera', comond, speed)
@@ -456,6 +514,15 @@
   }
   const stopAuxiliarySwitch = () => {
     emit('auxiliaryControl', 'off', ptzAuxiliarySwitchId.value)
+  }
+  const startForceKeyframe = () => {
+    emit('forceIframeControl')
+  }
+  const setHomePositionStart = () => {
+    emit('homePositionControl', 'start', ptzPresetIdForHomePosition.value, resetTime.value)
+  }
+  const setHomePositionStop = () => {
+    emit('homePositionControl', 'stop', ptzPresetIdForHomePosition.value, resetTime.value)
   }
   // 存活时间，单位秒
   let aliveSecond = ref<number>(0)
@@ -580,5 +647,9 @@
   .preset-danger {
     color: #ed6f6f;
     padding-right: 0;
+  }
+  .ptz-space {
+    width: 100%;
+    margin-bottom: 1rem;
   }
 </style>

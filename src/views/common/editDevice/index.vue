@@ -27,7 +27,6 @@
               <a-input v-if="isEdit" v-model:value="form.deviceId" disabled />
               <a-input-group compact v-if="!isEdit">
                 <a-input
-                  v-if="!isEdit"
                   v-model:value="form.deviceId"
                   clearable
                   placeholder="设备编号"
@@ -224,11 +223,13 @@
     endFnCallback = endFn
     if (device && device.createTime) {
       title.value = '编辑'
+      isEdit.value = true
       form.value = device
       switchForCatalogSubscribe.value = device.subscribeCycleForCatalog > 0
       switchForMobilePositionSubscribe.value = device.subscribeCycleForMobilePosition > 0
     } else {
       title.value = '添加'
+      isEdit.value = false
       form.value = clearForm()
     }
   }

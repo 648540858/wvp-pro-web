@@ -131,6 +131,8 @@
       @scanControl="scanControl"
       @wiperControl="wiperControl"
       @auxiliaryControl="auxiliaryControl"
+      @forceIframeControl="forceIframeControl"
+      @homePositionControl="homePositionControl"
     />
   </div>
 </template>
@@ -141,6 +143,7 @@
     cruiseControlApi,
     deviceChannelListApi,
     deviceSubChannelListApi,
+    forceIframeControlApi, homePositionControlApi,
     playApi,
     presetControlApi,
     ptzCameraApi,
@@ -337,9 +340,13 @@
     })
   }
   function presetControl(presetId: number, command: string): void {
-    presetControlApi(playChannel, command, presetId).catch((e) => {
-      message.error(e)
-    })
+    presetControlApi(playChannel, command, presetId)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
   }
   function cruiseControl(
     cruiseId: number,
@@ -348,24 +355,58 @@
     speed: number | undefined,
     stay: number | undefined,
   ): void {
-    cruiseControlApi(playChannel, cruiseId, command, presetId, speed, stay).catch((e) => {
-      message.error(e)
-    })
+    cruiseControlApi(playChannel, cruiseId, command, presetId, speed, stay)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
   }
   function scanControl(command: string, scanId: number, speed: number | undefined): void {
-    scanControlApi(playChannel, scanId, command, speed).catch((e) => {
-      message.error(e)
-    })
+    scanControlApi(playChannel, scanId, command, speed)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
   }
   function wiperControl(command: string): void {
-    wiperControlApi(playChannel, command).catch((e) => {
-      message.error(e)
-    })
+    wiperControlApi(playChannel, command)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
   }
   function auxiliaryControl(command: string, auxiliaryId: number): void {
-    auxiliaryControlApi(playChannel, command, auxiliaryId).catch((e) => {
-      message.error(e)
-    })
+    auxiliaryControlApi(playChannel, command, auxiliaryId)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
+  }
+  function forceIframeControl(): void {
+    forceIframeControlApi(playChannel)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
+  }
+  function homePositionControl(command: string, presetId: number, resetTime: number): void {
+    homePositionControlApi(playChannel, command, presetId, resetTime)
+      .then(() => {
+        message.success('已发送')
+      })
+      .catch((e) => {
+        message.error(e)
+      })
   }
 
   // 初始化获取数据

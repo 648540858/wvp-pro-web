@@ -33,6 +33,8 @@ enum Api {
   SCAN_CONTROL = '/api/ptz/scan/control/{deviceId}/{channelId}',
   WIPER_CONTROL = '/api/ptz/wiper/control/{deviceId}/{channelId}',
   AUXILIARY_CONTROL = '/api/ptz/auxiliary/control/{deviceId}/{channelId}',
+  FORCE_I_FRAME_CONTROL = '/api/device/control/i_frame/{deviceId}/{channelId}',
+  HOME_POSITION_CONTROL = '/api/device/control/home_position/{deviceId}',
 }
 
 /**
@@ -304,6 +306,38 @@ export const auxiliaryControlApi = (
     params: {
       command: command,
       auxiliaryId: auxiliaryId,
+    },
+  })
+
+export const forceIframeControlApi = (deviceChannel: DeviceChannel) =>
+  defHttp.get<void>({
+    url: Api.FORCE_I_FRAME_CONTROL.replace('{deviceId}', deviceChannel.deviceId).replace(
+      '{channelId}',
+      deviceChannel.channelId,
+    ),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const homePositionControlApi = (
+  deviceChannel: DeviceChannel,
+  command: string,
+  presetId: number,
+  resetTime: number,
+) =>
+  defHttp.get<void>({
+    url: Api.HOME_POSITION_CONTROL.replace('{deviceId}', deviceChannel.deviceId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      command: command,
+      channelId: deviceChannel.channelId,
+      presetId: presetId,
+      resetTime: resetTime,
     },
   })
 
