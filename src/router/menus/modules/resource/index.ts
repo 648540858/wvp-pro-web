@@ -20,16 +20,16 @@ const menu: MenuModule = {
         name: t('routes.resource.region'),
       },
       {
-        path: 'gbResource',
-        name: t('routes.resource.gbResource'),
+        path: 'gb28181',
+        name: t('routes.resource.gb28181'),
       },
       {
-        path: 'pushResource',
-        name: t('routes.resource.pushResource'),
+        path: 'push',
+        name: t('routes.resource.push'),
       },
       {
-        path: 'proxyResource',
-        name: t('routes.resource.proxyResource'),
+        path: 'proxy',
+        name: t('routes.resource.proxy'),
       },
     ],
   },

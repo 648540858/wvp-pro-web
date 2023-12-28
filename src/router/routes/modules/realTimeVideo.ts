@@ -4,10 +4,10 @@ import { LAYOUT } from '/@/router/constant'
 import { t } from '/@/hooks/web/useI18n'
 
 const dashboard: AppRouteModule = {
-  path: '/realTimeVideo',
-  name: 'RealTimeVideo',
+  path: '/live',
+  name: 'LIVE',
   component: LAYOUT,
-  redirect: '/realTimeVideo/content',
+  redirect: '/live/content',
   meta: {
     orderNo: 10,
     icon: 'icon-park-outline:grid-nine',

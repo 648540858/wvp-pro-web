@@ -4,7 +4,7 @@ const menu: MenuModule = {
   orderNo: 4,
   menu: {
     name: t('routes.cloudRecord.cloudRecord'),
-    path: '/cloudRecord',
+    path: '/cloud-record',
   },
 }
 export default menu

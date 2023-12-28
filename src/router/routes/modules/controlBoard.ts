@@ -4,10 +4,10 @@ import { LAYOUT } from '/@/router/constant'
 import { t } from '/@/hooks/web/useI18n'
 
 const dashboard: AppRouteModule = {
-  path: '/controlBoard',
+  path: '/control-board',
   name: 'ControlBoard',
   component: LAYOUT,
-  redirect: '/controlBoard/overview',
+  redirect: '/control-board/overview',
   meta: {
     orderNo: 1,
     icon: 'ion:grid-outline',
@@ -24,7 +24,7 @@ const dashboard: AppRouteModule = {
       },
     },
     {
-      path: 'operationControl',
+      path: 'operation-control',
       name: 'OperationControl',
       component: () => import('/@/views/controlBoard/operationControl/index.vue'),
       meta: {
@@ -33,7 +33,7 @@ const dashboard: AppRouteModule = {
       },
     },
     {
-      path: 'accessStatistics',
+      path: 'access-ctatistics',
       name: 'AccessStatistics',
       component: () => import('/@/views/controlBoard/accessStatistics/index.vue'),
       meta: {

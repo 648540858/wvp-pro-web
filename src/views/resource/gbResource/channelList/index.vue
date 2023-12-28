@@ -3,6 +3,7 @@
     <PageWrapper>
       <Transition>
         <a-table
+          v-if="recordDeviceId == ''"
           :dataSource="dataSource"
           :columns="columns"
           :loading="loading"
@@ -134,6 +135,11 @@
       @forceIframeControl="forceIframeControl"
       @homePositionControl="homePositionControl"
     />
+    <DeviceRecord
+      v-if="recordDeviceId != ''"
+      :deviceId="recordDeviceId"
+      :channelId="recordChannelId"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -143,7 +149,8 @@
     cruiseControlApi,
     deviceChannelListApi,
     deviceSubChannelListApi,
-    forceIframeControlApi, homePositionControlApi,
+    forceIframeControlApi,
+    homePositionControlApi,
     playApi,
     presetControlApi,
     ptzCameraApi,
@@ -168,9 +175,11 @@
     message,
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
+  import DeviceRecord from '/@/views/resource/gbResource/deviceRecord/index.vue'
   import Icon from '/@/components/Icon'
 
   const playRef = ref()
+  const deviceRecordRef = ref()
   /**
    * 定义变量
    */
@@ -209,6 +218,8 @@
   let channelType = ref<string>('')
   let online = ref<string>('')
   let parentChannelId = ref<string>('')
+  let recordDeviceId = ref<string>('')
+  let recordChannelId = ref<string>('')
   function back() {
     if (parentChannelId.value) {
       parentChannelId.value = ''
@@ -330,7 +341,10 @@
     pagination.value.current = 1
     getDeviceChannelList()
   }
-  function queryRecords(_deviceChannel: DeviceChannel): void {}
+  function queryRecords(_deviceChannel: DeviceChannel): void {
+    recordDeviceId.value = _deviceChannel.deviceId
+    recordChannelId.value = _deviceChannel.channelId
+  }
   function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
   function ptzCamera(command: string, speed: number): void {
     console.log('ptz===> ' + command)

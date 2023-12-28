@@ -1,7 +1,7 @@
 <template>
   <PageWrapper>
     <div class="lg:flex">
-      <div class="lg:w-7/10 w-full !mr-4 enter-y"> 报警管理 </div>
+      <div class="lg:w-7/10 w-full !mr-4 enter-y"> 日志管理 </div>
     </div>
   </PageWrapper>
 </template>

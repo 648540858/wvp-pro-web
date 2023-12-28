@@ -4,10 +4,10 @@ import { t } from '/@/hooks/web/useI18n'
 import { LAYOUT } from '/@/router/constant'
 
 const dashboard: AppRouteModule = {
-  path: '/gbPlatform',
+  path: '/platform',
   name: 'GBPlatform',
   component: LAYOUT,
-  redirect: '/gbPlatform/content',
+  redirect: '/platform/content',
   meta: {
     orderNo: 10,
     icon: 'streamline:interface-hierarchy-2-node-organization-links-structure-link-nodes-network-hierarchy',

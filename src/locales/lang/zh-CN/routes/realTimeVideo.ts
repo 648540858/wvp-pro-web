@@ -1,3 +1,3 @@
 export default {
-  realTimeVideo: '实时视频',
+  live: '实时视频',
 }

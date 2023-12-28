@@ -4,18 +4,18 @@ const menu: MenuModule = {
   orderNo: 1,
   menu: {
     name: t('routes.controlBoard.controlBoard'),
-    path: '/controlBoard',
+    path: '/control-board',
     children: [
       {
         path: 'overview',
         name: t('routes.controlBoard.overview'),
       },
       {
-        path: 'operationControl',
+        path: 'operation-control',
         name: t('routes.controlBoard.operationControl'),
       },
       {
-        path: 'accessStatistics',
+        path: 'access-statistics',
         name: t('routes.controlBoard.accessStatistics'),
       },
     ],

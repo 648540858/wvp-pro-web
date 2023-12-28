@@ -7,7 +7,6 @@ const dashboard: AppRouteModule = {
   path: '/resource',
   name: 'Resource',
   component: LAYOUT,
-  redirect: '/resource/group',
   meta: {
     orderNo: 10,
     icon: 'carbon:software-resource-cluster',
@@ -42,30 +41,50 @@ const dashboard: AppRouteModule = {
       },
     },
     {
-      path: 'gbResource',
-      name: 'GBResource',
+      path: 'gb28181',
+      name: 'GB28181',
       component: () => import('/@/views/resource/gbResource/index.vue'),
       meta: {
         // affix: true,
-        title: t('routes.resource.gbResource'),
+        title: t('routes.resource.gb28181'),
       },
+      children: [
+        {
+          path: 'channel',
+          name: 'Channel',
+          component: () => import('/@/views/resource/gbResource/channelList/index.vue'),
+          meta: {
+            // affix: true,
+            title: t('routes.resource.gb28181'),
+          },
+        },
+        {
+          path: 'record/device',
+          name: 'Channel',
+          component: () => import('/@/views/resource/gbResource/deviceRecord/index.vue'),
+          meta: {
+            // affix: true,
+            title: t('routes.resource.gb28181'),
+          },
+        },
+      ],
     },
     {
-      path: 'pushResource',
+      path: 'push-resource',
       name: 'PushResource',
       component: () => import('/@/views/resource/pushResource/index.vue'),
       meta: {
         // affix: true,
-        title: t('routes.resource.pushResource'),
+        title: t('routes.resource.push'),
       },
     },
     {
-      path: 'proxyResource',
+      path: 'proxy-resource',
       name: 'ProxyResource',
       component: () => import('/@/views/resource/proxyResource/index.vue'),
       meta: {
         // affix: true,
-        title: t('routes.resource.proxyResource'),
+        title: t('routes.resource.proxy'),
       },
     },
   ],

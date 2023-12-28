@@ -16,8 +16,8 @@ const about: AppRouteModule = {
   },
   children: [
     {
-      path: 'content',
-      name: 'AboutContent',
+      path: 'about',
+      name: 'About',
       component: () => import('/@/views/about/index.vue'),
       meta: {
         title: t('routes.about.about'),

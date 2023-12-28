@@ -4,10 +4,10 @@ import { t } from '/@/hooks/web/useI18n'
 import { LAYOUT } from '/@/router/constant'
 
 const dashboard: AppRouteModule = {
-  path: '/cloudRecord',
+  path: '/cloud-record',
   name: 'CloudRecord',
   component: LAYOUT,
-  redirect: '/cloudRecord/content',
+  redirect: '/cloud-record/content',
   meta: {
     orderNo: 10,
     icon: 'streamline:interface-weather-cloud-1-cloud-meteorology-cloudy-overcast-cover-weather',

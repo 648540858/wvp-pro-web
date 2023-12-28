@@ -7,11 +7,11 @@ const menu: MenuModule = {
     path: '/setting',
     children: [
       {
-        path: 'baseSetting',
-        name: t('routes.setting.baseSetting'),
+        path: 'base',
+        name: t('routes.setting.base'),
       },
       {
-        path: 'mediaNode',
+        path: 'media-node',
         name: t('routes.setting.mediaNode'),
       },
     ],

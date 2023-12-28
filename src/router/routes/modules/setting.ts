@@ -15,16 +15,16 @@ const dashboard: AppRouteModule = {
   },
   children: [
     {
-      path: 'baseSetting',
-      name: 'BaseSetting',
+      path: 'base',
+      name: 'base',
       component: () => import('/@/views/setting/baseSetting/index.vue'),
       meta: {
         // affix: true,
-        title: t('routes.setting.baseSetting'),
+        title: t('routes.setting.base'),
       },
     },
     {
-      path: 'mediaNode',
+      path: 'media-node',
       name: 'MediaNode',
       component: () => import('/@/views/setting/mediaNode/index.vue'),
       meta: {

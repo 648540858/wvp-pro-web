@@ -4,7 +4,7 @@ const menu: MenuModule = {
   orderNo: 6,
   menu: {
     name: t('routes.gbPlatform.gbPlatform'),
-    path: '/gbPlatform',
+    path: '/platform',
   },
 }
 export default menu

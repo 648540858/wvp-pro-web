@@ -115,6 +115,25 @@ export interface SyncStatus {
   errorMsg: string
   syncIng: boolean
 }
+export interface RecordInfo {
+  deviceId: string
+  channelId: string
+  sn: string
+  name: string
+  sumNum: number
+  count: number
+  recordList: RecordItem[]
+}
+export interface RecordItem {
+  deviceId: string
+  name: string
+  filePath: string
+  fileSize: string
+  address: string
+  startTime: string
+  endTime: string
+  recorderId: string
+}
 
 /**
  * @description: 通道同步状态

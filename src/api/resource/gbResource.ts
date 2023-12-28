@@ -8,6 +8,7 @@ import {
   DeviceChannel,
   PresetItem,
   Device,
+  RecordInfo,
 } from '/@/api/resource/model/gbResourceModel'
 import { StreamInfo } from '/@/api/model/baseModel'
 
@@ -39,6 +40,7 @@ enum Api {
   RECORD_CONTROL = '/api/device/control/record/{deviceId}/{channelId}',
   GUARD_CONTROL = '/api/device/control/guard/{deviceId}',
   RESET_ALARM_CONTROL = '/api/device/control/reset_alarm/{deviceId}',
+  DEVICE_RECORD = '/api/gb_record/query/{deviceId}/{channelId}',
 }
 
 /**
@@ -409,4 +411,22 @@ export const updateDeviceApi = (device: Device) =>
       ignoreCancelToken: true,
     },
     params: device,
+  })
+
+export const queryDeviceRecordApi = (
+  deviceId: string,
+  channelId: string,
+  startTime: string,
+  endTime: string,
+) =>
+  defHttp.get<RecordInfo>({
+    url: Api.DEVICE_RECORD.replace('{deviceId}', deviceId).replace('{channelId}', channelId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      startTime: startTime,
+      endTime: endTime,
+    },
   })
