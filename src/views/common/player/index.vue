@@ -35,7 +35,7 @@
       </a-col>
       <a-col style="width: 16vw; height: 32vw; overflow: auto">
         <a-tabs style="width: 100%" size="small" type="card">
-          <a-tab-pane key="1" tab="控制">
+          <a-tab-pane key="1" tab="控制" v-if="!hideControlTab">
             <ptz @ptz-camera="ptzCamera" style="width: 15vw; height: 9vw; padding: 0 1rem 0 1rem" />
             <div style="height: 23vw; padding: 0 1rem">
               <a-select
@@ -351,15 +351,21 @@
   const jessibuca = ref()
   const rtcPlayer = ref()
   let presetLoading = ref<boolean>(true)
+  let hideControlTab = ref<boolean>(false)
   let addCruiseSwitch = ref<boolean>(false)
   let setScanSwitch = ref<boolean>(false)
   let setCruiseSpeedSwitch = ref<boolean>(false)
   let setCruiseStaySwitch = ref<boolean>(false)
   let setScanAutoSpeedSwitch = ref<boolean>(false)
   const presetList = ref<PresetItem[]>()
-  const play = (streamInfoParam: StreamInfo, name: string) => {
+  const play = (streamInfoParam: StreamInfo, name: string, hideControl: boolean) => {
     title.value = name
     streamInfo.value = streamInfoParam
+    if (hideControl) {
+      hideControlTab.value = true
+    } else {
+      hideControlTab.value = false
+    }
     if (streamInfoParam.tracks.length > 0) {
       for (let i = 0; i < streamInfoParam.tracks.length; i++) {
         if (streamInfoParam.tracks[i].codec_type == 0) {

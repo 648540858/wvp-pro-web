@@ -316,7 +316,7 @@
       .then((streamInfo) => {
         console.log(streamInfo)
         _deviceChannel.streamId = streamInfo.stream
-        playRef.value.play(streamInfo, _deviceChannel.name)
+        playRef.value.play(streamInfo, _deviceChannel.name, false)
         // presetQueryApi(playChannel)
         //   .then((presetItemlist) => {
         //     playRef.value.presetQuery(presetItemlist)

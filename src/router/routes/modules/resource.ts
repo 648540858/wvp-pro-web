@@ -16,7 +16,7 @@ const dashboard: AppRouteModule = {
     {
       path: 'channel',
       name: 'Channel',
-      component: () => import('/src/views/resource/channel/index.vue'),
+      component: () => import('/@/views/resource/channel/index.vue'),
       meta: {
         // affix: true,
         title: t('routes.resource.channel'),
@@ -25,7 +25,7 @@ const dashboard: AppRouteModule = {
     {
       path: 'group',
       name: 'Group',
-      component: () => import('/src/views/resource/group/index.vue'),
+      component: () => import('/@/views/resource/group/index.vue'),
       meta: {
         // affix: true,
         title: t('routes.resource.group'),
@@ -34,7 +34,7 @@ const dashboard: AppRouteModule = {
     {
       path: 'region',
       name: 'Region',
-      component: () => import('/src/views/resource/region/index.vue'),
+      component: () => import('/@/views/resource/region/index.vue'),
       meta: {
         // affix: true,
         title: t('routes.resource.region'),
@@ -70,18 +70,18 @@ const dashboard: AppRouteModule = {
       ],
     },
     {
-      path: 'push-resource',
-      name: 'PushResource',
-      component: () => import('/@/views/resource/pushResource/index.vue'),
+      path: 'push',
+      name: 'Push',
+      component: () => import('/@/views/resource/push/index.vue'),
       meta: {
         // affix: true,
         title: t('routes.resource.push'),
       },
     },
     {
-      path: 'proxy-resource',
-      name: 'ProxyResource',
-      component: () => import('/@/views/resource/proxyResource/index.vue'),
+      path: 'proxy',
+      name: 'Proxy',
+      component: () => import('/@/views/resource/proxy/index.vue'),
       meta: {
         // affix: true,
         title: t('routes.resource.proxy'),

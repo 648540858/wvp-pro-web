@@ -3,7 +3,7 @@ import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface PushModel extends RcTableProps {
   //  应用名
-  app: String
+  app: string
   // 流id
   stream: string
   // 观看总人数
@@ -28,6 +28,6 @@ export type PushListResultModel = BasicFetchResult<PushModel>
 
 export interface PushListParams extends BasicPageParams {
   query: string | null | undefined
-  pushing: boolean | null | undefined
+  pushing: string | null | undefined
   mediaServerId: string | null | undefined
 }
