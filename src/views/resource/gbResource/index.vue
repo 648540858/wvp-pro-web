@@ -1,5 +1,5 @@
 <template>
-  <div id="DeviceList">
+  <div id="DeviceList" style="height: 100%">
     <PageWrapper v-if="deviceIdForChannelList == ''">
       <a-table
         :dataSource="dataSource"
@@ -112,6 +112,7 @@
     <RefreshChanel ref="refreshChanel" />
     <ChannelList
       ref="channelList"
+      style="height: 100%"
       v-if="deviceIdForChannelList != ''"
       :device-id="deviceIdForChannelList"
       :deviceOnline="deviceOnlineForChannelList"

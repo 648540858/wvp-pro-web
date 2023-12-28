@@ -1,6 +1,6 @@
 <template>
   <div id="DeviceChannelList">
-    <PageWrapper>
+    <PageWrapper v-if="recordDeviceId == ''">
       <Transition>
         <a-table
           v-if="recordDeviceId == ''"
