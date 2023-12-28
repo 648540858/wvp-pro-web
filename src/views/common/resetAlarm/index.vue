@@ -15,12 +15,13 @@
       autocomplete="off"
       style="margin-top: 2rem"
     >
-      <a-form-item label="报警方式" name="commonGroupDeviceId">
+      <a-form-item label="报警方式" name="alarmMethod">
         <a-select
           v-model:value="resetAlarm.alarmMethod"
           placeholder="请选择报警方式"
           size="small"
-          style="width: 5rem"
+          @change="alarmTypeChange"
+          style="width: 90%"
         >
           <a-select-option value="0">全部</a-select-option>
           <a-select-option value="1">电话报警</a-select-option>
@@ -31,12 +32,13 @@
           <a-select-option value="6">设备故障报警</a-select-option>
           <a-select-option value="7">其他报警</a-select-option>
         </a-select>
+      </a-form-item>
+      <a-form-item label="报警类型" name="alarmType" v-if="alarmMethod == 2">
         <a-select
-          v-if="resetAlarm.alarmMethod == 2"
           v-model:value="resetAlarm.alarmType"
           placeholder="请选择报警类型"
           size="small"
-          style="width: 5rem"
+          style="width: 90%"
         >
           <a-select-option value="0">全部</a-select-option>
           <a-select-option value="1">视频丢失报警</a-select-option>
@@ -45,12 +47,13 @@
           <a-select-option value="4">设备高温报警</a-select-option>
           <a-select-option value="5">设备低温报警</a-select-option>
         </a-select>
+      </a-form-item>
+      <a-form-item label="报警类型" name="alarmType" v-if="alarmMethod == 5">
         <a-select
-          v-if="resetAlarm.alarmMethod == 5"
           v-model:value="resetAlarm.alarmType"
           placeholder="请选择报警类型"
           size="small"
-          style="width: 5rem"
+          style="width: 90%"
         >
           <a-select-option value="0">全部</a-select-option>
           <a-select-option value="1">人工视频报警</a-select-option>
@@ -66,12 +69,13 @@
           <a-select-option value="11">视频异常检测报警</a-select-option>
           <a-select-option value="12">快速移动报警</a-select-option>
         </a-select>
+      </a-form-item>
+      <a-form-item label="报警类型" name="alarmType" v-if="alarmMethod == 6">
         <a-select
-          v-if="resetAlarm.alarmMethod == 6"
           v-model:value="resetAlarm.alarmType"
           placeholder="请选择报警类型"
           size="small"
-          style="width: 5rem"
+          style="width: 90%"
         >
           <a-select-option value="0">全部</a-select-option>
           <a-select-option value="1">存储设备磁盘故障报警</a-select-option>
@@ -95,18 +99,24 @@
   import { resetAlarmControlApi } from '/@/api/resource/gbResource'
 
   const open = ref<boolean>(false)
+  const alarmMethod = ref<number>(0)
   const resetAlarm = ref<ResetAlarmParam>({
     alarmMethod: 0,
     alarmType: 0,
     deviceId: '',
   })
 
+  const alarmTypeChange = (value: number) => {
+    console.log(value)
+    alarmMethod.value = value
+  }
+
   const openModel = (deviceId: string) => {
+    console.log(deviceId)
     open.value = true
     resetAlarm.value.deviceId = deviceId
   }
   const closeModel = () => {
-    console.log('onBeforeUnmount')
     open.value = false
     resetAlarm.value = {
       alarmMethod: 0,
@@ -121,7 +131,8 @@
       resetAlarm.value.alarmType,
     )
       .then(() => {
-        message.info('发送成功')
+        message.info('[报警复位] 已发送')
+        closeModel()
       })
       .catch((e) => {
         message.error(e)

@@ -132,8 +132,8 @@
     telebootControlApi,
   } from '/@/api/resource/gbResource'
   import { Device } from '/@/api/resource/model/gbResourceModel'
-  import EditDevice from '../../common/editDevice/index.vue'
-  import ResetAlarm from '../../common/resetAlarm/index.vue'
+  import EditDevice from '/@/views/common/editDevice/index.vue'
+  import ResetAlarm from '/@/views/common/resetAlarm/index.vue'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
   import {
@@ -245,34 +245,38 @@
   function telebootControl(device: Device): void {
     telebootControlApi(device.deviceId)
       .then(() => {
-        message.info('发送成功')
+        message.info('[远程启动] 已发送')
       })
       .catch((e) => [message.error(e)])
   }
   function recordControl(device: Device, command: string): void {
     recordControlApi(device.deviceId, command)
       .then(() => {
-        message.info('发送成功')
+        if (command == 'start') {
+          message.info('[开始录像] 已发送')
+        } else {
+          message.info('[停止录像] 已发送')
+        }
       })
       .catch((e) => [message.error(e)])
   }
   function setGuardControl(device: Device): void {
     guardControlApi(device.deviceId, 'set')
       .then(() => {
-        message.info('发送成功')
+        message.info('[报警布防] 已发送')
       })
       .catch((e) => [message.error(e)])
   }
   function resetGuardControl(device: Device): void {
     guardControlApi(device.deviceId, 'reset')
       .then(() => {
-        message.info('发送成功')
+        message.info('[报警撤防] 已发送')
       })
       .catch((e) => [message.error(e)])
   }
   function resetAlarmControl(device: Device): void {
     console.log(resetAlarmRef)
-    resetAlarmRef.value.openModal(device.deviceId)
+    resetAlarmRef.value.openModel(device.deviceId)
   }
   // 初始化获取数据
   getDeviceList()

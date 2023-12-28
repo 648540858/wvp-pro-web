@@ -381,7 +381,7 @@ export const resetAlarmControlApi = (deviceId: string, alarmMethod: number, alar
 
 export const recordControlApi = (deviceId: string, command: string) =>
   defHttp.get<void>({
-    url: Api.RECORD_CONTROL.replace('{deviceId}', deviceId),
+    url: Api.RECORD_CONTROL.replace('{deviceId}', deviceId).replace('{channelId}', deviceId),
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

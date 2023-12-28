@@ -342,7 +342,7 @@
   function presetControl(presetId: number, command: string): void {
     presetControlApi(playChannel, command, presetId)
       .then(() => {
-        message.success('已发送')
+        message.success('[预置位]' + command + '已发送')
       })
       .catch((e) => {
         message.error(e)
@@ -357,7 +357,7 @@
   ): void {
     cruiseControlApi(playChannel, cruiseId, command, presetId, speed, stay)
       .then(() => {
-        message.success('已发送')
+        message.success('[巡航] ' + command + ' 已发送')
       })
       .catch((e) => {
         message.error(e)
@@ -366,7 +366,7 @@
   function scanControl(command: string, scanId: number, speed: number | undefined): void {
     scanControlApi(playChannel, scanId, command, speed)
       .then(() => {
-        message.success('已发送')
+        message.success('[扫描组] ' + command + ' 已发送')
       })
       .catch((e) => {
         message.error(e)
@@ -375,7 +375,7 @@
   function wiperControl(command: string): void {
     wiperControlApi(playChannel, command)
       .then(() => {
-        message.success('已发送')
+        message.success('[雨刷] ' + command + ' 已发送')
       })
       .catch((e) => {
         message.error(e)
@@ -384,7 +384,7 @@
   function auxiliaryControl(command: string, auxiliaryId: number): void {
     auxiliaryControlApi(playChannel, command, auxiliaryId)
       .then(() => {
-        message.success('已发送')
+        message.success('[辅助开关] ' + command + ' 已发送')
       })
       .catch((e) => {
         message.error(e)
@@ -393,7 +393,7 @@
   function forceIframeControl(): void {
     forceIframeControlApi(playChannel)
       .then(() => {
-        message.success('已发送')
+        message.success('[强制关键帧] 已发送')
       })
       .catch((e) => {
         message.error(e)
@@ -402,7 +402,7 @@
   function homePositionControl(command: string, presetId: number, resetTime: number): void {
     homePositionControlApi(playChannel, command, presetId, resetTime)
       .then(() => {
-        message.success('已发送')
+        message.success('[看守位控制] ' + command + ' 已发送')
       })
       .catch((e) => {
         message.error(e)
