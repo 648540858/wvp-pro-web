@@ -1,7 +1,22 @@
 <template>
   <div id="deviceRecord" style="height: 100%; overflow: auto; padding: 1rem">
     <div class="device-record-box">
-      <div class="player-box">222</div>
+      <div class="player-box">
+        <div class="player-box-content">
+          <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="hasAudio" />
+        </div>
+        <div style="width: 100%; height: 200px">
+          <a-slider
+            size="small"
+            id="playtimeSlider"
+            :range="true"
+            :max="sliderMax"
+            :min="sliderMIn"
+            v-model:value="playTime"
+            :marks="playTimeSliderMarks"
+          />
+        </div>
+      </div>
       <div class="info-box">
         <a-date-picker
           v-model:value="recordDate"
@@ -28,13 +43,11 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { PageWrapper } from '/@/components/Page'
   import {
     DatePicker as ADatePicker,
     List as AList,
     ListItem as AListItem,
     Tag as ATag,
-    Space as ASpace,
     Card as ACard,
     message,
   } from 'ant-design-vue'
@@ -43,6 +56,7 @@
   import { queryDeviceRecordApi } from '/@/api/resource/gbResource'
   import { RecordInfo, RecordItem } from '/@/api/resource/model/gbResourceModel'
   import Icon from '/@/components/Icon/src/Icon.vue'
+  import Jessibuca from '/@/views/common/player/module/jessibuca.vue'
 
   const props = defineProps({
     deviceId: {
@@ -57,6 +71,39 @@
 
   const recordDate = ref<Dayjs>(dayjs())
   const recordList = ref<RecordItem[]>()
+  const playUrl = ref<string>()
+  const hasAudio = ref<boolean>(false)
+  const sliderMIn = ref<number>(0)
+  const sliderMax = ref<number>(86400)
+  const playTime = ref<[number, number]>([sliderMIn.value, sliderMax.value])
+
+  const playTimeSliderMarks = ref<Record<number, any>>({
+    0: '00:00',
+    3600: '01:00',
+    7200: '02:00',
+    10800: '03:00',
+    14400: '04:00',
+    18000: '05:00',
+    21600: '06:00',
+    25200: '07:00',
+    28800: '08:00',
+    32400: '09:00',
+    36000: '10:00',
+    39600: '11:00',
+    43200: '12:00',
+    46800: '13:00',
+    50400: '14:00',
+    54000: '15:00',
+    57600: '16:00',
+    61200: '17:00',
+    64800: '18:00',
+    68400: '19:00',
+    72000: '20:00',
+    75600: '21:00',
+    79200: '22:00',
+    82800: '23:00',
+    86400: '24:00',
+  })
   const recordListStyle = ref({
     height: '600px',
   })
@@ -97,6 +144,10 @@
   .player-box {
     width: calc(100% - 200px);
     height: 100%;
+  }
+  .player-box-content {
+    width: 100%;
+    height: calc(100% - 200px);
   }
   .record-list {
     height: 100%;
