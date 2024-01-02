@@ -142,7 +142,7 @@
   }
   const chooseRecordItem = (record: RecordItem) => {
     chooseRecordId.value = record.startTime
-    initTime.value = record.startTime;
+    initTime.value = record.startTime
   }
   const getTagColor = (record: RecordItem) => {
     if (record.startTime === chooseRecordId.value) {
