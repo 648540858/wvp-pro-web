@@ -41,6 +41,10 @@ enum Api {
   GUARD_CONTROL = '/api/device/control/guard/{deviceId}',
   RESET_ALARM_CONTROL = '/api/device/control/reset_alarm/{deviceId}',
   DEVICE_RECORD = '/api/gb_record/query/{deviceId}/{channelId}',
+  PLAYBACK = '/api/playback/start/{deviceId}/{channelId}',
+  PLAYBACK_STOP = '/api/playback/stop/{deviceId}/{channelId}/{streamId}',
+  PLAY_CONTROL = '/api/playback/resume/{streamId}',
+  PAUSE_CONTROL = '/api/playback/resume/{streamId}',
 }
 
 /**
@@ -428,5 +432,48 @@ export const queryDeviceRecordApi = (
     params: {
       startTime: startTime,
       endTime: endTime,
+    },
+  })
+export const playbackApi = (
+  deviceId: string,
+  channelId: string,
+  startTime: string,
+  endTime: string,
+) =>
+  defHttp.get<StreamInfo>({
+    url: Api.PLAYBACK.replace('{deviceId}', deviceId).replace('{channelId}', channelId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      startTime: startTime,
+      endTime: endTime,
+    },
+  })
+export const stopPlayBackApi = (deviceId: string, channelId: string, streamId: string) =>
+  defHttp.get<void>({
+    url: Api.PLAYBACK_STOP.replace('{deviceId}', deviceId)
+      .replace('{channelId}', channelId)
+      .replace('{streamId}', streamId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const playControlApi = (streamId: string) =>
+  defHttp.get<void>({
+    url: Api.PLAY_CONTROL.replace('{streamId}', streamId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const pauseControlApi = (streamId: string) =>
+  defHttp.get<void>({
+    url: Api.PAUSE_CONTROL.replace('{streamId}', streamId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
     },
   })

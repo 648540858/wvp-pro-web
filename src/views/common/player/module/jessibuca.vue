@@ -96,6 +96,7 @@
   const showToolBtn = ref(false)
   const kBps = ref(0)
   const iconSize = ref(16)
+  const emit = defineEmits(['play', 'pause', 'stop'])
   interface VideoInfo {
     height: string
     width: string
@@ -172,12 +173,14 @@
     jessibuca.on('pause', function () {
       console.log('on pause')
       playing.value = false
+      emit('pause')
     })
     jessibuca.on('play', function () {
       console.log('on play')
       playing.value = true
       loaded.value = true
       quieting.value = jessibuca.isMute()
+      emit('play')
     })
     jessibuca.on('fullscreen', function (msg: boolean) {
       console.log('on fullscreen', msg)
@@ -281,6 +284,7 @@
       jessibuca.destroy()
     }
     createJessibuca()
+    emit('stop')
     playing.value = false
     loaded.value = false
   }

@@ -12,13 +12,22 @@
       <div class="device-record-box">
         <div class="player-box">
           <div class="player-box-content">
-            <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="hasAudio" />
+            <Jessibuca
+              ref="jessibuca"
+              :play-url="playUrl"
+              :hasAudio="hasAudio"
+              @pause="playerPause()"
+              @play="playerPlay()"
+              @stop="playerStop()"
+            />
           </div>
-          <div style="width: 100%; height: 100px; padding: 8px">
+          <div style="width: 100%; height: 100px; padding: 8px 0">
             <TimeLine
+              ref="timeLineRef"
               :initTime="initTime"
-              @timeChange="timeChange"
+              @dragTimeChange="timeChange"
               :timeSegments="timeSegments"
+              :showHoverTime="false"
               initZoomIndex="5"
               backgroundColor="rgb(0, 12, 23)"
             />
@@ -66,12 +75,19 @@
   } from 'ant-design-vue'
   import { onMounted, ref } from 'vue'
   import dayjs, { Dayjs } from 'dayjs'
-  import { queryDeviceRecordApi } from '/@/api/resource/gbResource'
+  import {
+    pauseControlApi,
+    playbackApi,
+    playControlApi,
+    queryDeviceRecordApi,
+    stopPlayBackApi,
+  } from '/@/api/resource/gbResource'
   import { RecordInfo, RecordItem } from '/@/api/resource/model/gbResourceModel'
   import { Icon } from '/@/components/Icon'
   import Jessibuca from '/@/views/common/player/module/jessibuca.vue'
   import { BasicTitle } from '/@/components/Basic'
   import { TimeLine } from '/@/components/TimeLine'
+  import { StreamInfo } from '/@/api/model/baseModel'
 
   const props = defineProps({
     deviceId: {
@@ -84,16 +100,22 @@
     },
   })
   const emit = defineEmits(['close'])
+  const timeLineRef = ref()
   const recordDate = ref<Dayjs>(dayjs())
   const recordList = ref<RecordItem[]>()
   const playUrl = ref<string>()
   const hasAudio = ref<boolean>(false)
 
-  const chooseRecordId = ref<string>()
+  let chooseRecord: RecordItem | null = null
+  let streamInfo: StreamInfo | null = null
   const initTime = ref<string>()
   const timeSegments = ref<any[]>([])
-  const timeChange = (time) => {
+  const timeChange = (time: string) => {
     console.log(time)
+    let dayItem = dayjs(time)
+    let startTime = dayItem.format('YYYY-MM-DD HH:mm:ss')
+    let stopTime = dayItem.add(1, 'day').format('YYYY-MM-DD HH:mm:ss')
+    play(startTime, stopTime)
   }
   const recordListStyle = ref({
     height: '600px',
@@ -141,15 +163,54 @@
     emit('close')
   }
   const chooseRecordItem = (record: RecordItem) => {
-    chooseRecordId.value = record.startTime
+    chooseRecord = record
     initTime.value = record.startTime
+    timeLineRef.value.setTime(record.startTime)
+    play(record.startTime, record.endTime)
   }
   const getTagColor = (record: RecordItem) => {
-    if (record.startTime === chooseRecordId.value) {
+    if (record.startTime === chooseRecord?.startTime) {
       return 'red'
     } else {
       return 'blue'
     }
+  }
+  const getUrlByStreamInfo = () => {
+    if (location.protocol === 'https:') {
+      return streamInfo?.wss_flv
+    } else {
+      return streamInfo?.ws_flv
+    }
+  }
+  const playerPlay = () => {
+    if (streamInfo != null) {
+      playControlApi(streamInfo.stream)
+    }
+  }
+  const playerPause = () => {
+    if (streamInfo != null) {
+      pauseControlApi(streamInfo.stream)
+    }
+  }
+  const playerStop = () => {
+    if (streamInfo != null) {
+      stopPlayBackApi(props.deviceId, props.channelId, streamInfo.stream)
+      streamInfo = null
+    }
+  }
+  const play = (startTime: string, stopTime: string) => {
+    if (streamInfo != null) {
+      stopPlayBackApi(props.deviceId, props.channelId, streamInfo.stream)
+      streamInfo = null
+    }
+    playbackApi(props.deviceId, props.channelId, startTime, stopTime)
+      .then((result: StreamInfo) => {
+        streamInfo = result
+        playUrl.value = getUrlByStreamInfo()
+      })
+      .catch((e) => {
+        message.error(e)
+      })
   }
   getRecordList()
 </script>
@@ -173,11 +234,11 @@
   .player-box {
     width: calc(100% - 200px);
     height: 100%;
+    padding: 0 2rem;
   }
   .player-box-content {
     width: 100%;
     height: calc(100% - 100px);
-    padding: 0.5rem;
   }
   .record-list {
     width: 100%;
