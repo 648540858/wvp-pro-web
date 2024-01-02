@@ -139,6 +139,7 @@
       v-if="recordDeviceId != ''"
       :deviceId="recordDeviceId"
       :channelId="recordChannelId"
+      @close="closeDeviceRecord"
     />
   </div>
 </template>
@@ -421,6 +422,10 @@
       .catch((e) => {
         message.error(e)
       })
+  }
+  const closeDeviceRecord = () => {
+    recordDeviceId.value = ''
+    recordChannelId.value = ''
   }
 
   // 初始化获取数据

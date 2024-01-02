@@ -1,5 +1,5 @@
 <template>
-  <div id="DeviceList" style="height: 100%">
+  <div id="DeviceList">
     <PageWrapper v-if="deviceIdForChannelList == ''">
       <a-table
         :dataSource="dataSource"
@@ -282,3 +282,8 @@
   // 初始化获取数据
   getDeviceList()
 </script>
+<style>
+  #DeviceList {
+    height: calc(100% - 16px);
+  }
+</style>
