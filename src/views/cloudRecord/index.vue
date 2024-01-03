@@ -9,18 +9,6 @@
       >
         <template #title>
           <div style="width: 100%; display: flex">
-            <div style="margin-right: auto; display: inline-flex">
-              <div style="display: inline-flex; align-items: center">
-                <a-button
-                  type="primary"
-                  preIcon="ant-design:reload-outlined"
-                  size="small"
-                  @click="addDeviceEvent"
-                >
-                  添加
-                </a-button>
-              </div>
-            </div>
             <div style="margin-left: auto; display: inline-flex">
               <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                 <span style="width: 3rem">搜索:</span>
@@ -28,29 +16,48 @@
                   size="small"
                   v-model:value="searchSrt"
                   placeholder="请输入搜索内容"
-                  @change="getDeviceList"
+                  @change="getCloudRecordList"
                 />
               </div>
               <div style="display: inline-flex; margin-left: 2rem; align-items: center">
-                <span style="width: 5rem">在线状态:</span>
+                <span style="width: 3rem">时间:</span>
+                <a-range-picker
+                  size="small"
+                  v-model:value="rangeValue"
+                  show-time
+                  @change="getCloudRecordList"
+                />
+              </div>
+
+              <div
+                style="width: 15rem; display: inline-flex; margin-left: 2rem; align-items: center"
+              >
+                <span style="width: 5rem">节点选择:</span>
                 <a-select
-                  v-model:value="online"
+                  v-model:value="mediaServerId"
                   placeholder="请选择"
                   size="small"
-                  @change="getDeviceList"
-                  style="width: 5rem"
+                  @change="getCloudRecordList"
+                  style="width: 10rem"
                 >
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="true">在线</a-select-option>
-                  <a-select-option value="false">离线</a-select-option>
+                  <a-select-option v-for="item in mediaServerList" :value="item.id">
+                    {{ item.id }}
+                  </a-select-option>
                 </a-select>
               </div>
             </div>
           </div>
         </template>
         <template #bodyCell="{ column, record }">
+          <template v-if="column.dataIndex === 'startTime'">
+            {{ dayjs(record.startTime).format('YYYY-MM-DD HH:mm:ss') }}
+          </template>
+          <template v-if="column.dataIndex === 'endTime'">
+            {{ dayjs(record.endTime).format('YYYY-MM-DD HH:mm:ss') }}
+          </template>
           <template v-if="column.dataIndex === 'timeLen'">
-            <a-tag>{{ record.timeLen }}</a-tag>
+            <a-tag color="blue">{{ formatTime(record.timeLen) }}</a-tag>
           </template>
           <template v-if="column.dataIndex === 'operation'">
             <a-button type="link" size="small" @click="play(record)">播放</a-button>
@@ -58,22 +65,10 @@
         </template>
       </a-table>
     </PageWrapper>
-    <RefreshChanel ref="refreshChanel" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { deviceColumns } from '/@/views/resource/gbResource/columns'
-  import {
-    changeDeviceStreamTransportApi,
-    deleteDeviceApi,
-    deviceListApi,
-    guardControlApi,
-    recordControlApi,
-    telebootControlApi,
-  } from '/@/api/resource/gbResource'
-  import { Device } from '/@/api/resource/model/gbResourceModel'
-  import EditDevice from '/@/views/common/editDevice/index.vue'
-  import ResetAlarm from '/@/views/common/resetAlarm/index.vue'
+  import { cloudRecordColumns } from '/@/views/cloudRecord/columns'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
   import {
@@ -82,28 +77,31 @@
     Button as AButton,
     Select as ASelect,
     SelectOption as ASelectOption,
-    message,
-    Popconfirm as APopconfirm,
-    Dropdown as ADropdown,
-    Menu as AMenu,
-    MenuItem as AMenuItem,
+    RangePicker as ARangePicker,
   } from 'ant-design-vue'
-  import RefreshChanel from './refreshChanel/index.vue'
-  import ChannelList from './channelList/index.vue'
-
+  import { CloudRecordItem } from '/@/api/cloudRecord/model/cloudRecordModel'
+  import { queryCloudRecordListApi } from '/@/api/cloudRecord/cloudRecord'
+  import dayjs, { Dayjs } from 'dayjs'
+  import duration from 'dayjs/plugin/duration'
+  import relativeTime from 'dayjs/plugin/relativeTime'
+  import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
+  import { queryOnlineMediaServerListApi } from '/@/api/mediaServer/mediaServer'
+  type RangeValue = [Dayjs, Dayjs]
+  dayjs.extend(duration)
+  dayjs.extend(relativeTime)
   /**
    * 定义变量
    */
   let loading = ref(false)
-  const columns = deviceColumns()
-  let dataSource = ref<Device[]>([])
+  const columns = cloudRecordColumns()
+  let dataSource = ref<CloudRecordItem[]>([])
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
-  let deviceIdForChannelList = ref('')
   let searchSrt = ref('')
-  let deviceOnlineForChannelList = ref(true)
-  let online = ref<string>('')
+  let mediaServerId = ref('')
+  const rangeValue = ref<RangeValue>()
+  let mediaServerList = ref<MediaServer[]>([])
   const pagination = computed(() => ({
     // 表格分页的配置
     current: tablePage.value,
@@ -118,17 +116,25 @@
     onChange: pageChange,
   }))
   const refreshChanel = ref()
-  const editDeviceRef = ref()
-  const resetAlarmRef = ref()
   /**
    * 定义方法
    */
-  function getDeviceList(): void {
-    deviceListApi({
+  function getCloudRecordList(): void {
+    let startTime: string | null = null
+    let endTime: string | null = null
+    if (typeof rangeValue.value != 'undefined') {
+      startTime = rangeValue.value[0].format('YYYY-MM-DD HH:mm:ss')
+      endTime = rangeValue.value[1].format('YYYY-MM-DD HH:mm:ss')
+    }
+    queryCloudRecordListApi({
       page: tablePage.value,
       count: tablePageSize.value,
       query: searchSrt.value,
-      online: online.value,
+      startTime: startTime,
+      endTime: endTime,
+      mediaServerId: mediaServerId.value,
+      app: null,
+      stream: null,
     })
       .then((result) => {
         console.log(result)
@@ -144,82 +150,34 @@
   }
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
-    getDeviceList()
+    getCloudRecordList()
   }
   function pageChange(page: number): void {
     tablePage.value = page
-    getDeviceList()
+    getCloudRecordList()
   }
+  function getMediaServerList(): void {
+    queryOnlineMediaServerListApi()
+      .then((result) => {
+        mediaServerList.value = result
+      })
+      .catch((exception) => {
+        console.error(exception)
+      })
+  }
+  function play(record: CloudRecordItem): void {
+    console.log(record)
+  }
+  function formatTime(time: number): string {
+    const h = parseInt(time / 3600 / 1000)
+    const minute = parseInt((time / 60 / 1000) % 60)
+    const second = Math.ceil(time / 1000)
 
-  function transportChange(_device: Device, mode: string): void {
-    console.log(mode)
-    console.log(`修改传输方式为 ${_device.streamMode}：${_device.deviceId} `)
-    changeDeviceStreamTransportApi(_device.deviceId, mode).catch((e) => {
-      message.info('流传输模式修改失败： ' + e.message)
-    })
-  }
-  function deleteDevice(_device: Device): void {
-    deleteDeviceApi(_device.deviceId)
-      .catch((e) => {
-        message.info('删除失败： ' + e.message)
-      })
-      .then(getDeviceList)
-  }
-  function syncDeviceChannel(_device: Device): void {
-    refreshChanel.value.show(_device.deviceId)
-  }
-  function showDeviceChannel(_device: Device): void {
-    deviceIdForChannelList.value = _device.deviceId
-    deviceOnlineForChannelList.value = _device.onLine
-  }
-  function closeDeviceChannel(): void {
-    deviceIdForChannelList.value = ''
-    deviceOnlineForChannelList.value = true
-  }
-  function editDevice(_device: Device): void {
-    editDeviceRef.value.openModel(_device)
-  }
-  function addDeviceEvent(): void {
-    editDeviceRef.value.openModel()
-  }
-  function telebootControl(device: Device): void {
-    telebootControlApi(device.deviceId)
-      .then(() => {
-        message.info('[远程启动] 已发送')
-      })
-      .catch((e) => [message.error(e)])
-  }
-  function recordControl(device: Device, command: string): void {
-    recordControlApi(device.deviceId, command)
-      .then(() => {
-        if (command == 'start') {
-          message.info('[开始录像] 已发送')
-        } else {
-          message.info('[停止录像] 已发送')
-        }
-      })
-      .catch((e) => [message.error(e)])
-  }
-  function setGuardControl(device: Device): void {
-    guardControlApi(device.deviceId, 'set')
-      .then(() => {
-        message.info('[报警布防] 已发送')
-      })
-      .catch((e) => [message.error(e)])
-  }
-  function resetGuardControl(device: Device): void {
-    guardControlApi(device.deviceId, 'reset')
-      .then(() => {
-        message.info('[报警撤防] 已发送')
-      })
-      .catch((e) => [message.error(e)])
-  }
-  function resetAlarmControl(device: Device): void {
-    console.log(resetAlarmRef)
-    resetAlarmRef.value.openModel(device.deviceId)
+    return (h > 0 ? h + `小时` : '') + (minute > 0 ? minute + '分' : '') + second + '秒'
   }
   // 初始化获取数据
-  getDeviceList()
+  getCloudRecordList()
+  getMediaServerList()
 </script>
 <style>
   #DeviceList {

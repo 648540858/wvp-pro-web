@@ -115,7 +115,7 @@
   import Player from '/@/views/common/player/index.vue'
   import { pushColumns } from '/@/views/resource/push/columns'
   import { PushModel } from '/@/api/resource/model/pushModel'
-  import { MediaServer } from '/@/api/resource/model/MediaServer'
+  import { MediaServer } from '/src/api/mediaServer/model/MediaServer'
   import { playPushApi, queryPushListApi, stopPushApi } from '/@/api/resource/push'
 
   const playRef = ref()

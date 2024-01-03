@@ -171,7 +171,7 @@
     InputGroup as AInputGroup,
   } from 'ant-design-vue'
   import { Device } from '/@/api/resource/model/gbResourceModel'
-  import { MediaServer } from '/@/api/resource/model/MediaServer'
+  import { MediaServer } from '/src/api/mediaServer/model/MediaServer'
   import { addDeviceApi, updateDeviceApi } from '/@/api/resource/gbResource'
   import ChannelCode from '/@/views/common/ChannelCode/index.vue'
 

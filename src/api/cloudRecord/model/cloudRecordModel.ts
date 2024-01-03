@@ -2,8 +2,6 @@ import { BasicPageParams, BasicFetchResult } from '/@/api/model/baseModel'
 import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface CloudRecordItem extends RcTableProps {
-  // 数据库自增ID
-  id: number
   // 应用名
   app: string
   // 流
@@ -33,7 +31,12 @@ export interface CloudRecordItem extends RcTableProps {
 export type CloudRecordListResultModel = BasicFetchResult<CloudRecordItem>
 
 export interface CloudRecordListParams extends BasicPageParams {
+  app: string | null | undefined
+  stream: string | null | undefined
   query: string | null | undefined
+  startTime: string | null | undefined
+  endTime: string | null | undefined
+  mediaServerId: string | null | undefined
 }
 
 export interface ChildGroupListParams extends BasicPageParams {

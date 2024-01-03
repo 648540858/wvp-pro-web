@@ -114,7 +114,7 @@
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
   import { PushModel } from '/@/api/resource/model/pushModel'
-  import { MediaServer } from '/@/api/resource/model/MediaServer'
+  import { MediaServer } from '/src/api/mediaServer/model/MediaServer'
   import { playPushApi, queryPushListApi, stopPushApi } from '/@/api/resource/push'
   import { proxyColumns } from '/@/views/resource/proxy/columns'
 
