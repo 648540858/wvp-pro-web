@@ -52,6 +52,14 @@ export interface StreamInfo {
   originSock: any
   originTypeStr: string
   originUrl: string
+  downLoadFilePath: DownloadFileInfo
+}
+
+export interface DownloadFileInfo {
+  httpPath: string
+  httpsPath: string
+  httpDomainPath: string
+  httpsDomainPath: string
 }
 
 export interface Track {

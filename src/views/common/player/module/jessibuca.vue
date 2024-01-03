@@ -27,9 +27,14 @@
               v-if="playing"
               class="jessibuca-btn"
               icon="ic:baseline-pause"
-              @click="pause"
+              @click="pauseBtnClick"
             />
-            <Icon :size="iconSize" icon="ic:baseline-stop" class="jessibuca-btn" @click="destroy" />
+            <Icon
+              :size="iconSize"
+              icon="ic:baseline-stop"
+              class="jessibuca-btn"
+              @click="stopBtnClick"
+            />
             <Icon
               :size="iconSize"
               v-if="!quieting"
@@ -173,14 +178,12 @@
     jessibuca.on('pause', function () {
       console.log('on pause')
       playing.value = false
-      emit('pause')
     })
     jessibuca.on('play', function () {
       console.log('on play')
       playing.value = true
       loaded.value = true
       quieting.value = jessibuca.isMute()
-      emit('play')
     })
     jessibuca.on('fullscreen', function (msg: boolean) {
       console.log('on fullscreen', msg)
@@ -278,15 +281,18 @@
       jessibuca.cancelMute()
     }
   }
+  const stopBtnClick = () => {
+    emit('stop')
+    destroy()
+  }
 
   const destroy = () => {
     if (jessibuca) {
       jessibuca.destroy()
     }
-    createJessibuca()
-    emit('stop')
     playing.value = false
     loaded.value = false
+    createJessibuca()
   }
   const fullscreenSwich = () => {
     let isFull = isFullscreen()
@@ -312,7 +318,12 @@
     return document.fullscreenElement || false
   }
   const playBtnClick = () => {
+    emit('play')
     play(props.playUrl)
+  }
+  const pauseBtnClick = () => {
+    emit('pause')
+    pause()
   }
   const screenshot = () => {
     if (jessibuca) {

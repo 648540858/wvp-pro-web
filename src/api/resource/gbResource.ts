@@ -44,7 +44,10 @@ enum Api {
   PLAYBACK = '/api/playback/start/{deviceId}/{channelId}',
   PLAYBACK_STOP = '/api/playback/stop/{deviceId}/{channelId}/{streamId}',
   PLAY_CONTROL = '/api/playback/resume/{streamId}',
-  PAUSE_CONTROL = '/api/playback/resume/{streamId}',
+  PAUSE_CONTROL = '/api/playback/pause/{streamId}',
+  DOWNLOAD = '/api/gb_record/download/start/{deviceId}/{channelId}',
+  STOP_DOWNLOAD = '/api/gb_record/download/stop/{deviceId}/{channelId}/{streamId}',
+  PROGRESS = '/api/gb_record/download/progress/{deviceId}/{channelId}/{streamId}',
 }
 
 /**
@@ -472,6 +475,51 @@ export const playControlApi = (streamId: string) =>
 export const pauseControlApi = (streamId: string) =>
   defHttp.get<void>({
     url: Api.PAUSE_CONTROL.replace('{streamId}', streamId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const downloadDeviceRecordApi = (
+  deviceId: string,
+  channelId: string,
+  startTime: string,
+  endTime: string,
+  downloadSpeed: number,
+) =>
+  defHttp.get<StreamInfo>({
+    url: Api.DOWNLOAD.replace('{deviceId}', deviceId).replace('{channelId}', channelId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      startTime: startTime,
+      endTime: endTime,
+      downloadSpeed: downloadSpeed,
+    },
+  })
+
+export const stopDownloadDeviceRecordApi = (
+  deviceId: string,
+  channelId: string,
+  streamId: string,
+) =>
+  defHttp.get<void>({
+    url: Api.STOP_DOWNLOAD.replace('{deviceId}', deviceId)
+      .replace('{channelId}', channelId)
+      .replace('{streamId}', streamId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const getProgressApi = (deviceId: string, channelId: string, streamId: string) =>
+  defHttp.get<StreamInfo>({
+    url: Api.PROGRESS.replace('{deviceId}', deviceId)
+      .replace('{channelId}', channelId)
+      .replace('{streamId}', streamId),
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

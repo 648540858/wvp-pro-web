@@ -8,6 +8,17 @@
           </template>
         </a-button>
         <BasicTitle>国标录像</BasicTitle>
+        <a-button
+          shape="circle"
+          type="primary"
+          size="small"
+          @click="downloadBtnClick()"
+          style="margin-left: calc(100% - 347px)"
+        >
+          <template #icon>
+            <Icon icon="material-symbols:download" />
+          </template>
+        </a-button>
       </div>
       <div class="device-record-box">
         <div class="player-box">
@@ -51,7 +62,12 @@
                   dayjs(item.endTime).format('HH:mm:ss')
                 }}
               </a-tag>
-              <a-button type="link" size="small" @click="back()" style="color: #000">
+              <a-button
+                type="link"
+                size="small"
+                @click="itemDownloadBrnClick(item)"
+                style="color: #000"
+              >
                 <template #icon>
                   <Icon icon="material-symbols:download" />
                 </template>
@@ -62,6 +78,7 @@
       </div>
     </a-card>
   </div>
+  <RecordDownload ref="recordDownloadRef" />
 </template>
 <script lang="ts" setup>
   import {
@@ -87,6 +104,7 @@
   import Jessibuca from '/@/views/common/player/module/jessibuca.vue'
   import { BasicTitle } from '/@/components/Basic'
   import { TimeLine } from '/@/components/TimeLine'
+  import RecordDownload from '/@/views/resource/gbResource/recordDownload/index.vue'
   import { StreamInfo } from '/@/api/model/baseModel'
 
   const props = defineProps({
@@ -100,6 +118,7 @@
     },
   })
   const emit = defineEmits(['close'])
+  const recordDownloadRef = ref()
   const timeLineRef = ref()
   const recordDate = ref<Dayjs>(dayjs())
   const recordList = ref<RecordItem[]>()
@@ -108,6 +127,7 @@
 
   let chooseRecord: RecordItem | null = null
   let streamInfo: StreamInfo | null = null
+  let currentStarTime: string | null = null
   const initTime = ref<string>()
   const timeSegments = ref<any[]>([])
   const timeChange = (time: string) => {
@@ -137,6 +157,7 @@
         if (result.recordList.length > 0) {
           recordList.value = result.recordList
           initTime.value = result.recordList[0].startTime
+          currentStarTime = result.recordList[0].startTime
           for (let i = 0; i < result.recordList.length; i++) {
             let record = result.recordList[i]
             timeSegments.value.push({
@@ -188,29 +209,56 @@
     }
   }
   const playerPause = () => {
+    console.log('======playerPause')
     if (streamInfo != null) {
       pauseControlApi(streamInfo.stream)
     }
   }
   const playerStop = () => {
+    console.log('======playerStop')
     if (streamInfo != null) {
       stopPlayBackApi(props.deviceId, props.channelId, streamInfo.stream)
       streamInfo = null
     }
   }
   const play = (startTime: string, stopTime: string) => {
+    console.log('======play')
     if (streamInfo != null) {
-      stopPlayBackApi(props.deviceId, props.channelId, streamInfo.stream)
-      streamInfo = null
+      stopPlayBackApi(props.deviceId, props.channelId, streamInfo.stream).finally(() => {
+        streamInfo = null
+        playbackApi(props.deviceId, props.channelId, startTime, stopTime)
+          .then((result: StreamInfo) => {
+            streamInfo = result
+            currentStarTime = startTime
+            playUrl.value = getUrlByStreamInfo()
+          })
+          .catch((e) => {
+            message.error(e)
+          })
+      })
+    } else {
+      playbackApi(props.deviceId, props.channelId, startTime, stopTime)
+        .then((result: StreamInfo) => {
+          streamInfo = result
+          playUrl.value = getUrlByStreamInfo()
+        })
+        .catch((e) => {
+          message.error(e)
+        })
     }
-    playbackApi(props.deviceId, props.channelId, startTime, stopTime)
-      .then((result: StreamInfo) => {
-        streamInfo = result
-        playUrl.value = getUrlByStreamInfo()
-      })
-      .catch((e) => {
-        message.error(e)
-      })
+  }
+  const downloadBtnClick = () => {
+    // 默认下载十分钟视频, 基于当前时间设置结束时间
+    let dayItem = dayjs(currentStarTime)
+    let startTime = dayItem.format('YYYY-MM-DD HH:mm:ss')
+    let stopTime = dayItem.add(10, 'minute').format('YYYY-MM-DD HH:mm:ss')
+    console.log(currentStarTime)
+    console.log(startTime)
+    console.log(stopTime)
+    recordDownloadRef.value.openModel(props.deviceId, props.channelId, startTime, stopTime)
+  }
+  const itemDownloadBrnClick = (item: RecordItem) => {
+    recordDownloadRef.value.openModel(props.deviceId, props.channelId, item.startTime, item.endTime)
   }
   getRecordList()
 </script>
