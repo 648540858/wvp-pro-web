@@ -158,6 +158,7 @@
           recordList.value = result.recordList
           initTime.value = result.recordList[0].startTime
           currentStarTime = result.recordList[0].startTime
+          timeSegments.value = []
           for (let i = 0; i < result.recordList.length; i++) {
             let record = result.recordList[i]
             timeSegments.value.push({
