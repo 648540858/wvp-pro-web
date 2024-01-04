@@ -23,6 +23,7 @@
                 <span style="width: 3rem">时间:</span>
                 <a-range-picker
                   size="small"
+                  :allowEmpty="[true, true]"
                   v-model:value="rangeValue"
                   show-time
                   @change="getCloudRecordList"
@@ -61,10 +62,12 @@
           </template>
           <template v-if="column.dataIndex === 'operation'">
             <a-button type="link" size="small" @click="play(record)">播放</a-button>
+            <a-button type="link" size="small" @click="download(record)">下载</a-button>
           </template>
         </template>
       </a-table>
     </PageWrapper>
+    <Player ref="playRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -80,12 +83,17 @@
     RangePicker as ARangePicker,
   } from 'ant-design-vue'
   import { CloudRecordItem } from '/@/api/cloudRecord/model/cloudRecordModel'
-  import { queryCloudRecordListApi } from '/@/api/cloudRecord/cloudRecord'
+  import {
+    queryCloudRecordListApi,
+    getDownloadPathApi,
+    getPlayLiveApi
+  } from '/@/api/cloudRecord/cloudRecord'
   import dayjs, { Dayjs } from 'dayjs'
   import duration from 'dayjs/plugin/duration'
   import relativeTime from 'dayjs/plugin/relativeTime'
   import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
   import { queryOnlineMediaServerListApi } from '/@/api/mediaServer/mediaServer'
+  import Player from '/@/views/common/player/index.vue'
   type RangeValue = [Dayjs, Dayjs]
   dayjs.extend(duration)
   dayjs.extend(relativeTime)
@@ -93,6 +101,7 @@
    * 定义变量
    */
   let loading = ref(false)
+  const playRef = ref()
   const columns = cloudRecordColumns()
   let dataSource = ref<CloudRecordItem[]>([])
   let tablePage = ref(1)
@@ -115,16 +124,21 @@
     onShowSizeChange: pageSizeChange,
     onChange: pageChange,
   }))
-  const refreshChanel = ref()
   /**
    * 定义方法
    */
   function getCloudRecordList(): void {
+    console.log('getCloudRecordList== getCloudRecordList')
+    console.log(rangeValue.value)
     let startTime: string | null = null
     let endTime: string | null = null
-    if (typeof rangeValue.value != 'undefined') {
-      startTime = rangeValue.value[0].format('YYYY-MM-DD HH:mm:ss')
-      endTime = rangeValue.value[1].format('YYYY-MM-DD HH:mm:ss')
+    if (typeof rangeValue.value != 'undefined' && rangeValue.value != null) {
+      if (typeof rangeValue.value[0] != 'undefined' && rangeValue.value[0] != null) {
+        startTime = rangeValue.value[0].format('YYYY-MM-DD HH:mm:ss')
+      }
+      if (typeof rangeValue.value[1] != 'undefined' && rangeValue.value[1] != null) {
+        endTime = rangeValue.value[1].format('YYYY-MM-DD HH:mm:ss')
+      }
     }
     queryCloudRecordListApi({
       page: tablePage.value,
@@ -167,11 +181,35 @@
   }
   function play(record: CloudRecordItem): void {
     console.log(record)
+    getPlayLiveApi(parseInt(record.id)).then((streamInfo) => {
+      playRef.value.play(streamInfo, record.fileName, true)
+    })
+  }
+  function download(record: CloudRecordItem): void {
+    getDownloadPathApi(parseInt(record.id)).then((downloadInfo) => {
+      let url
+      if (location.protocol === 'https:') {
+        url = downloadInfo.httpsPath
+      } else {
+        url = downloadInfo.httpPath
+      }
+      let x = new XMLHttpRequest()
+      x.open('GET', url, true)
+      x.responseType = 'blob'
+      x.onload = () => {
+        let url = window.URL.createObjectURL(x.response)
+        let a = document.createElement('a')
+        a.href = url
+        a.download = record.app + '-' + record.stream + '.mp4'
+        a.click()
+      }
+      x.send()
+    })
   }
   function formatTime(time: number): string {
     const h = parseInt(time / 3600 / 1000)
-    const minute = parseInt((time / 60 / 1000) % 60)
-    const second = Math.ceil(time / 1000)
+    const minute = parseInt((time - h * 60) / 60 / 1000)
+    const second = Math.ceil((time - h * 3600 * 1000 - minute * 60 * 1000) / 1000)
 
     return (h > 0 ? h + `小时` : '') + (minute > 0 ? minute + '分' : '') + second + '秒'
   }
