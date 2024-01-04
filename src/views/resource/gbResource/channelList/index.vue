@@ -135,6 +135,12 @@
       @forceIframeControl="forceIframeControl"
       @homePositionControl="homePositionControl"
     />
+    <CloudRecordDetail
+      v-if="cloudRecordApp != ''"
+      :app="cloudRecordApp"
+      :stream="cloudRecordStream"
+      @close="closeCloudRecordDetail"
+    />
     <DeviceRecord
       v-if="recordDeviceId != ''"
       :deviceId="recordDeviceId"
@@ -177,10 +183,10 @@
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
   import DeviceRecord from '/@/views/resource/gbResource/deviceRecord/index.vue'
+  import CloudRecordDetail from '/@/views/cloudRecord/cloudRecordDetail/index.vue'
   import Icon from '/@/components/Icon'
 
   const playRef = ref()
-  const deviceRecordRef = ref()
   /**
    * 定义变量
    */
@@ -220,6 +226,8 @@
   let online = ref<string>('')
   let parentChannelId = ref<string>('')
   let recordDeviceId = ref<string>('')
+  let cloudRecordApp = ref<string>('')
+  let cloudRecordStream = ref<string>('')
   let recordChannelId = ref<string>('')
   function back() {
     if (parentChannelId.value) {
@@ -346,7 +354,10 @@
     recordDeviceId.value = _deviceChannel.deviceId
     recordChannelId.value = _deviceChannel.channelId
   }
-  function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
+  function queryCloudRecords(_deviceChannel: DeviceChannel): void {
+    cloudRecordApp.value = 'rtp'
+    cloudRecordStream.value = _deviceChannel.deviceId + '_' + _deviceChannel.channelId
+  }
   function ptzCamera(command: string, speed: number): void {
     console.log('ptz===> ' + command)
     console.log('ptz===> ' + speed)
@@ -426,6 +437,10 @@
   const closeDeviceRecord = () => {
     recordDeviceId.value = ''
     recordChannelId.value = ''
+  }
+  const closeCloudRecordDetail = () => {
+    cloudRecordDeviceId.value = ''
+    cloudRecordChannelId.value = ''
   }
 
   // 初始化获取数据
