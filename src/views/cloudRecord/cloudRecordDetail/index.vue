@@ -12,36 +12,18 @@
       <div class="device-record-box">
         <div class="player-box">
           <div class="player-box-content">
-            <Jessibuca
-              ref="jessibuca"
-              :play-url="playUrl"
-              :hasAudio="hasAudio"
-            />
-          </div>
-          <div style="width: 100%; height: 100px; padding: 8px 0">
-            <TimeLine
-              ref="timeLineRef"
-              :initTime="initTime"
-              @dragTimeChange="timeChange"
-              :timeSegments="timeSegments"
-              :showHoverTime="false"
-              initZoomIndex="5"
-              backgroundColor="rgb(0, 12, 23)"
-            />
+            <Jessibuca ref="jessibuca" :play-url="playUrl" :hasAudio="hasAudio" />
           </div>
         </div>
         <div class="info-box">
-          <a-list class="record-list" :split="false" ：loading="listLoading">
+          <a-list class="record-list" :split="false" :loading="listLoading">
             <template #header>
               <a-date-picker v-model:value="recordDate" @change="recordDateChange" size="small">
                 <template #dateRender="{ current }">
-                  <div
-                    v-if="hasRecordDate(current.date())"
-                    class="ant-picker-cell-inner has-record-date"
-                  >
+                  <div v-if="hasRecordDate(current)" class="ant-picker-cell-inner has-record-date">
                     {{ current.date() }}
                   </div>
-                  <div v-if="!hasRecordDate(current.date())" class="ant-picker-cell-inner">
+                  <div v-if="!hasRecordDate(current)" class="ant-picker-cell-inner">
                     {{ current.date() }}
                   </div>
                 </template>
@@ -57,7 +39,7 @@
                   lineHeight: '32px',
                 }"
               >
-                <a-button @click="onLoadMore">loading more</a-button>
+                <a-button v-if="total !== recordList.length" @click="onLoadMore">加载更多</a-button>
               </div>
             </template>
             <a-list-item v-for="item in recordList">
@@ -67,7 +49,9 @@
                 @click="chooseRecordItem(item)"
               >
                 <Icon icon="solar:videocamera-record-linear" />
-                {{ item.fileName }}
+                {{ dayjs(item.startTime).format('HH:mm:ss') }}
+                -
+                {{ dayjs(item.endTime).format('HH:mm:ss') }}
               </a-tag>
               <a-button
                 type="link"
@@ -132,42 +116,29 @@
   })
   const emit = defineEmits(['close'])
   const recordDownloadRef = ref()
-  const timeLineRef = ref()
   const dateArray = ref<string[]>([])
   const recordDate = ref<Dayjs>(dayjs())
-  const recordList = ref<CloudRecordItem[]>()
+  const recordList = ref<CloudRecordItem[]>([])
   const playUrl = ref<string>()
   const hasAudio = ref<boolean>(false)
   const listLoading = ref<boolean>(false)
 
   let chooseRecord: CloudRecordItem | null = null
   let streamInfo: StreamInfo | null = null
-  let currentStarTime: string | null = null
-  const initTime = ref<string>()
-  const timeSegments = ref<any[]>([])
+  let total = ref<number>(0)
   let page = 1
-  const count = 100
-  const timeChange = (time: string) => {
-    console.log(time)
-    let dayItem = dayjs(time)
-    let startTime = dayItem.format('YYYY-MM-DD HH:mm:ss')
-    let stopTime = dayItem.add(1, 'day').format('YYYY-MM-DD HH:mm:ss')
-    play(startTime, stopTime)
-  }
+  const count = 15
   const recordListStyle = ref({
     height: '600px',
     padding: '10px',
   })
 
-  onBeforeMount(() => {
-    getRecordDateList(dayjs().year(), dayjs().month() + 1)
-  })
-
   onMounted(() => {
-    var element = document.getElementById('deviceRecord')
+    var element = document.getElementById('cloudRecordDetail')
     if (element) {
       recordListStyle.value.height = element.clientHeight - 32 + 'px'
     }
+    getRecordDateList(dayjs().year(), dayjs().month() + 1)
   })
   const getRecordDateList = (year: number, month: number) => {
     queryDateListApi(props.app, props.stream, year, month)
@@ -194,22 +165,9 @@
       mediaServerId: null,
     })
       .then((result) => {
+        total.value = result.total
         if (result.list.length > 0) {
-          recordList.value = result.list
-          initTime.value = dayjs(result.list[0].startTime).format('YYYY-MM-DD HH:mm:ss')
-          currentStarTime = initTime.value
-          timeSegments.value = []
-          for (let i = 0; i < result.list.length; i++) {
-            let record = result.list[i]
-            timeSegments.value.push({
-              name: record.fileName,
-              beginTime: new Date(record.startTime).getTime(),
-              endTime: new Date(record.endTime).getTime(),
-              color: '#1a94bc',
-              startRatio: 0.65,
-              endRatio: 0.9,
-            })
-          }
+          recordList.value = recordList.value?.concat(result.list)
         }
       })
       .catch((e) => {
@@ -226,7 +184,6 @@
   }
   const chooseRecordItem = (record: CloudRecordItem) => {
     chooseRecord = record
-    timeLineRef.value.setTime(record.startTime)
     play(record)
   }
   const getTagColor = (record: CloudRecordItem) => {
@@ -244,13 +201,15 @@
     }
   }
   const hasRecordDate = (date) => {
-    console.log(date)
-    return dateArray.value.indexOf(date) > 0
+    return dateArray.value.indexOf(date.format('YYYY-MM-DD')) > -1
   }
   const play = (record: CloudRecordItem) => {
     getPlayLiveApi(parseInt(record.id)).then((streamInfoResult) => {
       streamInfo = streamInfoResult
       playUrl.value = getUrlByStreamInfo()
+      if (streamInfoResult.tracks.length > 1) {
+        hasAudio.value = true
+      }
     })
   }
   const downloadBtnClick = (record: CloudRecordItem) => {
@@ -304,7 +263,7 @@
   }
   .player-box-content {
     width: 100%;
-    height: calc(100% - 100px);
+    height: 100%;
   }
   .record-list {
     width: 100%;

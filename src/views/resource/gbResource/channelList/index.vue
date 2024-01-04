@@ -1,6 +1,6 @@
 <template>
   <div id="DeviceChannelList">
-    <PageWrapper v-if="recordDeviceId == ''">
+    <PageWrapper v-if="recordDeviceId == '' && cloudRecordApp == ''">
       <Transition>
         <a-table
           v-if="recordDeviceId == ''"
@@ -439,8 +439,8 @@
     recordChannelId.value = ''
   }
   const closeCloudRecordDetail = () => {
-    cloudRecordDeviceId.value = ''
-    cloudRecordChannelId.value = ''
+    cloudRecordApp.value = ''
+    cloudRecordStream.value = ''
   }
 
   // 初始化获取数据
