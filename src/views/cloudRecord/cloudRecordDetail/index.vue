@@ -81,19 +81,11 @@
     Button as AButton,
     message,
   } from 'ant-design-vue'
-  import { onMounted, onBeforeMount, ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import dayjs, { Dayjs } from 'dayjs'
-  import {
-    pauseControlApi,
-    playbackApi,
-    playControlApi,
-    queryDeviceRecordApi,
-    stopPlayBackApi,
-  } from '/@/api/resource/gbResource'
   import { Icon } from '/@/components/Icon'
   import Jessibuca from '/@/views/common/player/module/jessibuca.vue'
   import { BasicTitle } from '/@/components/Basic'
-  import { TimeLine } from '/@/components/TimeLine'
   import RecordDownload from '/@/views/resource/gbResource/recordDownload/index.vue'
   import { StreamInfo } from '/@/api/model/baseModel'
   import {
@@ -204,7 +196,7 @@
     return dateArray.value.indexOf(date.format('YYYY-MM-DD')) > -1
   }
   const play = (record: CloudRecordItem) => {
-    getPlayLiveApi(parseInt(record.id)).then((streamInfoResult) => {
+    getPlayLiveApi(parseInt(record.id + '')).then((streamInfoResult) => {
       streamInfo = streamInfoResult
       playUrl.value = getUrlByStreamInfo()
       if (streamInfoResult.tracks.length > 1) {
@@ -213,7 +205,7 @@
     })
   }
   const downloadBtnClick = (record: CloudRecordItem) => {
-    getDownloadPathApi(parseInt(record.id)).then((downloadInfo) => {
+    getDownloadPathApi(parseInt(record.id + '')).then((downloadInfo) => {
       let url
       if (location.protocol === 'https:') {
         url = downloadInfo.httpsPath
