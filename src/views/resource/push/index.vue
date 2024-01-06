@@ -13,17 +13,25 @@
               <div style="display: inline-flex">
                 <a-space>
                   <a-button
-                      type="primary"
-                      preIcon="ant-design:reload-outlined"
-                      size="small"
-                      @click="addStream"
+                    type="primary"
+                    preIcon="ant-design:reload-outlined"
+                    size="small"
+                    @click="addStream"
                   >
                     添加
                   </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small" @click="importChannel">
+                  <a-button
+                    preIcon="ant-design:reload-outlined"
+                    size="small"
+                    @click="importChannel"
+                  >
                     通道导入
                   </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small" @click="importChannel">
+                  <a-button
+                    preIcon="ant-design:reload-outlined"
+                    size="small"
+                    @click="importChannel"
+                  >
                     下载模板
                   </a-button>
                   <a-button preIcon="ant-design:reload-outlined" size="small" @click="batchDel">
@@ -80,16 +88,17 @@
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button type="link" size="small" @click="play(record)">播放</a-button>
+              <a-button type="link" size="small" @click="play(record)">编辑</a-button>
               <a-popconfirm
                 title="确定删除?"
                 ok-text="确定"
                 cancel-text="取消"
                 @confirm="stop(record)"
               >
-                <a-button type="link" danger size="small" v-if="!!record.streamId">移除</a-button>
+                <a-button type="link" danger size="small">移除</a-button>
               </a-popconfirm>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
-                云端录像
+                录像
               </a-button>
             </template>
           </template>
@@ -111,11 +120,12 @@
     Select as ASelect,
     SelectOption as ASelectOption,
     Space as ASpace,
+    Popconfirm as APopconfirm,
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
   import { pushColumns } from '/@/views/resource/push/columns'
   import { PushModel } from '/@/api/resource/model/pushModel'
-  import { MediaServer } from '/src/api/mediaServer/model/MediaServer'
+  import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
   import { playPushApi, queryPushListApi, stopPushApi } from '/@/api/resource/push'
 
   const playRef = ref()
