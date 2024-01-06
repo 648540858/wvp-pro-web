@@ -1,5 +1,5 @@
 import { defHttp } from '/@/utils/http/axios'
-import { PushListParams, PushListResultModel } from '/@/api/resource/model/pushModel'
+import {PushListParams, PushListResultModel, PushModel} from '/@/api/resource/model/pushModel'
 import { StreamInfo } from '/@/api/model/baseModel'
 
 enum Api {
@@ -7,6 +7,10 @@ enum Api {
   LIST = '/api/push/list',
   PLAY = '/api/push/getPlayUrl',
   STOP = '/api/push/stop',
+  DELETE = '/api/push/delete',
+  ADD = '/api/push/add',
+  UPDATE = '/api/push/update',
+  BATCH_DELETE = '/api/push/batchDelete',
 }
 
 export const queryPushListApi = (param: PushListParams) =>
@@ -38,6 +42,46 @@ export const stopPushApi = (app: string, stream: string) =>
     params: {
       app: app,
       stream: stream,
+    },
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const updatePushApi = (pushModel: PushModel) =>
+  defHttp.post<void>({
+    url: Api.UPDATE,
+    params: pushModel,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const addPushApi = (pushModel: PushModel) =>
+  defHttp.post<void>({
+    url: Api.ADD,
+    params: pushModel,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const deletePushApi = (id: number) =>
+  defHttp.delete<void>({
+    url: Api.DELETE,
+    params: {
+      id: id,
+    },
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const batchDeletePushApi = (streamPushIds: number[]) =>
+  defHttp.delete<void>({
+    url: Api.BATCH_DELETE,
+    params: {
+      streamPushIds: streamPushIds,
     },
     headers: {
       // @ts-ignore

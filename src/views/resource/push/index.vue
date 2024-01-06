@@ -7,6 +7,8 @@
           :columns="columns"
           :loading="loading"
           :pagination="pagination"
+          rowKey="id"
+          :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         >
           <template #title>
             <div style="width: 100%; display: inline-flex">
@@ -27,12 +29,10 @@
                   >
                     通道导入
                   </a-button>
-                  <a-button
-                    preIcon="ant-design:reload-outlined"
-                    size="small"
-                    @click="importChannel"
-                  >
-                    下载模板
+                  <a-button preIcon="ant-design:reload-outlined" size="small">
+                    <a href="/resource/file/推流通道导入.zip" download="推流通道导入.zip">
+                      下载模板
+                    </a>
                   </a-button>
                   <a-button preIcon="ant-design:reload-outlined" size="small" @click="batchDel">
                     批量移除
@@ -73,7 +73,11 @@
                     style="width: 10rem"
                   >
                     <a-select-option value="">全部</a-select-option>
-                    <a-select-option v-for="item in mediaServerList" :value="item.id">
+                    <a-select-option
+                      v-for="item in mediaServerList"
+                      :value="item.id"
+                      :key="item.id"
+                    >
                       {{ item.id }}
                     </a-select-option>
                   </a-select>
@@ -82,20 +86,35 @@
             </div>
           </template>
           <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'position'">
+              <span v-if="record.longitude * record.latitude > 0">
+                {{ record.longitude }} , {{ record.latitude }}
+              </span>
+              <span v-if="record.longitude * record.latitude == 0">暂无位置</span>
+            </template>
             <template v-if="column.dataIndex === 'pushIng'">
               <a-tag color="processing" v-if="record.pushIng"> 正在推流 </a-tag>
               <a-tag v-if="!record.pushIng">已停止</a-tag>
             </template>
+            <template v-if="column.dataIndex === 'status'">
+              <a-tag color="processing" v-if="record.status"> 在线 </a-tag>
+              <a-tag v-if="!record.status">离线</a-tag>
+            </template>
+            <template v-if="column.dataIndex === 'self'">
+              <a-tag color="processing" v-if="record.self"> 是 </a-tag>
+              <a-tag v-if="!record.self">否</a-tag>
+            </template>
             <template v-if="column.dataIndex === 'operation'">
-              <a-button type="link" size="small" @click="play(record)">播放</a-button>
-              <a-button type="link" size="small" @click="play(record)">编辑</a-button>
+              <a-button type="link" size="small" @click="play(record)"> 播放 </a-button>
+
+              <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
               <a-popconfirm
                 title="确定删除?"
                 ok-text="确定"
                 cancel-text="取消"
-                @confirm="stop(record)"
+                @confirm="deleteItem(record)"
               >
-                <a-button type="link" danger size="small">移除</a-button>
+                <a-button type="link" danger size="small"> 移除 </a-button>
               </a-popconfirm>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
                 录像
@@ -106,11 +125,13 @@
       </Transition>
     </PageWrapper>
     <Player ref="playRef" />
+    <EditStreamPush ref="editStreamPushRef" />
+    <UploadStreamPush ref="uploadStreamPushRef" />
   </div>
 </template>
 <script lang="ts" setup>
   import { DeviceChannel } from '/@/api/resource/model/gbResourceModel'
-  import { computed, ref } from 'vue'
+  import { computed, reactive, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
   import {
     Table as ATable,
@@ -121,14 +142,26 @@
     SelectOption as ASelectOption,
     Space as ASpace,
     Popconfirm as APopconfirm,
+    message,
+    Modal,
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
   import { pushColumns } from '/@/views/resource/push/columns'
   import { PushModel } from '/@/api/resource/model/pushModel'
   import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
-  import { playPushApi, queryPushListApi, stopPushApi } from '/@/api/resource/push'
+  import {
+    batchDeletePushApi,
+    deletePushApi,
+    playPushApi,
+    queryPushListApi,
+    stopPushApi,
+  } from '/@/api/resource/push'
+  import EditStreamPush from '/@/views/common/editStreamPush/index.vue'
+  import UploadStreamPush from '/@/views/common/uploadStreamPush/index.vue'
 
   const playRef = ref()
+  const editStreamPushRef = ref()
+  const uploadStreamPushRef = ref()
   /**
    * 定义变量
    */
@@ -139,6 +172,9 @@
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
+  let state = reactive<{ selectedRowKeys: number[] }>({
+    selectedRowKeys: [],
+  })
   const pagination = computed(() => ({
     // 表格分页的配置
     current: tablePage.value,
@@ -160,14 +196,35 @@
     console.log('pageSizeChange')
     getPushList()
   }
+  const onSelectChange = (selectedRowKeysParam: number[]) => {
+    state.selectedRowKeys = selectedRowKeysParam
+  }
   function pageChange(page: number): void {
     tablePage.value = page
     console.log('pageChange')
     getPushList()
   }
-  function addStream(): void {}
-  function importChannel(): void {}
-  function batchDel(): void {}
+  function addStream(): void {
+    editStreamPushRef.value.openModel(null, () => {
+      getPushList()
+    })
+  }
+  function importChannel(): void {
+    uploadStreamPushRef.value.openModel()
+  }
+  function batchDel(): void {
+    console.log(state.selectedRowKeys)
+    Modal.confirm({
+      title: '确认要删除这些推流吗?',
+      onOk() {
+        return batchDeletePushApi(state.selectedRowKeys).then((data) => {
+          getPushList()
+        })
+      },
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onCancel() {},
+    })
+  }
   function getPushList(): void {
     dataSource.value = []
     loading.value = true
@@ -187,6 +244,10 @@
   }
   function play(pushItem: PushModel): void {
     console.log('播放')
+    if (typeof pushItem.mediaServerId == 'undefined') {
+      message.warn('播放失败: 缺少流媒体ID')
+      return
+    }
     loading.value = true
     playPushApi(pushItem.app, pushItem.stream, pushItem.mediaServerId)
       .then((streamInfo) => {
@@ -196,6 +257,18 @@
       .finally(() => {
         loading.value = false
       })
+  }
+  function edit(pushItem: PushModel): void {
+    editStreamPushRef.value.openModel(pushItem)
+  }
+  function deleteItem(pushItem: PushModel): void {
+    if (!pushItem.id) {
+      message.warn('删除失败: 缺少ID')
+    } else {
+      deletePushApi(parseInt(pushItem.id)).then(() => {
+        getPushList()
+      })
+    }
   }
   function stop(pushItem: PushModel): void {
     console.log('停止')

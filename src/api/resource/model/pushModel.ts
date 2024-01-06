@@ -2,26 +2,30 @@ import { BasicPageParams, BasicFetchResult } from '/@/api/model/baseModel'
 import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface PushModel extends RcTableProps {
+  //  名称
+  name?: string
   //  应用名
   app: string
   // 流id
   stream: string
-  // 观看总人数
-  totalReaderCount: string
-  // 产生源类型的字符串描述
-  originTypeStr: string
-  // 产生源的url
-  originUrl: string
-  // 存活时间，单位秒
-  aliveSecond: string
   // 使用的流媒体ID
-  mediaServerId: string
+  mediaServerId?: string
+  // 使用的服务ID
+  serverId?: string
   // 推流时间
-  pushTime: string
+  pushTime?: string
   // 是否正在推流
-  pushIng: boolean
+  pushIng?: boolean
   // 是否自己平台的推流
-  self: boolean
+  self?: boolean
+  // 国标ID
+  gbId: string
+  // 经度
+  longitude: number
+  // 纬度
+  latitude: number
+  // 状态
+  status?: boolean
 }
 
 export type PushListResultModel = BasicFetchResult<PushModel>

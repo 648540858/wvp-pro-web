@@ -20,14 +20,24 @@ export function pushColumns(): ColumnsType {
       width: 200,
     },
     {
-      title: '流媒体',
-      dataIndex: 'mediaServerId',
+      title: '国标编号',
+      dataIndex: 'gbId',
       width: 200,
     },
     {
-      title: '国标编码',
-      dataIndex: 'gbId',
+      title: '位置',
+      dataIndex: 'position',
       width: 200,
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: 200,
+    },
+    {
+      title: '流媒体',
+      dataIndex: 'mediaServerId',
+      width: 100,
     },
     {
       title: '推流时间',
