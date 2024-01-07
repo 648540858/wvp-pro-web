@@ -15,7 +15,7 @@ export function pushColumns(): ColumnsType {
       width: 200,
     },
     {
-      title: '流id',
+      title: '流ID',
       dataIndex: 'stream',
       width: 200,
     },

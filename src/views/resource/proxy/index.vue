@@ -1,5 +1,5 @@
 <template>
-  <div id="channelList">
+  <div id="proxyList">
     <PageWrapper>
       <Transition>
         <a-table
@@ -13,21 +13,12 @@
               <div style="display: inline-flex">
                 <a-space>
                   <a-button
-                      type="primary"
-                      preIcon="ant-design:reload-outlined"
-                      size="small"
-                      @click="addStream"
+                    type="primary"
+                    preIcon="ant-design:reload-outlined"
+                    size="small"
+                    @click="addStream"
                   >
                     添加
-                  </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small" @click="importChannel">
-                    通道导入
-                  </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small" @click="importChannel">
-                    下载模板
-                  </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small" @click="batchDel">
-                    批量移除
                   </a-button>
                 </a-space>
               </div>
@@ -65,7 +56,11 @@
                     style="width: 10rem"
                   >
                     <a-select-option value="">全部</a-select-option>
-                    <a-select-option v-for="item in mediaServerList" :value="item.id">
+                    <a-select-option
+                      v-for="item in mediaServerList"
+                      :value="item.id"
+                      :key="item.id"
+                    >
                       {{ item.id }}
                     </a-select-option>
                   </a-select>
@@ -74,10 +69,6 @@
             </div>
           </template>
           <template #bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'pushIng'">
-              <a-tag color="processing" v-if="record.pushIng"> 正在推流 </a-tag>
-              <a-tag v-if="!record.pushIng">已停止</a-tag>
-            </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button type="link" size="small" @click="play(record)">播放</a-button>
               <a-popconfirm
@@ -88,8 +79,9 @@
               >
                 <a-button type="link" danger size="small" v-if="!!record.streamId">移除</a-button>
               </a-popconfirm>
+              <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
-                云端录像
+                录像
               </a-button>
             </template>
           </template>
@@ -113,10 +105,10 @@
     Space as ASpace,
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
-  import { PushModel } from '/@/api/resource/model/pushModel'
-  import { MediaServer } from '/src/api/mediaServer/model/MediaServer'
+  import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
   import { playPushApi, queryPushListApi, stopPushApi } from '/@/api/resource/push'
   import { proxyColumns } from '/@/views/resource/proxy/columns'
+  import {ProxyModel} from "/@/api/resource/model/proxyModel";
 
   const playRef = ref()
   /**
@@ -124,7 +116,7 @@
    */
   let loading = ref(false)
   const columns = proxyColumns()
-  let dataSource = ref<PushModel[]>([])
+  let dataSource = ref<ProxyModel[]>([])
   let mediaServerList = ref<MediaServer[]>([])
   let tablePage = ref(1)
   let tablePageSize = ref(15)
@@ -156,8 +148,6 @@
     getPushList()
   }
   function addStream(): void {}
-  function importChannel(): void {}
-  function batchDel(): void {}
   function getPushList(): void {
     dataSource.value = []
     loading.value = true
@@ -175,23 +165,20 @@
         loading.value = false
       })
   }
-  function play(pushItem: PushModel): void {
+  function play(proxyModel: ProxyModel): void {
     console.log('播放')
     loading.value = true
-    playPushApi(pushItem.app, pushItem.stream, pushItem.mediaServerId)
+    playPushApi(proxyModel.app, proxyModel.stream, proxyModel.mediaServerId)
       .then((streamInfo) => {
         console.log(streamInfo)
-        playRef.value.play(streamInfo, pushItem.app + '/' + pushItem.stream, true)
+        playRef.value.play(streamInfo, proxyModel.app + '/' + proxyModel.stream, true)
       })
       .finally(() => {
         loading.value = false
       })
   }
-  function stop(pushItem: PushModel): void {
+  function stop(proxyModel: ProxyModel): void {
     console.log('停止')
-    stopPushApi(pushItem.app, pushItem.stream).then(() => {
-      getPushList()
-    })
   }
   function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
   // 初始化获取数据

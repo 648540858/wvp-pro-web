@@ -15,7 +15,7 @@ export function proxyColumns(): ColumnsType {
       width: 200,
     },
     {
-      title: '流id',
+      title: '流ID',
       dataIndex: 'stream',
       width: 200,
     },
@@ -25,8 +25,13 @@ export function proxyColumns(): ColumnsType {
       width: 200,
     },
     {
-      title: '流媒体',
-      dataIndex: 'mediaServerId',
+      title: '类型',
+      dataIndex: 'type',
+      width: 200,
+    },
+    {
+      title: '源地址',
+      dataIndex: 'url',
       width: 200,
     },
     {
@@ -38,16 +43,6 @@ export function proxyColumns(): ColumnsType {
       title: '启用',
       dataIndex: 'enable',
       width: 100,
-    },
-    {
-      title: '推流时间',
-      dataIndex: 'pushTime',
-      width: 150,
-    },
-    {
-      title: '正在推流',
-      dataIndex: 'pushIng',
-      width: 150,
     },
     {
       title: '音频',

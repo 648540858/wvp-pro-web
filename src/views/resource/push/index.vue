@@ -106,7 +106,6 @@
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button type="link" size="small" @click="play(record)"> 播放 </a-button>
-
               <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
               <a-popconfirm
                 title="确定删除?"
