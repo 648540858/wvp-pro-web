@@ -65,22 +65,7 @@
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                   <span style="width: 5rem">流媒体:</span>
-                  <a-select
-                    v-model:value="mediaServerId"
-                    placeholder="请选择"
-                    size="small"
-                    @change="getPushList"
-                    style="width: 10rem"
-                  >
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option
-                      v-for="item in mediaServerList"
-                      :value="item.id"
-                      :key="item.id"
-                    >
-                      {{ item.id }}
-                    </a-select-option>
-                  </a-select>
+                  <MediaServerSelect v-model="mediaServerId" @change="getPushList" />
                 </div>
               </div>
             </div>
@@ -157,6 +142,7 @@
   } from '/@/api/resource/push'
   import EditStreamPush from '/@/views/common/editStreamPush/index.vue'
   import UploadStreamPush from '/@/views/common/uploadStreamPush/index.vue'
+  import MediaServerSelect from '/@/views/common/mediaServerSelect/index.vue'
 
   const playRef = ref()
   const editStreamPushRef = ref()

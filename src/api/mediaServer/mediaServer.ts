@@ -1,8 +1,9 @@
 import { defHttp } from '/@/utils/http/axios'
-import {MediaServer} from "/@/api/mediaServer/model/MediaServer";
+import { FFmpegCmdInfo, MediaServer} from '/@/api/mediaServer/model/MediaServer'
 
 enum Api {
   ONLINE_LIST = '/api/server/media_server/online/list',
+  FFMPEG_CMD_LIST = '/api/server/media_server/ffmpeg_cmd/list',
 }
 
 export const queryOnlineMediaServerListApi = () =>
@@ -11,5 +12,17 @@ export const queryOnlineMediaServerListApi = () =>
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
+    },
+  })
+
+export const queryFfmpegCMDListApi = (mediaServerId: string) =>
+  defHttp.get<FFmpegCmdInfo[]>({
+    url: Api.FFMPEG_CMD_LIST,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+    params: {
+      mediaServerId: mediaServerId,
     },
   })

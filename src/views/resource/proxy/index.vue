@@ -114,6 +114,7 @@
       </Transition>
     </PageWrapper>
     <Player ref="playRef" />
+    <EditStreamProxy ref="editStreamProxyRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -137,8 +138,10 @@
   import { ProxyModel } from '/@/api/resource/model/proxyModel'
   import { queryProxyListApi, removeProxyApi } from '/@/api/resource/proxy'
   import Icon from '/@/components/Icon/src/Icon.vue'
+  import EditStreamProxy from '/@/views/common/editStreamProxy/index.vue'
 
   const playRef = ref()
+  const editStreamProxyRef = ref()
   /**
    * 定义变量
    */
@@ -175,7 +178,9 @@
     console.log('pageChange')
     getProxyList()
   }
-  function addStream(): void {}
+  function addStream(): void {
+    editStreamProxyRef.value.openModel()
+  }
   function getProxyList(): void {
     dataSource.value = []
     loading.value = true
@@ -195,14 +200,6 @@
   function play(proxyModel: ProxyModel): void {
     console.log('播放')
     loading.value = true
-    playPushApi(proxyModel.app, proxyModel.stream, proxyModel.mediaServerId)
-      .then((streamInfo) => {
-        console.log(streamInfo)
-        playRef.value.play(streamInfo, proxyModel.app + '/' + proxyModel.stream, true)
-      })
-      .finally(() => {
-        loading.value = false
-      })
   }
   function copy(content: string): void {
     navigator.clipboard.writeText(content).then(() => {
@@ -219,7 +216,9 @@
       getProxyList()
     })
   }
-  function edit(proxyModel: ProxyModel): void {}
+  function edit(proxyModel: ProxyModel): void {
+    editStreamProxyRef.value.openModel(proxyModel)
+  }
   function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
   // 初始化获取数据
   getProxyList()
