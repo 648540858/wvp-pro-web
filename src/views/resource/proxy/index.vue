@@ -29,21 +29,21 @@
                     size="small"
                     v-model:value="searchSrt"
                     placeholder="请输入搜索内容"
-                    @change="getPushList"
+                    @change="getProxyList"
                   />
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
-                  <span style="width: 5rem">推流状态:</span>
+                  <span style="width: 5rem">状态:</span>
                   <a-select
-                    v-model:value="pushing"
+                    v-model:value="online"
                     placeholder="请选择"
                     size="small"
-                    @change="getPushList"
+                    @change="getProxyList"
                     style="width: 10rem"
                   >
                     <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="true">推流进行中</a-select-option>
-                    <a-select-option value="false">推流未进行</a-select-option>
+                    <a-select-option value="true">在线</a-select-option>
+                    <a-select-option value="false">离线</a-select-option>
                   </a-select>
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
@@ -52,7 +52,7 @@
                     v-model:value="mediaServerId"
                     placeholder="请选择"
                     size="small"
-                    @change="getPushList"
+                    @change="getProxyList"
                     style="width: 10rem"
                   >
                     <a-select-option value="">全部</a-select-option>
@@ -69,15 +69,40 @@
             </div>
           </template>
           <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'url'">
+              <a-button type="link" size="small" @click="copy(record.url)">
+                <Icon icon="material-symbols:content-copy-outline" />
+              </a-button>
+              <span>{{ record.url }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'enable'">
+              <a-tag color="processing" v-if="record.enable">是</a-tag>
+              <a-tag v-if="!record.enable">否</a-tag>
+            </template>
+            <template v-if="column.dataIndex === 'enableAudio'">
+              <a-tag color="processing" v-if="record.enableAudio">是</a-tag>
+              <a-tag v-if="!record.enableAudio">否</a-tag>
+            </template>
+            <template v-if="column.dataIndex === 'enableMp4'">
+              <a-tag color="processing" v-if="record.enableMp4">是</a-tag>
+              <a-tag v-if="!record.enableMp4">否</a-tag>
+            </template>
+            <template v-if="column.dataIndex === 'noneReader'">
+              <a-tag color="processing" v-if="record.enableRemoveNoneReader">移除</a-tag>
+              <a-tag color="processing" v-if="record.enableDisableNoneReader">停用</a-tag>
+              <a-tag v-if="!record.enableDisableNoneReader && !record.enableRemoveNoneReader">
+                无操作
+              </a-tag>
+            </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button type="link" size="small" @click="play(record)">播放</a-button>
               <a-popconfirm
                 title="确定删除?"
                 ok-text="确定"
                 cancel-text="取消"
-                @confirm="stop(record)"
+                @confirm="remove(record)"
               >
-                <a-button type="link" danger size="small" v-if="!!record.streamId">移除</a-button>
+                <a-button type="link" danger size="small">移除</a-button>
               </a-popconfirm>
               <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
@@ -103,12 +128,15 @@
     Select as ASelect,
     SelectOption as ASelectOption,
     Space as ASpace,
+    message,
+    Popconfirm as APopconfirm,
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
   import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
-  import { playPushApi, queryPushListApi, stopPushApi } from '/@/api/resource/push'
   import { proxyColumns } from '/@/views/resource/proxy/columns'
-  import {ProxyModel} from "/@/api/resource/model/proxyModel";
+  import { ProxyModel } from '/@/api/resource/model/proxyModel'
+  import { queryProxyListApi, removeProxyApi } from '/@/api/resource/proxy'
+  import Icon from '/@/components/Icon/src/Icon.vue'
 
   const playRef = ref()
   /**
@@ -135,26 +163,25 @@
     onChange: pageChange,
   }))
   let searchSrt = ref<string>('')
-  let pushing = ref<string>('')
+  let online = ref<string>('')
   let mediaServerId = ref<string>('')
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
     console.log('pageSizeChange')
-    getPushList()
+    getProxyList()
   }
   function pageChange(page: number): void {
     tablePage.value = page
     console.log('pageChange')
-    getPushList()
+    getProxyList()
   }
   function addStream(): void {}
-  function getPushList(): void {
+  function getProxyList(): void {
     dataSource.value = []
     loading.value = true
-    queryPushListApi({
+    queryProxyListApi({
       query: searchSrt.value,
-      pushing: pushing.value === '' ? null : pushing.value,
-      mediaServerId: mediaServerId.value,
+      online: online.value == 'true',
       page: tablePage.value,
       count: tablePageSize.value,
     })
@@ -177,10 +204,23 @@
         loading.value = false
       })
   }
-  function stop(proxyModel: ProxyModel): void {
-    console.log('停止')
+  function copy(content: string): void {
+    navigator.clipboard.writeText(content).then(() => {
+      message.info('复制成功')
+    })
   }
+  function remove(proxyModel: ProxyModel): void {
+    console.log(proxyModel)
+    console.log(proxyModel.id)
+    if (typeof proxyModel.id == 'undefined') {
+      return
+    }
+    removeProxyApi(parseInt(proxyModel.id)).then(() => {
+      getProxyList()
+    })
+  }
+  function edit(proxyModel: ProxyModel): void {}
   function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
   // 初始化获取数据
-  getPushList()
+  getProxyList()
 </script>

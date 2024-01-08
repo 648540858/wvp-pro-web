@@ -6,33 +6,27 @@ export function proxyColumns(): ColumnsType {
       title: '名称',
       dataIndex: 'name',
       fixed: 'left',
-      width: 200,
+      ellipsis: true,
     },
     {
       title: '应用名',
       dataIndex: 'app',
       fixed: 'left',
-      width: 200,
     },
     {
       title: '流ID',
       dataIndex: 'stream',
-      width: 200,
-    },
-    {
-      title: '流地址',
-      dataIndex: 'url',
-      width: 200,
     },
     {
       title: '类型',
       dataIndex: 'type',
-      width: 200,
+      width: 100,
     },
     {
       title: '源地址',
       dataIndex: 'url',
       width: 200,
+      ellipsis: true,
     },
     {
       title: '国标编码',
@@ -42,32 +36,29 @@ export function proxyColumns(): ColumnsType {
     {
       title: '启用',
       dataIndex: 'enable',
-      width: 100,
     },
     {
       title: '音频',
       dataIndex: 'enableAudio',
-      width: 150,
     },
     {
       title: '录制',
       dataIndex: 'enableMp4',
-      width: 150,
     },
     {
       title: '无人观看',
       dataIndex: 'noneReader',
-      width: 150,
+      width: 100,
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
-      width: 150,
+      width: 200,
     },
     {
       title: '操作',
       dataIndex: 'operation',
-      width: 400,
+      width: 250,
       fixed: 'right',
     },
   ]

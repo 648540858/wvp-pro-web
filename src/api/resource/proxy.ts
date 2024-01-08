@@ -6,6 +6,7 @@ enum Api {
   // 获取所属的行政区划下的行政区划
   LIST = '/api/proxy/list',
   PLAY = '/api/proxy/getPlayUrl',
+  DEL = '/api/proxy/delete/id',
   STOP = '/api/proxy/stop',
   DELETE = '/api/proxy/delete',
   ADD = '/api/proxy/add',
@@ -22,16 +23,18 @@ export const queryProxyListApi = (param: ProxyListParams) =>
       ignoreCancelToken: true,
     },
   })
-export const addPushApi = (proxyModel: ProxyModel) =>
-  defHttp.post<void>({
-    url: Api.ADD,
-    params: proxyModel,
+export const removeProxyApi = (id: number) =>
+  defHttp.delete<void>({
+    url: Api.DEL,
+    params: {
+      id: id,
+    },
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
     },
   })
-export const playPushApi = (app: string, stream: string, mediaServerId: string) =>
+export const playProxyApi = (app: string, stream: string, mediaServerId: string) =>
   defHttp.get<StreamInfo>({
     url: Api.PLAY,
     params: {
@@ -44,18 +47,17 @@ export const playPushApi = (app: string, stream: string, mediaServerId: string) 
       ignoreCancelToken: true,
     },
   })
-export const stopPushApi = (app: string, stream: string) =>
-  defHttp.get<void>({
-    url: Api.STOP,
-    params: {
-      app: app,
-      stream: stream,
-    },
+export const addPushApi = (proxyModel: ProxyModel) =>
+  defHttp.post<void>({
+    url: Api.ADD,
+    params: proxyModel,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
     },
   })
+
+
 export const updatePushApi = (pushModel: ProxyModel) =>
   defHttp.post<void>({
     url: Api.UPDATE,

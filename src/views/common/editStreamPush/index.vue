@@ -64,7 +64,7 @@
   const edit = ref<boolean>(false)
   const title = ref<string>('')
   const channelCodeRef = ref()
-  const pushModel = ref<PushModel>({
+  const pushInitModel: PushModel = {
     //  名称
     name: '',
     //  应用名
@@ -79,7 +79,8 @@
     latitude: 0,
     // 状态
     status: false,
-  })
+  }
+  const pushModel = ref<PushModel>(pushInitModel)
 
   let endFnCallback: Function
   const openModel = (pushModelParam: PushModel, endFn: Function) => {
@@ -92,22 +93,7 @@
     } else {
       title.value = '添加推流'
       edit.value = false
-      pushModel.value = {
-        //  名称
-        name: '',
-        //  应用名
-        app: '',
-        // 流id
-        stream: '',
-        // 国标ID
-        gbId: '',
-        // 经度
-        longitude: 0,
-        // 纬度
-        latitude: 0,
-        // 状态
-        status: false,
-      }
+      pushModel.value = pushInitModel
     }
   }
   const closeModel = () => {

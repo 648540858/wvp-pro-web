@@ -2,6 +2,8 @@ import { BasicPageParams, BasicFetchResult } from '/@/api/model/baseModel'
 import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface ProxyModel extends RcTableProps {
+  //  类型
+  type: string
   //  名称
   name?: string
   //  应用名
@@ -10,6 +12,8 @@ export interface ProxyModel extends RcTableProps {
   stream: string
   // 使用的流媒体ID
   mediaServerId?: string
+  // ffmpeg模板KEY
+  ffmpegCmdKey?: string
   // 使用的服务ID
   url: string
   // 创建时间
@@ -40,5 +44,5 @@ export type ProxyListResultModel = BasicFetchResult<ProxyModel>
 
 export interface ProxyListParams extends BasicPageParams {
   query: string | null | undefined
-  online: string | null | undefined
+  online: boolean | null | undefined
 }
