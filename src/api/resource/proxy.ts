@@ -10,6 +10,7 @@ enum Api {
   STOP = '/api/proxy/stop',
   DELETE = '/api/proxy/delete',
   ADD = '/api/proxy/add',
+  EDIT = '/api/proxy/edit',
   UPDATE = '/api/proxy/update',
   BATCH_DELETE = '/api/proxy/batchDelete',
 }
@@ -34,6 +35,25 @@ export const removeProxyApi = (id: number) =>
       ignoreCancelToken: true,
     },
   })
+
+export const addProxyApi = (proxyModel: ProxyModel) =>
+  defHttp.post<void>({
+    url: Api.ADD,
+    params: proxyModel,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const editProxyApi = (proxyModel: ProxyModel) =>
+  defHttp.post<void>({
+    url: Api.EDIT,
+    params: proxyModel,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
 export const playProxyApi = (app: string, stream: string, mediaServerId: string) =>
   defHttp.get<StreamInfo>({
     url: Api.PLAY,
@@ -47,15 +67,7 @@ export const playProxyApi = (app: string, stream: string, mediaServerId: string)
       ignoreCancelToken: true,
     },
   })
-export const addPushApi = (proxyModel: ProxyModel) =>
-  defHttp.post<void>({
-    url: Api.ADD,
-    params: proxyModel,
-    headers: {
-      // @ts-ignore
-      ignoreCancelToken: true,
-    },
-  })
+
 
 
 export const updatePushApi = (pushModel: ProxyModel) =>

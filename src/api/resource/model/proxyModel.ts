@@ -14,6 +14,8 @@ export interface ProxyModel extends RcTableProps {
   mediaServerId?: string
   // ffmpeg模板KEY
   ffmpegCmdKey?: string
+  // ffmpeg 命令超时时间，毫秒
+  timeoutMs?: number
   // 目标地址
   url: string
   // 使用的服务ID

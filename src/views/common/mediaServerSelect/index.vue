@@ -1,6 +1,11 @@
 <template>
   <div class="media-server-select">
-    <a-select placeholder="请选择" :size="size" @change="mediaServerIdChange" :value="modelValue">
+    <a-select
+      :size="size"
+      @change="mediaServerIdChange"
+      :placeholder="placeholder"
+      :value="modelValue"
+    >
       <a-select-option v-if="showAll" value="">全部</a-select-option>
       <a-select-option v-for="item in mediaServerList" :value="item.id" :key="item.id">
         {{ item.id }}
@@ -19,6 +24,11 @@
     modelValue: {
       type: String,
       required: false,
+    },
+    placeholder: {
+      type: String,
+      required: false,
+      default: '请选择节点',
     },
     showAll: {
       type: Boolean,

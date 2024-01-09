@@ -71,7 +71,7 @@
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'url'">
               <a-button type="link" size="small" @click="copy(record.url)">
-                <Icon icon="material-symbols:content-copy-outline" />
+                <Icon icon="tabler:copy" />
               </a-button>
               <span>{{ record.url }}</span>
             </template>

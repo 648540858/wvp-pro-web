@@ -8,90 +8,117 @@
     @cancel="closeModel"
     @ok="handleOk"
   >
-    <a-form
-      :model="proxyModel"
-      name="basic"
-      :label-col="{ span: 7 }"
-      autocomplete="off"
-      style="margin: 2rem auto 0 auto"
-    >
-      <div style="display: flex">
-        <div style="width: 50%; padding-right: 5rem">
-          <a-form-item label="名称" name="name">
-            <a-input v-model:value="proxyModel.name" style="width: 16rem" />
-          </a-form-item>
-          <a-form-item label="应用名" name="app">
-            <a-input
-              v-model:value="proxyModel.app"
-              style="width: 16rem"
-              :disabled="proxyModel.type == 'ffmpeg'"
-            />
-          </a-form-item>
-          <a-form-item label="流id" name="stream">
-            <a-input
-              v-model:value="proxyModel.stream"
-              style="width: 16rem"
-              :disabled="proxyModel.type == 'ffmpeg'"
-            />
-          </a-form-item>
-          <a-form-item label="国标ID" name="gbId">
-            <a-input-group compact style="width: 16rem">
+    <a-form :model="proxyModel" name="basic" autocomplete="off" style="margin: 0 auto">
+      <div style="padding: 2rem">
+        <div style="display: flex">
+          <div style="width: 50%">
+            <a-form-item label="类型" name="name" :label-col="{ span: 6 }">
+              <a-select
+                v-model:value="proxyModel.type"
+                placeholder="请选择代理类型"
+                style="width: 16rem"
+              >
+                <a-select-option value="default">默认</a-select-option>
+                <a-select-option value="ffmpeg">FFMPEG</a-select-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item label="名称" name="name" :label-col="{ span: 6 }">
+              <a-input v-model:value="proxyModel.name" placeholder="名称" style="width: 16rem" />
+            </a-form-item>
+            <a-form-item label="应用名" name="app" :label-col="{ span: 6 }">
               <a-input
-                v-model:value="proxyModel.gbId"
-                clearable
-                placeholder="国标ID"
-                style="width: calc(100% - 63px)"
+                v-model:value="proxyModel.app"
+                placeholder="应用名"
+                style="width: 16rem"
+                :disabled="proxyModel.type == 'ffmpeg'"
               />
-              <a-button @click="getChannelCode">生成</a-button>
-            </a-input-group>
-          </a-form-item>
-          <a-form-item label="经度" name="longitude">
-            <a-input v-model:value="proxyModel.longitude" style="width: 16rem" />
-          </a-form-item>
-          <a-form-item label="纬度" name="latitude">
-            <a-input v-model:value="proxyModel.latitude" style="width: 16rem" />
-          </a-form-item>
+            </a-form-item>
+            <a-form-item label="流id" name="stream" :label-col="{ span: 6 }">
+              <a-input
+                v-model:value="proxyModel.stream"
+                placeholder="流id"
+                style="width: 16rem"
+                :disabled="proxyModel.type == 'ffmpeg'"
+              />
+            </a-form-item>
+          </div>
+          <div style="width: 50%">
+            <a-form-item label="国标ID" name="gbId" :label-col="{ span: 6 }">
+              <a-input-group compact style="width: 17rem">
+                <a-input
+                  v-model:value="proxyModel.gbId"
+                  clearable
+                  placeholder="国标ID"
+                  style="width: calc(100% - 63px)"
+                />
+                <a-button @click="getChannelCode">生成</a-button>
+              </a-input-group>
+            </a-form-item>
+            <a-form-item label="经度" name="longitude" :label-col="{ span: 6 }">
+              <a-input
+                v-model:value="proxyModel.longitude"
+                placeholder="经度"
+                style="width: 17rem"
+              />
+            </a-form-item>
+            <a-form-item label="纬度" name="latitude" :label-col="{ span: 6 }">
+              <a-input
+                v-model:value="proxyModel.latitude"
+                placeholder="纬度"
+                style="width: 17rem"
+              />
+            </a-form-item>
+          </div>
         </div>
-        <div style="width: 50%; padding-right: 5rem">
-          <a-form-item label="类型" name="name">
-            <a-select
-              v-model:value="proxyModel.type"
-              placeholder="请选择代理类型"
-              style="width: 16rem"
-            >
-              <a-select-option value="default">默认</a-select-option>
-              <a-select-option value="ffmpeg">FFMPEG</a-select-option>
-            </a-select>
+        <div style="width: 100%">
+          <a-form-item label="拉流地址" name="url" :label-col="{ span: 3 }">
+            <a-input placeholder="视频源地址" v-model:value="proxyModel.url" />
           </a-form-item>
-
-          <a-form-item label="拉流地址" name="url">
-            <a-input v-model:value="proxyModel.url" style="width: 16rem" />
+          <a-form-item
+            label="超时时间"
+            name="timeoutMs"
+            :label-col="{ span: 3 }"
+            v-if="proxyModel.type == 'ffmpeg'"
+          >
+            <a-input placeholder="ffmpeg拉流的超时时间" v-model:value="proxyModel.timeoutMs" />
           </a-form-item>
-          <a-form-item label="超时时间:毫秒" name="timeoutMs" v-if="proxyModel.type == 'ffmpeg'">
-            <a-input v-model:value="proxyModel.timeoutMs" style="width: 16rem" />
-          </a-form-item>
-          <a-form-item label="节点选择" name="mediaServerId">
+          <a-form-item label="节点选择" name="mediaServerId" :label-col="{ span: 3 }">
             <MediaServerSelect
               v-model="proxyModel.mediaServerId"
               :show-all="false"
               size="default"
+              placeholder="请选择节点"
               @change="mediaServerIdChange"
-              style="width: 16rem"
             />
           </a-form-item>
-          <a-form-item label="命令模板" name="ffmpegCmdKey" v-if="proxyModel.type == 'ffmpeg'">
+          <a-form-item
+            label="命令模板"
+            name="ffmpegCmdKey"
+            :label-col="{ span: 3 }"
+            v-if="proxyModel.type == 'ffmpeg'"
+          >
             <a-select
+              style="width: calc(100% - 48px)"
               v-model:value="proxyModel.ffmpegCmdKey"
               placeholder="请选择模板"
-              style="width: 16rem"
             >
               <a-select-option v-for="item in cmdList" :value="item.key" :key="item.key">
-                {{item.value}}
+                {{ item.value }}
               </a-select-option>
             </a-select>
+            <a-button><Icon icon="tabler:copy" /></a-button>
           </a-form-item>
-          <a-form-item label="目标流地址" name="dstUrl" v-if="proxyModel.type == 'ffmpeg'">
-            <a-input v-model:value="proxyModel.dstUrl" style="width: 16rem" @change="dstUrlChange" />
+          <a-form-item
+            label="目标流地址"
+            name="dstUrl"
+            :label-col="{ span: 3 }"
+            v-if="proxyModel.type == 'ffmpeg'"
+          >
+            <a-input
+              placeholder="指向你所选择的节点的流地址，自动识别出应用名和流ID, 请注意与你选择的模板匹配"
+              v-model:value="proxyModel.dstUrl"
+              @change="dstUrlChange"
+            />
           </a-form-item>
         </div>
       </div>
@@ -105,16 +132,16 @@
     Modal as AModal,
     Form as AForm,
     FormItem as AFormItem,
-    Switch as ASwitch,
     Select as ASelect,
     SelectOption as ASelectOption,
   } from 'ant-design-vue'
   import ChannelCode from '/@/views/common/ChannelCode/index.vue'
-  import { addPushApi, updatePushApi } from '/@/api/resource/push'
   import { ProxyModel } from '/@/api/resource/model/proxyModel'
   import MediaServerSelect from '/@/views/common/mediaServerSelect/index.vue'
   import { queryFfmpegCMDListApi } from '/@/api/mediaServer/mediaServer'
   import { FFmpegCmdInfo } from '/@/api/mediaServer/model/MediaServer'
+  import Icon from '/@/components/Icon/src/Icon.vue'
+  import { addProxyApi, editProxyApi } from '/@/api/resource/proxy';
 
   const open = ref<boolean>(false)
   const edit = ref<boolean>(false)
@@ -146,12 +173,15 @@
     enableDisableNoneReader: false,
     // ffmpeg模板KEY
     ffmpegCmdKey: '',
+    // ffmpeg 命令超时时间，毫秒
+    timeoutMs: 15000,
     // 国标ID
     gbId: '',
     // 经度
     longitude: 0,
     // 纬度
     latitude: 0,
+    dstUrl: '',
   }
   const proxyModel = ref<ProxyModel>(proxyInitModel)
 
@@ -196,9 +226,8 @@
     channelCodeRef.value.openModel()
   }
   const handleOk = () => {
-    console.log('onBeforeUnmount')
     if (edit.value) {
-      updatePushApi(proxyModel.value)
+      editProxyApi(proxyModel.value)
         .then((result) => {
           console.log(result)
         })
@@ -210,7 +239,7 @@
           endFnCallback(proxyModel.value)
         })
     } else {
-      addPushApi(proxyModel.value)
+      addProxyApi(proxyModel.value)
         .then((result) => {
           console.log(result)
         })
