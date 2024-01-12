@@ -366,7 +366,7 @@
     } else {
       hideControlTab.value = false
     }
-    if (streamInfoParam.tracks.length > 0) {
+    if (streamInfoParam.tracks && streamInfoParam.tracks.length > 0) {
       for (let i = 0; i < streamInfoParam.tracks.length; i++) {
         if (streamInfoParam.tracks[i].codec_type == 0) {
           videoTrack.value = streamInfoParam.tracks[i]
@@ -558,7 +558,7 @@
     getMediaInfoApi(streamInfo.value.mediaServerId, streamInfo.value.app, streamInfo.value.stream)
       .then((result) => {
         let streamInfoParam = result as StreamInfo
-        if (streamInfoParam.tracks.length > 0) {
+        if (streamInfoParam.tracks && streamInfoParam.tracks.length > 0) {
           for (let i = 0; i < streamInfoParam.tracks.length; i++) {
             if (streamInfoParam.tracks[i].codec_type == 0) {
               videoTrack.value = streamInfoParam.tracks[i]

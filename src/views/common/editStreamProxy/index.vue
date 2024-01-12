@@ -120,6 +120,18 @@
               @change="dstUrlChange"
             />
           </a-form-item>
+          <a-form-item label="无人观看">
+            <a-radio-group v-model:value="noneReader" @change="noneReaderChange">
+              <a-radio value="1">停用并移除</a-radio>
+              <a-radio value="2">停用</a-radio>
+              <a-radio value="3">不做处理</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="其他选项">
+            <a-checkbox v-model:checked="proxyModel.enable">启用</a-checkbox>
+            <a-checkbox v-model:checked="proxyModel.enableAudio">开启音频</a-checkbox>
+            <a-checkbox v-model:checked="proxyModel.enableMp4">录像</a-checkbox>
+          </a-form-item>
         </div>
       </div>
     </a-form>
@@ -132,8 +144,12 @@
     Modal as AModal,
     Form as AForm,
     FormItem as AFormItem,
+    RadioGroup as ARadioGroup,
+    Radio as ARadio,
     Select as ASelect,
     SelectOption as ASelectOption,
+    Checkbox as ACheckbox,
+    CheckboxGroup as ACheckboxGroup,
   } from 'ant-design-vue'
   import ChannelCode from '/@/views/common/ChannelCode/index.vue'
   import { ProxyModel } from '/@/api/resource/model/proxyModel'
@@ -147,6 +163,7 @@
   const edit = ref<boolean>(false)
   const title = ref<string>('')
   const channelCodeRef = ref()
+  const noneReader = ref<string>('2')
   const cmdList = ref<FFmpegCmdInfo[]>([])
   const proxyInitModel: ProxyModel = {
     //  类型
@@ -162,7 +179,7 @@
     // 使用的服务ID
     url: '',
     // 是否启用
-    enable: false,
+    enable: true,
     // 是否启用音频
     enableAudio: false,
     // 是否录制
@@ -221,6 +238,18 @@
     const stream = pathname.substring(pathname.indexOf('/', 2) + 1)
     proxyModel.value.app = app
     proxyModel.value.stream = stream
+  }
+  const noneReaderChange = () => {
+    if (noneReader.value === '1') {
+      proxyModel.value.enableRemoveNoneReader = true
+      proxyModel.value.enableDisableNoneReader = false
+    } else if (noneReader.value === '2') {
+      proxyModel.value.enableRemoveNoneReader = false
+      proxyModel.value.enableDisableNoneReader = true
+    } else if (noneReader.value === '3') {
+      proxyModel.value.enableRemoveNoneReader = false
+      proxyModel.value.enableDisableNoneReader = false
+    }
   }
   const getChannelCode = () => {
     channelCodeRef.value.openModel()
