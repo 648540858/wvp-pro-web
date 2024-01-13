@@ -48,27 +48,16 @@
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                   <span style="width: 5rem">流媒体:</span>
-                  <a-select
-                    v-model:value="mediaServerId"
-                    placeholder="请选择"
-                    size="small"
-                    @change="getProxyList"
-                    style="width: 10rem"
-                  >
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option
-                      v-for="item in mediaServerList"
-                      :value="item.id"
-                      :key="item.id"
-                    >
-                      {{ item.id }}
-                    </a-select-option>
-                  </a-select>
+                  <MediaServerSelect v-model="mediaServerId" @change="getProxyList" />
                 </div>
               </div>
             </div>
           </template>
           <template #bodyCell="{ column, record }">
+            <template v-if="column.dataIndex === 'type'">
+              <span v-if="record.type == 'default'">直接代理</span>
+              <span v-if="record.type != 'default'">{{ record.type }}</span>
+            </template>
             <template v-if="column.dataIndex === 'url'">
               <a-button type="link" size="small" @click="copy(record.url)">
                 <Icon icon="tabler:copy" />
@@ -82,6 +71,10 @@
             <template v-if="column.dataIndex === 'enableAudio'">
               <a-tag color="processing" v-if="record.enableAudio">是</a-tag>
               <a-tag v-if="!record.enableAudio">否</a-tag>
+            </template>
+            <template v-if="column.dataIndex === 'status'">
+              <a-tag color="processing" v-if="record.status">在线</a-tag>
+              <a-tag v-if="!record.status">离线</a-tag>
             </template>
             <template v-if="column.dataIndex === 'enableMp4'">
               <a-tag color="processing" v-if="record.enableMp4">是</a-tag>
@@ -136,9 +129,11 @@
   import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
   import { proxyColumns } from '/@/views/resource/proxy/columns'
   import { ProxyModel } from '/@/api/resource/model/proxyModel'
-  import { queryProxyListApi, removeProxyApi } from '/@/api/resource/proxy'
+  import { playProxyApi, queryProxyListApi, removeProxyApi } from '/@/api/resource/proxy'
   import Icon from '/@/components/Icon/src/Icon.vue'
   import EditStreamProxy from '/@/views/common/editStreamProxy/index.vue'
+  import { StreamInfo } from '/@/api/model/baseModel'
+  import MediaServerSelect from '/@/views/common/mediaServerSelect/index.vue'
 
   const playRef = ref()
   const editStreamProxyRef = ref()
@@ -148,7 +143,6 @@
   let loading = ref(false)
   const columns = proxyColumns()
   let dataSource = ref<ProxyModel[]>([])
-  let mediaServerList = ref<MediaServer[]>([])
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
@@ -186,7 +180,7 @@
     loading.value = true
     queryProxyListApi({
       query: searchSrt.value,
-      online: online.value == 'true',
+      online: online.value == '' ? null : online.value == 'true',
       page: tablePage.value,
       count: tablePageSize.value,
     })
@@ -198,8 +192,18 @@
       })
   }
   function play(proxyModel: ProxyModel): void {
-    console.log('播放')
+    if (typeof proxyModel.id == 'undefined') {
+      message.error('播放失败： 数据错误')
+      return
+    }
     loading.value = true
+    playProxyApi(parseInt(proxyModel.id))
+      .then((streamInfoParam: StreamInfo) => {
+        playRef.value.play(streamInfoParam, proxyModel.name, true)
+      })
+      .finally(() => {
+        loading.value = false
+      })
   }
   function copy(content: string): void {
     navigator.clipboard.writeText(content).then(() => {

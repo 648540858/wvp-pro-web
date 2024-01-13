@@ -18,7 +18,7 @@
                 placeholder="请选择代理类型"
                 style="width: 16rem"
               >
-                <a-select-option value="default">默认</a-select-option>
+                <a-select-option value="default">直接代理</a-select-option>
                 <a-select-option value="ffmpeg">FFMPEG</a-select-option>
               </a-select>
             </a-form-item>
@@ -122,9 +122,9 @@
           </a-form-item>
           <a-form-item label="无人观看">
             <a-radio-group v-model:value="noneReader" @change="noneReaderChange">
-              <a-radio value="1">停用并移除</a-radio>
+              <a-radio value="1">移除</a-radio>
               <a-radio value="2">停用</a-radio>
-              <a-radio value="3">不做处理</a-radio>
+              <a-radio value="3">无操作</a-radio>
             </a-radio-group>
           </a-form-item>
           <a-form-item label="其他选项">
@@ -157,7 +157,8 @@
   import { queryFfmpegCMDListApi } from '/@/api/mediaServer/mediaServer'
   import { FFmpegCmdInfo } from '/@/api/mediaServer/model/MediaServer'
   import Icon from '/@/components/Icon/src/Icon.vue'
-  import { addProxyApi, editProxyApi } from '/@/api/resource/proxy';
+  import { addProxyApi, editProxyApi } from '/@/api/resource/proxy'
+  import { cloneDeep } from 'lodash-es'
 
   const open = ref<boolean>(false)
   const edit = ref<boolean>(false)
@@ -209,7 +210,14 @@
     if (proxyModelParam && proxyModelParam.id) {
       title.value = '编辑推流'
       edit.value = true
-      proxyModel.value = proxyModelParam
+      proxyModel.value = cloneDeep(proxyModelParam)
+      if (proxyModelParam.enableRemoveNoneReader) {
+        noneReader.value = '1'
+      } else if (proxyModelParam.enableDisableNoneReader) {
+        noneReader.value = '2'
+      } else {
+        noneReader.value = '3'
+      }
     } else {
       title.value = '添加推流'
       edit.value = false

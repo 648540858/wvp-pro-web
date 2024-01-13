@@ -12,6 +12,7 @@ enum Api {
   ADD = '/api/proxy/add',
   EDIT = '/api/proxy/edit',
   UPDATE = '/api/proxy/update',
+  STREAM = '/api/proxy/stream',
   BATCH_DELETE = '/api/proxy/batchDelete',
 }
 
@@ -54,21 +55,17 @@ export const editProxyApi = (proxyModel: ProxyModel) =>
       ignoreCancelToken: true,
     },
   })
-export const playProxyApi = (app: string, stream: string, mediaServerId: string) =>
+export const playProxyApi = (id: number) =>
   defHttp.get<StreamInfo>({
-    url: Api.PLAY,
+    url: Api.STREAM,
     params: {
-      app: app,
-      stream: stream,
-      mediaServerId: mediaServerId,
+      id: id,
     },
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
     },
   })
-
-
 
 export const updatePushApi = (pushModel: ProxyModel) =>
   defHttp.post<void>({

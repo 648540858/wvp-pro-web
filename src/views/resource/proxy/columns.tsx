@@ -42,13 +42,8 @@ export function proxyColumns(): ColumnsType {
       dataIndex: 'enableAudio',
     },
     {
-      title: '录制',
-      dataIndex: 'enableMp4',
-    },
-    {
-      title: '无人观看',
-      dataIndex: 'noneReader',
-      width: 100,
+      title: '状态',
+      dataIndex: 'status',
     },
     {
       title: '创建时间',

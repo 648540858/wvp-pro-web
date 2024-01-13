@@ -377,4 +377,7 @@
     height: 0px !important;
     opacity: 0;
   }
+  #container video {
+    max-height: 100%;
+  }
 </style>
