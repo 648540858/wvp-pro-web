@@ -1,6 +1,6 @@
 <template>
   <div id="channelList">
-    <PageWrapper>
+    <PageWrapper v-if="cloudRecordApp == ''">
       <Transition>
         <a-table
           :dataSource="dataSource"
@@ -101,7 +101,7 @@
                 <a-button type="link" danger size="small"> 移除 </a-button>
               </a-popconfirm>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
-                录像
+                云端录像
               </a-button>
             </template>
           </template>
@@ -111,6 +111,12 @@
     <Player ref="playRef" />
     <EditStreamPush ref="editStreamPushRef" />
     <UploadStreamPush ref="uploadStreamPushRef" />
+    <CloudRecordDetail
+      v-if="cloudRecordApp != ''"
+      :app="cloudRecordApp"
+      :stream="cloudRecordStream"
+      @close="closeCloudRecordDetail"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -143,6 +149,7 @@
   import EditStreamPush from '/@/views/common/editStreamPush/index.vue'
   import UploadStreamPush from '/@/views/common/uploadStreamPush/index.vue'
   import MediaServerSelect from '/@/views/common/mediaServerSelect/index.vue'
+  import CloudRecordDetail from "/@/views/cloudRecord/cloudRecordDetail/index.vue";
 
   const playRef = ref()
   const editStreamPushRef = ref()
@@ -157,6 +164,8 @@
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
+  let cloudRecordApp = ref<string>('')
+  let cloudRecordStream = ref<string>('')
   let state = reactive<{ selectedRowKeys: number[] }>({
     selectedRowKeys: [],
   })
@@ -255,13 +264,14 @@
       })
     }
   }
-  function stop(pushItem: PushModel): void {
-    console.log('停止')
-    stopPushApi(pushItem.app, pushItem.stream).then(() => {
-      getPushList()
-    })
+  function queryCloudRecords(pushItem: PushModel): void {
+    cloudRecordApp.value = pushItem.app
+    cloudRecordStream.value = pushItem.stream
   }
-  function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
+  const closeCloudRecordDetail = () => {
+    cloudRecordApp.value = ''
+    cloudRecordStream.value = ''
+  }
   // 初始化获取数据
   getPushList()
 </script>

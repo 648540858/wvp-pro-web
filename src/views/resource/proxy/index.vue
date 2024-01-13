@@ -1,6 +1,6 @@
 <template>
   <div id="proxyList">
-    <PageWrapper>
+    <PageWrapper v-if="cloudRecordApp == ''">
       <Transition>
         <a-table
           :dataSource="dataSource"
@@ -99,7 +99,7 @@
               </a-popconfirm>
               <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
-                录像
+                云端录像
               </a-button>
             </template>
           </template>
@@ -108,6 +108,12 @@
     </PageWrapper>
     <Player ref="playRef" />
     <EditStreamProxy ref="editStreamProxyRef" />
+    <CloudRecordDetail
+      v-if="cloudRecordApp != ''"
+      :app="cloudRecordApp"
+      :stream="cloudRecordStream"
+      @close="closeCloudRecordDetail"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -134,6 +140,7 @@
   import EditStreamProxy from '/@/views/common/editStreamProxy/index.vue'
   import { StreamInfo } from '/@/api/model/baseModel'
   import MediaServerSelect from '/@/views/common/mediaServerSelect/index.vue'
+  import CloudRecordDetail from "/@/views/cloudRecord/cloudRecordDetail/index.vue";
 
   const playRef = ref()
   const editStreamProxyRef = ref()
@@ -162,6 +169,8 @@
   let searchSrt = ref<string>('')
   let online = ref<string>('')
   let mediaServerId = ref<string>('')
+  let cloudRecordApp = ref<string>('')
+  let cloudRecordStream = ref<string>('')
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
     console.log('pageSizeChange')
@@ -223,7 +232,14 @@
   function edit(proxyModel: ProxyModel): void {
     editStreamProxyRef.value.openModel(proxyModel)
   }
-  function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
+  function queryCloudRecords(proxyModel: ProxyModel): void {
+    cloudRecordApp.value = proxyModel.app
+    cloudRecordStream.value = proxyModel.stream
+  }
+  const closeCloudRecordDetail = () => {
+    cloudRecordApp.value = ''
+    cloudRecordStream.value = ''
+  }
   // 初始化获取数据
   getProxyList()
 </script>
