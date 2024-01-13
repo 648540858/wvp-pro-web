@@ -39,7 +39,7 @@
                   lineHeight: '32px',
                 }"
               >
-                <a-button v-if="total !== recordList.length" @click="onLoadMore">加载更多</a-button>
+                <a-button v-if="total < recordList.length" @click="onLoadMore">加载更多</a-button>
               </div>
             </template>
             <a-list-item v-for="item in recordList">
@@ -168,6 +168,7 @@
   }
   const recordDateChange = () => {
     console.log(recordDate.value.format('YYYY-MM-DD'))
+    recordList.value = []
     getRecordList()
   }
   const back = () => {
@@ -226,6 +227,7 @@
     })
   }
   const onLoadMore = () => {
+    console.log(recordList.value.length)
     page++
     getRecordList()
   }
@@ -241,7 +243,7 @@
   .device-record-box {
     display: flex;
     width: 100%;
-    height: calc(100% - 24px);
+    height: calc(100% - 48px);
   }
   .info-box {
     width: 200px;

@@ -1,5 +1,5 @@
 <template>
-  <div id="proxyList">
+  <div id="proxyList" style="width: 100%; height: 100%">
     <PageWrapper v-if="cloudRecordApp == ''">
       <Transition>
         <a-table
