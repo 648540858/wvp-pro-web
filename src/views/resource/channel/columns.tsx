@@ -3,33 +3,28 @@ import { ColumnsType } from 'ant-design-vue/lib/table/interface'
 export function commonChannelColumns(): ColumnsType {
   return [
     {
-      title: '通道编号',
+      title: '编号',
       dataIndex: 'commonGbDeviceID',
       fixed: 'left',
       width: 200,
     },
     {
-      title: '通道名称',
+      title: '名称',
       dataIndex: 'commonGbName',
       width: 200,
     },
     {
-      title: '设备厂商',
+      title: '厂商',
       dataIndex: 'commonGbManufacturer',
       width: 200,
     },
     {
-      title: '行政区域',
-      dataIndex: 'commonGbCivilCode',
-      width: 200,
-    },
-    {
-      title: '安装地址',
+      title: '地址',
       dataIndex: 'commonGbAddress',
       width: 200,
     },
     {
-      title: '设备状态',
+      title: '状态',
       dataIndex: 'commonGbStatus',
       width: 100,
     },
@@ -39,7 +34,7 @@ export function commonChannelColumns(): ColumnsType {
       width: 150,
     },
     {
-      title: '云台类型',
+      title: '云台',
       dataIndex: 'commonGbPtzType',
       width: 150,
     },
@@ -54,9 +49,9 @@ export function commonChannelColumns(): ColumnsType {
       width: 150,
     },
     {
-      title: '来源类型',
+      title: '资源',
       dataIndex: 'type',
-      width: 150,
+      width: 200,
     },
     {
       title: '操作',

@@ -99,12 +99,14 @@ export interface CommonGbChannel extends RcTableProps {
 export type ChannelListResultModel = BasicFetchResult<CommonGbChannel>
 
 export interface ChannelListForGroupParams extends BasicPageParams {
-  query: string | null | undefined
-  type: string | null | undefined
-  inGroup: boolean | null | undefined
-  inRegion: boolean | null | undefined
-  groupDeviceId: string | null | undefined
-  regionDeviceId: string | null | undefined
+  query?: string | null | undefined
+  type?: string | null | undefined
+  inGroup?: boolean | null | undefined
+  inRegion?: boolean | null | undefined
+  groupDeviceId?: string | null | undefined
+  regionDeviceId?: string | null | undefined
+  ptzType?: string | null | undefined
+  online?: string | null | undefined
 }
 
 export interface UpdateCommonChannelToGroup extends RcTableProps {

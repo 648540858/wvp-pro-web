@@ -9,33 +9,65 @@
           :pagination="pagination"
         >
           <template #bodyCell="{ column, record }">
-            <!--            <template v-if="column.dataIndex === 'snap'">-->
-            <!--              <a-image-->
-            <!--                :src="getSnap(record)"-->
-            <!--                fallback="/resource/img/defaultSnap.png"-->
-            <!--                style="width: 3rem"-->
-            <!--              />-->
-            <!--            </template>-->
-            <template v-if="column.dataIndex === 'commonGbLongitudeAndLatitude'">
-              <span v-if="record.commonGbLongitude * record.commonGbLatitude > 0"
-                >{{ record.commonGbLongitude }},<br />{{ record.commonGbLatitude }}</span
-              >
-              <span v-if="record.longitude * record.latitude === 0">无</span>
-            </template>
             <template v-if="column.dataIndex === 'commonGbStatus'">
               <a-tag color="processing" v-if="record.commonGbStatus"> 在线 </a-tag>
               <a-tag v-if="!record.commonGbStatus">离线</a-tag>
             </template>
+            <template v-if="column.dataIndex === 'commonGbLongitudeAndLatitude'">
+              <span v-if="record.commonGbLongitude * record.commonGbLatitude > 0"
+                >{{ record.commonGbLongitude }},<br />{{ record.commonGbLatitude }}</span
+              >
+              <span
+                v-if="
+                  !record.commonGbLongitude ||
+                  !record.commonGbLatitude ||
+                  record.commonGbLongitude * record.commonGbLatitude === 0
+                "
+                >无</span
+              >
+            </template>
+            <template v-if="column.dataIndex === 'commonGbPtzType'">
+              <span v-if="![1, 2, 3, 4].includes(record.commonGbPtzType)"> 未知 </span>
+              <span v-if="record.commonGbPtzType == 1">球机</span>
+              <span v-if="record.commonGbPtzType == 2">半球</span>
+              <span v-if="record.commonGbPtzType == 3">固定枪机</span>
+              <span v-if="record.commonGbPtzType == 4">遥控枪机</span>
+            </template>
+            <template v-if="column.dataIndex === 'commonGbPositionType'">
+              <span v-if="![1, 2, 3, 4, 5, 6, 7, 8, 9, 10].includes(record.commonGbPositionType)">
+                未知
+              </span>
+              <span v-if="record.commonGbPositionType == 1">省际检查站</span>
+              <span v-if="record.commonGbPositionType == 2">党政机关</span>
+              <span v-if="record.commonGbPositionType == 3">车站码头</span>
+              <span v-if="record.commonGbPositionType == 4">中心广场</span>
+              <span v-if="record.commonGbPositionType == 5">体育场馆</span>
+              <span v-if="record.commonGbPositionType == 6">商业中心</span>
+              <span v-if="record.commonGbPositionType == 7">宗教场所</span>
+              <span v-if="record.commonGbPositionType == 8">校园周边</span>
+              <span v-if="record.commonGbPositionType == 9">治安复杂区域</span>
+              <span v-if="record.commonGbPositionType == 10">交通干线</span>
+            </template>
+            <template v-if="column.dataIndex === 'commonGbRoomType'">
+              <span v-if="![1, 2].includes(record.commonGbRoomType)"> 未知 </span>
+              <span v-if="record.commonGbRoomType == 1">室外</span>
+              <span v-if="record.commonGbRoomType == 2">室内</span>
+            </template>
+            <template v-if="column.dataIndex === 'type'">
+              <span v-if="record.type == '28181'">国标28181</span>
+              <span v-if="record.type == 'push'">推流</span>
+              <span v-if="record.type == 'proxy'">拉流代理</span>
+            </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button
-                :disabled="deviceId == null || !deviceOnline"
+                :disabled="!record.commonGbStatus"
                 type="link"
                 size="small"
                 @click="play(record)"
                 >播放</a-button
               >
               <a-button
-                :disabled="deviceId == null || !deviceOnline"
+                :disabled="!record.commonGbStatus"
                 type="link"
                 danger
                 size="small"
@@ -43,13 +75,14 @@
                 @click="stop(record)"
                 >停止</a-button
               >
+              <a-button type="link" size="small" @click="edit(record)"> 编辑 </a-button>
               <a-button
                 type="link"
                 size="small"
-                v-if="record.subCount > 0 || record.parental === 1"
-                @click="changeSubChannel(record)"
+                v-if="record.type == '28181'"
+                @click="queryDeviceRecords(record)"
               >
-                查看
+                国标录像
               </a-button>
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
                 云端录像
@@ -58,34 +91,57 @@
           </template>
           <template #title>
             <div style="width: 100%; display: inline-flex">
-              <a-button type="link" size="small" @click="back()" style="color: #000">
-                <template #icon>
-                  <ArrowLeftOutlined />
-                </template>
-              </a-button>
-              <BasicTitle>国标通道</BasicTitle>
-              <div style="margin-left: auto; display: inline-flex">
+              <div style="display: inline-flex">
+                <a-space>
+                  <a-button
+                    type="primary"
+                    preIcon="ant-design:reload-outlined"
+                    size="small"
+                    @click="addChannel"
+                  >
+                    添加
+                  </a-button>
+                </a-space>
+              </div>
+              <div style="margin-left: auto; display: inline-flex; align-items: center">
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                   <span style="width: 3rem">搜索:</span>
                   <a-input
                     size="small"
                     v-model:value="searchSrt"
                     placeholder="请输入搜索内容"
-                    @change="getDeviceChannelList"
+                    @change="getCommonGbChannelList"
                   />
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
-                  <span style="width: 5rem">通道类型:</span>
+                  <span style="width: 5rem">资源类型:</span>
                   <a-select
-                    v-model:value="channelType"
+                    v-model:value="resourceType"
                     placeholder="请选择"
                     size="small"
-                    @change="getDeviceChannelList"
-                    style="width: 5rem"
+                    @change="getCommonGbChannelList"
+                    style="width: 7rem"
                   >
                     <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="false">设备</a-select-option>
-                    <a-select-option value="true">子目录</a-select-option>
+                    <a-select-option value="28181">国标28181</a-select-option>
+                    <a-select-option value="push">推流</a-select-option>
+                    <a-select-option value="proxy">拉流代理</a-select-option>
+                  </a-select>
+                </div>
+                <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                  <span style="width: 5rem">云台类型:</span>
+                  <a-select
+                    v-model:value="ptzType"
+                    placeholder="请选择"
+                    size="small"
+                    @change="getCommonGbChannelList"
+                    style="width: 7rem"
+                  >
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">球机</a-select-option>
+                    <a-select-option value="2">半球</a-select-option>
+                    <a-select-option value="3">固定枪机</a-select-option>
+                    <a-select-option value="4">遥控枪机</a-select-option>
                   </a-select>
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
@@ -94,7 +150,7 @@
                     v-model:value="online"
                     placeholder="请选择"
                     size="small"
-                    @change="getDeviceChannelList"
+                    @change="getCommonGbChannelList"
                     style="width: 5rem"
                   >
                     <a-select-option value="">全部</a-select-option>
@@ -112,19 +168,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { deviceChannelColumns } from '/@/views/resource/gbResource/channelList/columns'
-  import {
-    deviceChannelListApi,
-    deviceSubChannelListApi,
-    playApi,
-    ptzCameraApi,
-    stopPlayApi,
-    updateDeviceChannelApi,
-  } from '/@/api/resource/gbResource'
-  import { DeviceChannel } from '/@/api/resource/model/gbResourceModel'
   import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
-  import { BasicTitle } from '/@/components/Basic'
   import {
     Table as ATable,
     Tag as ATag,
@@ -132,20 +177,20 @@
     Input as AInput,
     Select as ASelect,
     SelectOption as ASelectOption,
-    Image as AImage,
-    Switch as ASwitch,
     message,
   } from 'ant-design-vue'
-  import { ArrowLeftOutlined } from '@ant-design/icons-vue'
   import Player from '/@/views/common/player/index.vue'
+  import { commonChannelColumns } from '/@/views/resource/channel/columns'
+  import { CommonGbChannel } from '/@/api/resource/model/channelModel'
+  import { queryChannelList } from '/@/api/resource/channel'
 
   const playRef = ref()
   /**
    * 定义变量
    */
   let loading = ref(false)
-  const columns = deviceChannelColumns()
-  let dataSource = ref<DeviceChannel[]>([])
+  const columns = commonChannelColumns()
+  let dataSource = ref<CommonGbChannel[]>([])
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
@@ -162,146 +207,53 @@
     onShowSizeChange: pageSizeChange,
     onChange: pageChange,
   }))
-  const props = defineProps({
-    deviceId: {
-      type: String,
-      required: true,
-    },
-    deviceOnline: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-  })
-  const closeEmit = defineEmits(['close-device-channel'])
   let searchSrt = ref<string>('')
-  let channelType = ref<string>('')
+  let resourceType = ref<string>('')
+  let ptzType = ref<string>('')
   let online = ref<string>('')
-  let parentChannelId = ref<string>('')
-  function back() {
-    if (parentChannelId.value) {
-      parentChannelId.value = ''
-      pagination.value.total = 0
-      pagination.value.current = 1
-      getDeviceChannelList()
-    } else {
-      // 通知父组件
-      closeEmit('close-device-channel')
-    }
-  }
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
     console.log('pageSizeChange')
-    getDeviceChannelList()
+    getCommonGbChannelList()
   }
   function pageChange(page: number): void {
     tablePage.value = page
     console.log('pageChange')
-    getDeviceChannelList()
+    getCommonGbChannelList()
   }
-  function getDeviceChannelList(): void {
+  function getCommonGbChannelList(): void {
     dataSource.value = []
-    if (parentChannelId.value) {
-      loading.value = true
-      deviceSubChannelListApi(
-        {
-          page: tablePage.value,
-          count: tablePageSize.value,
-          query: searchSrt.value,
-          online: online.value,
-          channelType: channelType.value,
-          catalogUnderDevice: 'false',
-        },
-        props.deviceId,
-        parentChannelId.value,
-      )
-        .then((result) => {
-          console.log(result)
-          dataSource.value = result.list
-          tableTotal.value = result.total
-        })
-        .catch((exception) => {
-          console.error(exception)
-        })
-        .finally(() => {
-          loading.value = false
-        })
-    } else {
-      deviceChannelListApi(
-        {
-          page: tablePage.value,
-          count: tablePageSize.value,
-          query: searchSrt.value,
-          online: online.value,
-          channelType: channelType.value,
-          catalogUnderDevice: 'false',
-        },
-        props.deviceId,
-      )
-        .then((result) => {
-          console.log(result)
-          dataSource.value = result.list
-          tableTotal.value = result.total
-        })
-        .catch((exception) => {
-          console.error(exception)
-        })
-        .finally(() => {
-          loading.value = false
-        })
-    }
-  }
-  function getSnap(_deviceChannel: DeviceChannel): string {
-    return (
-      import.meta.env.VITE_GLOB_API_URL +
-      '/api/device/query/snap/' +
-      _deviceChannel.deviceId +
-      '/' +
-      _deviceChannel.channelId
-    )
-  }
-  function updateChannel(_deviceChannel: DeviceChannel): void {
-    updateDeviceChannelApi(_deviceChannel).catch((e) => {
-      message.info('修改是否接收音频失败： ' + e.message)
-    })
-  }
-  let playChannel: DeviceChannel
-  function play(_deviceChannel: DeviceChannel): void {
-    console.log('播放')
     loading.value = true
-    playChannel = _deviceChannel
-    playApi(_deviceChannel)
-      .then((streamInfo) => {
-        console.log(streamInfo)
-        _deviceChannel.streamId = streamInfo.stream
-        playRef.value.play(streamInfo, _deviceChannel.name)
+    queryChannelList({
+      page: tablePage.value,
+      count: tablePageSize.value,
+      query: searchSrt.value,
+      type: resourceType.value,
+      ptzType: ptzType.value,
+      online: online.value,
+    })
+      .then((result) => {
+        console.log(result)
+        dataSource.value = result.list
+        tableTotal.value = result.total
+      })
+      .catch((exception) => {
+        console.error(exception)
       })
       .finally(() => {
         loading.value = false
       })
   }
-  function stop(_deviceChannel: DeviceChannel): void {
-    console.log('播放')
-    stopPlayApi(_deviceChannel).then(() => {
-      _deviceChannel.streamId = ''
-    })
-  }
-  function changeSubChannel(_deviceChannel: DeviceChannel): void {
-    parentChannelId.value = _deviceChannel.channelId
-    pagination.value.total = 0
-    pagination.value.current = 1
-    getDeviceChannelList()
-  }
-  function queryRecords(_deviceChannel: DeviceChannel): void {}
-  function queryCloudRecords(_deviceChannel: DeviceChannel): void {}
-  function ptzCamera(comond: string, speed: number): void {
-    console.log('ptz===> ' + comond)
-    console.log('ptz===> ' + speed)
-    ptzCameraApi(playChannel.deviceId, playChannel.channelId, comond, speed).catch((e) => {
-      message.error(e)
-    })
-  }
+  function edit(channel: CommonGbChannel): void {}
+  let playChannel: CommonGbChannel
+  function play(channel: CommonGbChannel): void {}
+  function stop(channel: CommonGbChannel): void {}
+
+  function queryDeviceRecords(channel: CommonGbChannel): void {}
+  function queryCloudRecords(channel: CommonGbChannel): void {}
+  function addChannel(channel: CommonGbChannel): void {}
+  function ptzCamera(comond: string, speed: number): void {}
 
   // 初始化获取数据
-  getDeviceChannelList()
+  getCommonGbChannelList()
 </script>
