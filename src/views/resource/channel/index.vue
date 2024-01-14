@@ -75,7 +75,7 @@
                 @click="stop(record)"
                 >停止</a-button
               >
-              <a-button type="link" size="small" @click="edit(record)"> 编辑 </a-button>
+              <a-button type="link" size="small" @click="editChannel(record)"> 编辑 </a-button>
               <a-button
                 type="link"
                 size="small"
@@ -165,6 +165,7 @@
       </Transition>
     </PageWrapper>
     <Player ref="playRef" @ptzCamera="ptzCamera" />
+    <EditChannel ref="editChannelRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -180,11 +181,13 @@
     message,
   } from 'ant-design-vue'
   import Player from '/@/views/common/player/index.vue'
+  import EditChannel from '/@/views/common/editChannel/index.vue'
   import { commonChannelColumns } from '/@/views/resource/channel/columns'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
   import { queryChannelList } from '/@/api/resource/channel'
 
   const playRef = ref()
+  const editChannelRef = ref()
   /**
    * 定义变量
    */
@@ -244,14 +247,18 @@
         loading.value = false
       })
   }
-  function edit(channel: CommonGbChannel): void {}
   let playChannel: CommonGbChannel
   function play(channel: CommonGbChannel): void {}
   function stop(channel: CommonGbChannel): void {}
 
   function queryDeviceRecords(channel: CommonGbChannel): void {}
   function queryCloudRecords(channel: CommonGbChannel): void {}
-  function addChannel(channel: CommonGbChannel): void {}
+  function addChannel(): void {
+    editChannelRef.value.openModel()
+  }
+  function editChannel(channel: CommonGbChannel): void {
+    editChannelRef.value.openModel(channel)
+  }
   function ptzCamera(comond: string, speed: number): void {}
 
   // 初始化获取数据

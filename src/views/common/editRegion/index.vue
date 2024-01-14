@@ -62,7 +62,7 @@
   const openModel = (regionParam: Region, endFn: Function) => {
     open.value = true
     endFnCallback = endFn
-    if (regionParam.commonRegionId > 0) {
+    if (regionParam && regionParam.commonRegionId > 0) {
       title.value = '编辑区域'
       region.value = regionParam
     } else {

@@ -73,7 +73,7 @@
   const openModel = (groupParam: Group, endFn: Function) => {
     open.value = true
     endFnCallback = endFn
-    if (groupParam.commonGroupId > 0) {
+    if (groupParam && groupParam.commonGroupId > 0) {
       title.value = '编辑分组'
       deviceIdPrefix.value = groupParam.commonGroupDeviceId.substring(0, 10)
       deviceIdType.value = groupParam.commonGroupDeviceId.substring(10, 13)
