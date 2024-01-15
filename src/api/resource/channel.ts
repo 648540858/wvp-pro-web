@@ -1,17 +1,20 @@
 import { defHttp } from '/@/utils/http/axios'
 import {
   ChannelListForGroupParams,
-  ChannelListResultModel,
+  ChannelListResultModel, CommonGbChannel,
   UpdateCommonChannelToGroup,
   UpdateCommonChannelToRegion,
 } from '/@/api/resource/model/channelModel'
 import { IndustryCodeType } from '/@/api/resource/model/industryCodeType'
 import { DeviceType } from '/@/api/resource/model/deviceTypeModel'
 import { NetworkIdentificationType } from '/@/api/resource/model/networkIdentificationTypeModel'
+import Common from "/@/locales/lang/zh-CN/common";
 
 enum Api {
   // 查询分组下的通道
   LIST = '/api/channel/list',
+  // 更新通道
+  UPDATE = '/api/channel/update',
   // 查询所有的省
   QUERY_PROVINCE_LIST_IN_REGION = '/api/channel/region/province',
   // 查询省下的所有的市
@@ -44,10 +47,12 @@ export const queryChannelList = (params: ChannelListForGroupParams) =>
     },
   })
 
-export const queryProvinceListInGroup = () =>
-  defHttp.get<String[]>({
-    url: Api.QUERY_PROVINCE_LIST_IN_REGION,
-    params: {},
+export const updateApi = (commonGbChannel: CommonGbChannel) =>
+  defHttp.post<void>({
+    url: Api.UPDATE,
+    params: {
+      commonGbChannel: commonGbChannel,
+    },
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

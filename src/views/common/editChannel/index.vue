@@ -24,7 +24,7 @@
           <a-input
             v-model:value="channel.commonGbDeviceID"
             clearable
-            placeholder="编号"
+            placeholder="请输入编号"
             style="width: calc(100% - 64px)"
           />
           <a-button style="width: 64px" @click="getChannelCode">生成</a-button>
@@ -34,14 +34,7 @@
           name="commonGbName"
           :rules="[{ required: true, message: 'Please input your password!' }]"
         >
-          <a-input v-model:value="channel.commonGbName" />
-        </a-form-item>
-        <a-form-item
-          label="行政区域"
-          name="commonGbCivilCode"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
-          <a-input v-model:value="channel.commonGbCivilCode" />
+          <a-input v-model:value="channel.commonGbName" placeholder="请输入名称" />
         </a-form-item>
         <a-form-item label="状态" name="commonGbStatus">
           <a-switch
@@ -49,12 +42,6 @@
             checked-children="在线"
             un-checked-children="离线"
           />
-        </a-form-item>
-        <a-form-item label="经度" name="commonGbLongitude">
-          <a-input-number v-model:value="channel.commonGbLongitude" />
-        </a-form-item>
-        <a-form-item label="纬度" name="commonGbLatitude">
-          <a-input-number v-model:value="channel.commonGbLatitude" />
         </a-form-item>
         <a-form-item label="摄像机类型" name="commonGbPtzType">
           <a-select v-model:value="channel.commonGbPtzType" placeholder="请选择摄像机类型">
@@ -64,12 +51,38 @@
             <a-select-option title="遥控枪机" :value="4"> 遥控枪机 </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="资源类型" name="type">
-          <a-select v-model:value="channel.type" placeholder="请选择资源类型">
-            <a-select-option title="国标28181" value="28181"> 国标28181 </a-select-option>
-            <a-select-option title="推流" value="push"> 推流 </a-select-option>
-            <a-select-option title="拉流代理" value="proxy"> 拉流代理 </a-select-option>
-          </a-select>
+        <a-form-item label="经度" name="commonGbLongitude">
+          <a-input-number v-model:value="channel.commonGbLongitude" />
+        </a-form-item>
+        <a-form-item label="纬度" name="commonGbLatitude">
+          <a-input-number v-model:value="channel.commonGbLatitude" />
+        </a-form-item>
+        <a-form-item label="安装地址" name="commonGbAddress">
+          <a-input v-model:value="channel.commonGbAddress" placeholder="请输入安装地址" />
+        </a-form-item>
+        <a-form-item label="厂商" name="commonGbManufacturer">
+          <a-input v-model:value="channel.commonGbManufacturer" />
+        </a-form-item>
+        <a-form-item label="型号" name="commonGbModel">
+          <a-input v-model:value="channel.commonGbModel" />
+        </a-form-item>
+        <a-form-item label="归属" name="commonGbOwner">
+          <a-input v-model:value="channel.commonGbOwner" />
+        </a-form-item>
+      </div>
+      <div class="form-box">
+        <a-form-item label="警区" name="commonGbBlock">
+          <a-input v-model:value="channel.commonGbBlock" />
+        </a-form-item>
+
+        <a-form-item label="IP地址" name="commonGbIPAddress">
+          <a-input v-model:value="channel.commonGbIPAddress" />
+        </a-form-item>
+        <a-form-item label="端口" name="commonGbPort">
+          <a-input-number v-model:value="channel.commonGbPort" />
+        </a-form-item>
+        <a-form-item label="口令" name="commonGbPassword">
+          <a-input v-model:value="channel.commonGbPassword" />
         </a-form-item>
         <a-form-item label="位置类型" name="commonGbPositionType">
           <a-select v-model:value="channel.commonGbPositionType" placeholder="请选择摄像机类型">
@@ -103,8 +116,6 @@
             <a-select-option title="西北" :value="8"> 西北 </a-select-option>
           </a-select>
         </a-form-item>
-      </div>
-      <div class="form-box">
         <a-form-item label="用途" name="commonGbUseType">
           <a-select v-model:value="channel.commonGbUseType" placeholder="请选择用途">
             <a-select-option title="治安" :value="1"> 治安 </a-select-option>
@@ -125,11 +136,9 @@
             <a-select-option title="涉密" :value="1"> 涉密 </a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item
-          label="证书序列号"
-          name="commonGbCertNum"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
+      </div>
+      <div class="form-box">
+        <a-form-item label="证书序列号" name="commonGbCertNum">
           <a-input v-model:value="channel.commonGbCertNum" />
         </a-form-item>
         <a-form-item v-if="channel.commonGbCertNum" label="证书有效标识" name="commonGbCertNum">
@@ -201,52 +210,6 @@
           </a-select>
         </a-form-item>
       </div>
-      <div class="form-box">
-        <a-form-item
-          label="厂商"
-          name="commonGbManufacturer"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
-          <a-input v-model:value="channel.commonGbManufacturer" />
-        </a-form-item>
-        <a-form-item
-          label="型号"
-          name="commonGbModel"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
-          <a-input v-model:value="channel.commonGbModel" />
-        </a-form-item>
-        <a-form-item
-          label="归属"
-          name="commonGbOwner"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
-          <a-input v-model:value="channel.commonGbOwner" />
-        </a-form-item>
-        <a-form-item
-          label="警区"
-          name="commonGbBlock"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
-          <a-input v-model:value="channel.commonGbBlock" />
-        </a-form-item>
-        <a-form-item
-          label="安装地址"
-          name="commonGbAddress"
-          :rules="[{ required: true, message: 'Please input your password!' }]"
-        >
-          <a-input v-model:value="channel.commonGbAddress" />
-        </a-form-item>
-        <a-form-item label="IP地址" name="commonGbIPAddress">
-          <a-input v-model:value="channel.commonGbIPAddress" />
-        </a-form-item>
-        <a-form-item label="端口" name="commonGbPort">
-          <a-input-number v-model:value="channel.commonGbPort" />
-        </a-form-item>
-        <a-form-item label="口令" name="commonGbPassword">
-          <a-input v-model:value="channel.commonGbPassword" />
-        </a-form-item>
-      </div>
     </a-form>
   </a-modal>
   <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd" />
@@ -260,11 +223,12 @@
     Select as ASelect,
     InputNumber as AInputNumber,
     SelectOption as ASelectOption,
-    Switch as ASwitch,
+    Switch as ASwitch, message,
   } from 'ant-design-vue'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
   import { cloneDeep } from 'lodash-es'
   import ChannelCode from '/@/views/common/ChannelCode/index.vue'
+  import { updateApi } from '/@/api/resource/channel'
 
   const open = ref<boolean>(false)
   const title = ref<string>('')
@@ -313,7 +277,16 @@
     title.value = ''
   }
   const handleOk = () => {
-    endFnCallback()
+    if (channel.value.commonGbId > 0) {
+      updateApi(channel.value)
+        .catch((exception) => {
+          message.error(exception)
+        })
+        .finally(() => {
+          closeModel()
+          endFnCallback()
+        })
+    }
   }
   const getChannelCodeEnd = (code: string) => {
     channel.value.commonGbDeviceID = code

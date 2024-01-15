@@ -80,6 +80,7 @@
                 type="link"
                 size="small"
                 v-if="record.type == '28181'"
+                :disabled="!record.commonGbStatus"
                 @click="queryDeviceRecords(record)"
               >
                 国标录像
@@ -91,18 +92,6 @@
           </template>
           <template #title>
             <div style="width: 100%; display: inline-flex">
-              <div style="display: inline-flex">
-                <a-space>
-                  <a-button
-                    type="primary"
-                    preIcon="ant-design:reload-outlined"
-                    size="small"
-                    @click="addChannel"
-                  >
-                    添加
-                  </a-button>
-                </a-space>
-              </div>
               <div style="margin-left: auto; display: inline-flex; align-items: center">
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                   <span style="width: 3rem">搜索:</span>
