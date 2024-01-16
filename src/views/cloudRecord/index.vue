@@ -8,7 +8,7 @@
         :pagination="pagination"
       >
         <template #title>
-          <div style="width: 100%; display: flex">
+          <div style="width: 100%; display: inline-flex">
             <div style="margin-left: auto; display: inline-flex">
               <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                 <span style="width: 3rem">搜索:</span>
@@ -42,7 +42,7 @@
                   style="width: 10rem"
                 >
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option v-for="item in mediaServerList" :value="item.id">
+                  <a-select-option v-for="item in mediaServerList" :value="item.id" :key="item.id">
                     {{ item.id }}
                   </a-select-option>
                 </a-select>
@@ -81,12 +81,13 @@
     Select as ASelect,
     SelectOption as ASelectOption,
     RangePicker as ARangePicker,
+    message,
   } from 'ant-design-vue'
   import { CloudRecordItem } from '/@/api/cloudRecord/model/cloudRecordModel'
   import {
     queryCloudRecordListApi,
     getDownloadPathApi,
-    getPlayLiveApi
+    getPlayLiveApi,
   } from '/@/api/cloudRecord/cloudRecord'
   import dayjs, { Dayjs } from 'dayjs'
   import duration from 'dayjs/plugin/duration'
@@ -180,12 +181,19 @@
       })
   }
   function play(record: CloudRecordItem): void {
-    console.log(record)
+    if (!record.id) {
+      message.error('ID为空')
+      return
+    }
     getPlayLiveApi(parseInt(record.id)).then((streamInfo) => {
       playRef.value.play(streamInfo, record.fileName, true)
     })
   }
   function download(record: CloudRecordItem): void {
+    if (!record.id) {
+      message.error('ID为空')
+      return
+    }
     getDownloadPathApi(parseInt(record.id)).then((downloadInfo) => {
       let url
       if (location.protocol === 'https:') {
