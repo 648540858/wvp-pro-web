@@ -12,7 +12,7 @@ const dashboard: AppRouteModule = {
     orderNo: 10,
     icon: 'icon-park-outline:grid-nine',
     component: () => import('/@/views/realTimeVideo/index.vue'),
-    title: t('routes.realTimeVideo'),
+    title: t('routes.realTimeVideo.live'),
   },
   children: [
     {
@@ -21,7 +21,7 @@ const dashboard: AppRouteModule = {
       component: () => import('/@/views/realTimeVideo/index.vue'),
       meta: {
         // affix: true,
-        title: t('routes.realTimeVideo.realTimeVideo'),
+        title: t('routes.realTimeVideo.live'),
       },
     },
   ],
