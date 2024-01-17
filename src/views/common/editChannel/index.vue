@@ -52,37 +52,37 @@
           </a-select>
         </a-form-item>
         <a-form-item label="经度" name="commonGbLongitude">
-          <a-input-number v-model:value="channel.commonGbLongitude" />
+          <a-input-number placeholder="请输入经度" v-model:value="channel.commonGbLongitude" />
         </a-form-item>
         <a-form-item label="纬度" name="commonGbLatitude">
-          <a-input-number v-model:value="channel.commonGbLatitude" />
+          <a-input-number placeholder="请输入纬度" v-model:value="channel.commonGbLatitude" />
         </a-form-item>
         <a-form-item label="安装地址" name="commonGbAddress">
-          <a-input v-model:value="channel.commonGbAddress" placeholder="请输入安装地址" />
+          <a-input placeholder="请输入安装地址" v-model:value="channel.commonGbAddress" />
         </a-form-item>
         <a-form-item label="厂商" name="commonGbManufacturer">
-          <a-input v-model:value="channel.commonGbManufacturer" />
+          <a-input placeholder="请输入厂商" v-model:value="channel.commonGbManufacturer" />
         </a-form-item>
         <a-form-item label="型号" name="commonGbModel">
-          <a-input v-model:value="channel.commonGbModel" />
+          <a-input placeholder="请输入型号" v-model:value="channel.commonGbModel" />
         </a-form-item>
         <a-form-item label="归属" name="commonGbOwner">
-          <a-input v-model:value="channel.commonGbOwner" />
+          <a-input placeholder="请输入归属" v-model:value="channel.commonGbOwner" />
         </a-form-item>
       </div>
       <div class="form-box">
         <a-form-item label="警区" name="commonGbBlock">
-          <a-input v-model:value="channel.commonGbBlock" />
+          <a-input placeholder="请输入警区" v-model:value="channel.commonGbBlock" />
         </a-form-item>
 
         <a-form-item label="IP地址" name="commonGbIPAddress">
-          <a-input v-model:value="channel.commonGbIPAddress" />
+          <a-input placeholder="请输入IP地址" v-model:value="channel.commonGbIPAddress" />
         </a-form-item>
         <a-form-item label="端口" name="commonGbPort">
-          <a-input-number v-model:value="channel.commonGbPort" />
+          <a-input-number placeholder="请输入端口" v-model:value="channel.commonGbPort" />
         </a-form-item>
         <a-form-item label="口令" name="commonGbPassword">
-          <a-input v-model:value="channel.commonGbPassword" />
+          <a-input placeholder="请输入口令" v-model:value="channel.commonGbPassword" />
         </a-form-item>
         <a-form-item label="位置类型" name="commonGbPositionType">
           <a-select v-model:value="channel.commonGbPositionType" placeholder="请选择摄像机类型">
@@ -139,7 +139,7 @@
       </div>
       <div class="form-box">
         <a-form-item label="证书序列号" name="commonGbCertNum">
-          <a-input v-model:value="channel.commonGbCertNum" />
+          <a-input placeholder="请输入证书序列号" v-model:value="channel.commonGbCertNum" />
         </a-form-item>
         <a-form-item v-if="channel.commonGbCertNum" label="证书有效标识" name="commonGbCertNum">
           <a-select v-model:value="channel.commonGbCertifiable" placeholder="请选择证书有效标识">
@@ -182,10 +182,32 @@
           </a-select>
         </a-form-item>
         <a-form-item label="分辨率" name="commonGbResolution">
-          <a-input v-model:value="channel.commonGbResolution" />
+          <a-select
+            mode="multiple"
+            v-model:value="commonGbResolution"
+            placeholder="请选择支持的分辨率（可多选）"
+            @change="commonGbResolutionChange"
+          >
+            <a-select-option title="QCIF" value="1"> QCIF </a-select-option>
+            <a-select-option title="CIF" value="2"> CIF </a-select-option>
+            <a-select-option title="4CIF" value="3"> 4CIF </a-select-option>
+            <a-select-option title="D1" value="4"> D1 </a-select-option>
+            <a-select-option title="720P" value="5"> 720P </a-select-option>
+            <a-select-option title="1080P/I" value="6"> 1080P/I </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="下载倍速" name="commonGbDownloadSpeed">
-          <a-input v-model:value="channel.commonGbDownloadSpeed" />
+          <a-select
+            v-model:value="commonGbDownloadSpeed"
+            mode="multiple"
+            placeholder="请选择支持的下载倍速（可多选）"
+            @change="commonGbDownloadSpeedChange"
+          >
+            <a-select-option title="1" value="1"> 1 </a-select-option>
+            <a-select-option title="2" value="2"> 2 </a-select-option>
+            <a-select-option title="4" value="4"> 4 </a-select-option>
+            <a-select-option title="8" value="8"> 8 </a-select-option>
+          </a-select>
         </a-form-item>
         <a-form-item label="时域编码" name="commonGbSVCTimeSupportMode">
           <a-select
@@ -223,7 +245,8 @@
     Select as ASelect,
     InputNumber as AInputNumber,
     SelectOption as ASelectOption,
-    Switch as ASwitch, message,
+    Switch as ASwitch,
+    message,
   } from 'ant-design-vue'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
   import { cloneDeep } from 'lodash-es'
@@ -258,6 +281,8 @@
     typeId: '',
   }
   const channel = ref<CommonGbChannel>(initChannel)
+  const commonGbResolution = ref<string[]>([])
+  const commonGbDownloadSpeed = ref<string[]>([])
 
   let endFnCallback: Function
   const openModel = (channelParam: CommonGbChannel, endFn: Function) => {
@@ -266,6 +291,12 @@
     if (channelParam && channelParam.commonGbId > 0) {
       title.value = '编辑通道'
       channel.value = cloneDeep(channelParam)
+      if (channelParam.commonGbResolution) {
+        commonGbResolution.value = channelParam.commonGbResolution.split('/')
+      }
+      if (channelParam.commonGbDownloadSpeed) {
+        commonGbDownloadSpeed.value = channelParam.commonGbDownloadSpeed.split('/')
+      }
     } else {
       title.value = '添加通道'
       channel.value = initChannel
@@ -276,15 +307,26 @@
     open.value = false
     title.value = ''
   }
+  const commonGbResolutionChange = (val: number[]) => {
+    channel.value.commonGbResolution = val.join('/')
+  }
+  const commonGbDownloadSpeedChange = (val: number[]) => {
+    channel.value.commonGbDownloadSpeed = val.join('/')
+  }
   const handleOk = () => {
     if (channel.value.commonGbId > 0) {
       updateApi(channel.value)
+        .then(() => {
+          message.info('保存成功')
+        })
         .catch((exception) => {
           message.error(exception)
         })
         .finally(() => {
+          if (endFnCallback) {
+            endFnCallback()
+          }
           closeModel()
-          endFnCallback()
         })
     }
   }

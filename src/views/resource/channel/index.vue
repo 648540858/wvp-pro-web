@@ -88,6 +88,9 @@
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
                 云端录像
               </a-button>
+              <a-button type="link" size="small" @click="queryCloudRecords(record)">
+                关联资源
+              </a-button>
             </template>
           </template>
           <template #title>
@@ -173,7 +176,7 @@
   import EditChannel from '/@/views/common/editChannel/index.vue'
   import { commonChannelColumns } from '/@/views/resource/channel/columns'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
-  import { queryChannelList } from '/@/api/resource/channel'
+  import { playChannelApi, queryChannelList } from '/@/api/resource/channel';
 
   const playRef = ref()
   const editChannelRef = ref()
@@ -237,7 +240,21 @@
       })
   }
   let playChannel: CommonGbChannel
-  function play(channel: CommonGbChannel): void {}
+  function play(channel: CommonGbChannel): void {
+    playChannel = channel
+    loading.value = true
+    playChannelApi(channel.commonGbDeviceID)
+      .then((streamInfo) => {
+        console.log(streamInfo)
+        playRef.value.play(streamInfo, channel.commonGbName, channel.type != '28181')
+      })
+      .catch((error) => {
+        message.error('播放失败： ' + error)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
   function stop(channel: CommonGbChannel): void {}
 
   function queryDeviceRecords(channel: CommonGbChannel): void {}

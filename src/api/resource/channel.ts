@@ -1,14 +1,14 @@
 import { defHttp } from '/@/utils/http/axios'
 import {
   ChannelListForGroupParams,
-  ChannelListResultModel, CommonGbChannel,
+  ChannelListResultModel,
+  CommonGbChannel,
   UpdateCommonChannelToGroup,
   UpdateCommonChannelToRegion,
 } from '/@/api/resource/model/channelModel'
 import { IndustryCodeType } from '/@/api/resource/model/industryCodeType'
 import { DeviceType } from '/@/api/resource/model/deviceTypeModel'
 import { NetworkIdentificationType } from '/@/api/resource/model/networkIdentificationTypeModel'
-import Common from "/@/locales/lang/zh-CN/common";
 
 enum Api {
   // 查询分组下的通道
@@ -35,6 +35,8 @@ enum Api {
   UPDATE_TO_REGION = '/api/channel/region/update',
   // 移除区域信息
   REMOVE_FROM_REGION = '/api/channel/region/remove',
+  // 播放
+  PLAY = '/api/channel/play',
 }
 
 export const queryChannelList = (params: ChannelListForGroupParams) =>
@@ -50,8 +52,17 @@ export const queryChannelList = (params: ChannelListForGroupParams) =>
 export const updateApi = (commonGbChannel: CommonGbChannel) =>
   defHttp.post<void>({
     url: Api.UPDATE,
+    params: commonGbChannel,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const playChannelApi = (channelDeviceId: string) =>
+  defHttp.get<void>({
+    url: Api.PLAY,
     params: {
-      commonGbChannel: commonGbChannel,
+      channelDeviceId: channelDeviceId,
     },
     headers: {
       // @ts-ignore

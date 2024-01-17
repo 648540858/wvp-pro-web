@@ -10,8 +10,19 @@
         >
           <template #bodyCell="{ column, record }">
             <template v-if="column.dataIndex === 'timing'">
-              <a-tag color="processing">
-                {{ formatTime(record.timing) }}
+              <span>{{ formatTime(record.timing) }}</span>
+            </template>
+            <template v-if="column.dataIndex === 'result'">
+              <a-tag color="#87d068" v-if="record.result == '200 OK'">
+                {{ record.result }}
+              </a-tag>
+              <a-tag color="#f50" v-if="record.result == '500 INTERNAL_SERVER_ERROR'">
+                {{ record.result }}
+              </a-tag>
+              <a-tag
+                v-if="record.result != '200 OK' && record.result != '500 INTERNAL_SERVER_ERROR'"
+              >
+                {{ record.result }}
               </a-tag>
             </template>
             <template v-if="column.dataIndex === 'operation'">
