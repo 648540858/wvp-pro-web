@@ -182,7 +182,7 @@
     getProxyList()
   }
   function addStream(): void {
-    editStreamProxyRef.value.openModel()
+    editStreamProxyRef.value.openModel(null, getProxyList)
   }
   function getProxyList(): void {
     dataSource.value = []
@@ -230,7 +230,7 @@
     })
   }
   function edit(proxyModel: ProxyModel): void {
-    editStreamProxyRef.value.openModel(proxyModel)
+    editStreamProxyRef.value.openModel(proxyModel, getProxyList)
   }
   function queryCloudRecords(proxyModel: ProxyModel): void {
     cloudRecordApp.value = proxyModel.app
