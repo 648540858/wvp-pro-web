@@ -34,16 +34,12 @@ export function proxyColumns(): ColumnsType {
       width: 200,
     },
     {
-      title: '启用',
-      dataIndex: 'enable',
-    },
-    {
       title: '音频',
       dataIndex: 'enableAudio',
     },
     {
-      title: '状态',
-      dataIndex: 'status',
+      title: '推流状态',
+      dataIndex: 'pulling',
     },
     {
       title: '创建时间',

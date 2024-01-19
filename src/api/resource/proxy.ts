@@ -5,14 +5,13 @@ import {ProxyListParams, ProxyListResultModel, ProxyModel} from '/@/api/resource
 enum Api {
   // 获取所属的行政区划下的行政区划
   LIST = '/api/proxy/list',
-  PLAY = '/api/proxy/getPlayUrl',
   DEL = '/api/proxy/delete/id',
   STOP = '/api/proxy/stop',
   DELETE = '/api/proxy/delete',
   ADD = '/api/proxy/add',
   EDIT = '/api/proxy/edit',
   UPDATE = '/api/proxy/update',
-  STREAM = '/api/proxy/stream',
+  PLAY = '/api/proxy/play',
   BATCH_DELETE = '/api/proxy/batchDelete',
 }
 
@@ -57,7 +56,7 @@ export const editProxyApi = (proxyModel: ProxyModel) =>
   })
 export const playProxyApi = (id: number) =>
   defHttp.get<StreamInfo>({
-    url: Api.STREAM,
+    url: Api.PLAY,
     params: {
       id: id,
     },

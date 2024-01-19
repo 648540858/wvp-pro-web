@@ -72,9 +72,9 @@
               <a-tag color="processing" v-if="record.enableAudio">是</a-tag>
               <a-tag v-if="!record.enableAudio">否</a-tag>
             </template>
-            <template v-if="column.dataIndex === 'status'">
-              <a-tag color="processing" v-if="record.status">在线</a-tag>
-              <a-tag v-if="!record.status">离线</a-tag>
+            <template v-if="column.dataIndex === 'pulling'">
+              <a-tag color="processing" v-if="record.status">正在推流</a-tag>
+              <a-tag v-if="!record.status">已停止</a-tag>
             </template>
             <template v-if="column.dataIndex === 'enableMp4'">
               <a-tag color="processing" v-if="record.enableMp4">是</a-tag>

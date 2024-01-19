@@ -260,10 +260,10 @@
   function queryDeviceRecords(channel: CommonGbChannel): void {}
   function queryCloudRecords(channel: CommonGbChannel): void {}
   function addChannel(): void {
-    editChannelRef.value.openModel()
+    editChannelRef.value.openModel(null, getCommonGbChannelList)
   }
   function editChannel(channel: CommonGbChannel): void {
-    editChannelRef.value.openModel(channel)
+    editChannelRef.value.openModel(channel, getCommonGbChannelList)
   }
   function ptzCamera(comond: string, speed: number): void {}
 
