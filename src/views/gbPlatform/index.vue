@@ -1,6 +1,6 @@
 <template>
   <div id="platformList">
-    <PageWrapper v-if="cloudRecordApp == ''">
+    <PageWrapper>
       <Transition>
         <a-table
           :dataSource="dataSource"
@@ -8,7 +8,6 @@
           :loading="loading"
           :pagination="pagination"
           rowKey="id"
-          :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         >
           <template #title>
             <div style="width: 100%; display: inline-flex">
@@ -33,9 +32,6 @@
                     <a href="/resource/file/推流通道导入.zip" download="推流通道导入.zip">
                       下载模板
                     </a>
-                  </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small" @click="batchDel">
-                    批量移除
                   </a-button>
                 </a-space>
               </div>
@@ -86,7 +82,6 @@
               <a-tag v-if="!record.self">否</a-tag>
             </template>
             <template v-if="column.dataIndex === 'operation'">
-              <a-button type="link" size="small" @click="play(record)"> 播放 </a-button>
               <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
               <a-popconfirm
                 title="确定删除?"
@@ -94,11 +89,8 @@
                 cancel-text="取消"
                 @confirm="deleteItem(record)"
               >
-                <a-button type="link" danger size="small"> 移除 </a-button>
+                <a-button type="link" danger size="small"> 删除 </a-button>
               </a-popconfirm>
-              <a-button type="link" size="small" @click="queryCloudRecords(record)">
-                云端录像
-              </a-button>
             </template>
           </template>
         </a-table>
@@ -107,7 +99,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, reactive, ref } from 'vue'
+  import { computed, ref } from 'vue'
   import { PageWrapper } from '/@/components/Page'
   import {
     Table as ATable,
@@ -119,17 +111,7 @@
     Space as ASpace,
     Popconfirm as APopconfirm,
     message,
-    Modal,
   } from 'ant-design-vue'
-  import { PushModel } from '/@/api/resource/model/pushModel'
-  import { MediaServer } from '/@/api/mediaServer/model/MediaServer'
-  import {
-    batchDeletePushApi,
-    deletePushApi,
-    playPushApi,
-    queryPushListApi,
-    stopPushApi,
-  } from '/@/api/resource/push'
   import { platformColumns } from '/@/views/gbPlatform/columns';
   import { PlatformModel } from '/@/api/resource/model/platformModel';
 
@@ -142,11 +124,6 @@
   let tablePage = ref(1)
   let tablePageSize = ref(15)
   let tableTotal = ref(0)
-  let cloudRecordApp = ref<string>('')
-  let cloudRecordStream = ref<string>('')
-  let state = reactive<{ selectedRowKeys: number[] }>({
-    selectedRowKeys: [],
-  })
   const pagination = computed(() => ({
     // 表格分页的配置
     current: tablePage.value,
@@ -168,9 +145,6 @@
     console.log('pageSizeChange')
     getPlatformList()
   }
-  const onSelectChange = (selectedRowKeysParam: number[]) => {
-    state.selectedRowKeys = selectedRowKeysParam
-  }
   function pageChange(page: number): void {
     tablePage.value = page
     console.log('pageChange')
@@ -178,72 +152,25 @@
   }
   function addStream(): void {}
   function importChannel(): void {}
-  function batchDel(): void {
-    console.log(state.selectedRowKeys)
-    Modal.confirm({
-      title: '确认要删除这些推流吗?',
-      onOk() {
-        return batchDeletePushApi(state.selectedRowKeys).then((data) => {
-          getPlatformList()
-        })
-      },
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onCancel() {},
-    })
-  }
   function getPlatformList(): void {
     dataSource.value = []
     loading.value = true
-    queryPushListApi({
-      query: searchSrt.value,
-      pushing: pushing.value === '' ? null : pushing.value,
-      mediaServerId: mediaServerId.value,
-      page: tablePage.value,
-      count: tablePageSize.value,
-    })
-      .then((data) => {
-        dataSource.value = data.list
-      })
-      .finally(() => {
-        loading.value = false
-      })
+    // queryPushListApi({
+    //   query: searchSrt.value,
+    //   pushing: pushing.value === '' ? null : pushing.value,
+    //   mediaServerId: mediaServerId.value,
+    //   page: tablePage.value,
+    //   count: tablePageSize.value,
+    // })
+    //   .then((data) => {
+    //     dataSource.value = data.list
+    //   })
+    //   .finally(() => {
+    //     loading.value = false
+    //   })
   }
-  function play(pushItem: PushModel): void {
-    console.log('播放')
-    if (typeof pushItem.mediaServerId == 'undefined') {
-      message.warn('播放失败: 缺少流媒体ID')
-      return
-    }
-    loading.value = true
-    playPushApi(pushItem.app, pushItem.stream, pushItem.mediaServerId)
-      .then((streamInfo) => {
-        console.log(streamInfo)
-        playRef.value.play(streamInfo, pushItem.app + '/' + pushItem.stream, true)
-      })
-      .finally(() => {
-        loading.value = false
-      })
-  }
-  function edit(pushItem: PushModel): void {
-    editStreamPushRef.value.openModel(pushItem)
-  }
-  function deleteItem(pushItem: PushModel): void {
-    if (!pushItem.id) {
-      message.warn('删除失败: 缺少ID')
-    } else {
-      deletePushApi(parseInt(pushItem.id)).then(() => {
-        getPlatformList()
-      })
-    }
-  }
-  function queryCloudRecords(pushItem: PushModel): void {
-    cloudRecordApp.value = pushItem.app
-    cloudRecordStream.value = pushItem.stream
-  }
-  const closeCloudRecordDetail = () => {
-    cloudRecordApp.value = ''
-    cloudRecordStream.value = ''
-  }
+  function edit(platformModel: PlatformModel): void {}
+  function deleteItem(platformModel: PlatformModel): void {}
   // 初始化获取数据
   getPlatformList()
 </script>
