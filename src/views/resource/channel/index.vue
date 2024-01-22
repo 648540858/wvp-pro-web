@@ -88,9 +88,6 @@
               <a-button type="link" size="small" @click="queryCloudRecords(record)">
                 云端录像
               </a-button>
-              <a-button type="link" size="small" @click="queryCloudRecords(record)">
-                关联资源
-              </a-button>
             </template>
           </template>
           <template #title>
@@ -176,7 +173,7 @@
   import EditChannel from '/@/views/common/editChannel/index.vue'
   import { commonChannelColumns } from '/@/views/resource/channel/columns'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
-  import { playChannelApi, queryChannelList } from '/@/api/resource/channel';
+  import { playChannelApi, queryChannelList } from '/@/api/resource/channel'
 
   const playRef = ref()
   const editChannelRef = ref()

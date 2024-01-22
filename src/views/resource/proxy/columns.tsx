@@ -38,7 +38,7 @@ export function proxyColumns(): ColumnsType {
       dataIndex: 'enableAudio',
     },
     {
-      title: '推流状态',
+      title: '拉流状态',
       dataIndex: 'pulling',
     },
     {

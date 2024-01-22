@@ -17,7 +17,7 @@
                     type="primary"
                     preIcon="ant-design:reload-outlined"
                     size="small"
-                    @click="addStream"
+                    @click="addPlatform"
                   >
                     添加
                   </a-button>
@@ -48,15 +48,29 @@
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
                   <span style="width: 5rem">推流状态:</span>
                   <a-select
-                    v-model:value="pushing"
+                    v-model:value="online"
                     placeholder="请选择"
                     size="small"
                     @change="getPlatformList"
                     style="width: 10rem"
                   >
                     <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="true">推流进行中</a-select-option>
-                    <a-select-option value="false">推流未进行</a-select-option>
+                    <a-select-option value="true">在线</a-select-option>
+                    <a-select-option value="false">离线</a-select-option>
+                  </a-select>
+                </div>
+                <div style="display: inline-flex; margin-left: 2rem; align-items: center">
+                  <span style="width: 3rem">启用:</span>
+                  <a-select
+                    v-model:value="enable"
+                    placeholder="请选择"
+                    size="small"
+                    @change="getPlatformList"
+                    style="width: 10rem"
+                  >
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="true">启用</a-select-option>
+                    <a-select-option value="false">未启用</a-select-option>
                   </a-select>
                 </div>
               </div>
@@ -96,6 +110,7 @@
         </a-table>
       </Transition>
     </PageWrapper>
+    <EditPlatform ref="editPlatformRef"/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -112,12 +127,15 @@
     Popconfirm as APopconfirm,
     message,
   } from 'ant-design-vue'
-  import { platformColumns } from '/@/views/gbPlatform/columns';
-  import { PlatformModel } from '/@/api/resource/model/platformModel';
+  import { platformColumns } from '/@/views/gbPlatform/columns'
+  import { PlatformModel } from '/@/api/gbPlatform/model/platformModel'
+  import { queryPlatformListApi } from '/@/api/gbPlatform/gbPlatform'
+  import EditPlatform from '/@/views/common/editPlatform/index.vue'
 
   /**
    * 定义变量
    */
+  let editPlatformRef = ref()
   let loading = ref(false)
   const columns = platformColumns()
   let dataSource = ref<PlatformModel[]>([])
@@ -138,8 +156,8 @@
     onChange: pageChange,
   }))
   let searchSrt = ref<string>('')
-  let pushing = ref<string>('')
-  let mediaServerId = ref<string>('')
+  let online = ref<string>('')
+  let enable = ref<string>('')
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
     console.log('pageSizeChange')
@@ -150,26 +168,30 @@
     console.log('pageChange')
     getPlatformList()
   }
-  function addStream(): void {}
+  function addPlatform(): void {
+    editPlatformRef.value.openModel(null, getPlatformList)
+  }
   function importChannel(): void {}
   function getPlatformList(): void {
     dataSource.value = []
     loading.value = true
-    // queryPushListApi({
-    //   query: searchSrt.value,
-    //   pushing: pushing.value === '' ? null : pushing.value,
-    //   mediaServerId: mediaServerId.value,
-    //   page: tablePage.value,
-    //   count: tablePageSize.value,
-    // })
-    //   .then((data) => {
-    //     dataSource.value = data.list
-    //   })
-    //   .finally(() => {
-    //     loading.value = false
-    //   })
+    queryPlatformListApi({
+      query: searchSrt.value,
+      page: tablePage.value,
+      count: tablePageSize.value,
+      enable: enable.value,
+      online: online.value,
+    })
+      .then((data) => {
+        dataSource.value = data.list
+      })
+      .finally(() => {
+        loading.value = false
+      })
   }
-  function edit(platformModel: PlatformModel): void {}
+  function edit(platformModel: PlatformModel): void {
+    editPlatformRef.value.openModel(platformModel, getPlatformList)
+  }
   function deleteItem(platformModel: PlatformModel): void {}
   // 初始化获取数据
   getPlatformList()

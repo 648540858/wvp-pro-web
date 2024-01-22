@@ -12,11 +12,13 @@ export function platformColumns(): ColumnsType {
       title: '上级平台国标编号',
       dataIndex: 'serverGBId',
       fixed: 'left',
+      width: 200,
     },
     {
       title: '本平台国标编号',
       dataIndex: 'deviceGBId',
       fixed: 'left',
+      width: 200,
     },
     {
       title: '地址',
@@ -25,18 +27,11 @@ export function platformColumns(): ColumnsType {
     {
       title: '注册周期',
       dataIndex: 'expires',
-      width: 100,
     },
     {
       title: '心跳周期',
       dataIndex: 'keepTimeout',
-      width: 200,
       ellipsis: true,
-    },
-    {
-      title: '国标编码',
-      dataIndex: 'gbId',
-      width: 200,
     },
     {
       title: '协议',

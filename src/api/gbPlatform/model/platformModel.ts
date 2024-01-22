@@ -3,21 +3,23 @@ import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface PlatformModel extends RcTableProps {
   //  名称
-  name?: string
+  name: string
   //  是否启用
   enable: boolean
   // SIP服务国标编码
   serverGBId: string
   // SIP服务国标域
-  serverGBDomain?: string
+  serverGBDomain: string
   // SIP服务IP
-  serverIP?: string
+  serverIP: string
   // SIP服务端口
-  serverPort?: number
+  serverPort: number
+  // 设备国标编号
+  deviceGBId: string
   // 设备ip
-  deviceIp?: string
+  deviceIp: string
   // 设备端口
-  devicePort?: number
+  devicePort: number
   // SIP认证用户名
   username: string
   // SIP认证密码
@@ -45,19 +47,26 @@ export interface PlatformModel extends RcTableProps {
   // 已被订阅移动位置信息
   mobilePositionSubscribe?: boolean
   // 点播未推流的设备时是否使用redis通知拉起
-  startOfflinePush?: boolean
+  startOfflinePush: boolean
   // 目录分组-每次向上级发送通道信息时单个包携带的通道数量，取值1,2,4,8
-  catalogGroup?: number
+  catalogGroup: number
   // 是否作为消息通道
-  asMessageChannel?: boolean
+  asMessageChannel: boolean
   // 通道自动推送
-  autoPushChannel?: boolean
+  autoPushChannel: boolean
   // 是否共享所有通道
-  shareAllChannel?: boolean
+  shareAllChannel: boolean
   // 是否共享分组
-  shareGroup?: boolean
+  shareGroup: boolean
   // 是否共享区域
-  shareRegion?: boolean
+  shareRegion: boolean
+}
+
+export interface ServerInfo {
+  deviceIp: string
+  devicePort: number
+  username: string
+  password: string
 }
 
 export type PlatformModelResultModel = BasicFetchResult<PlatformModel>
