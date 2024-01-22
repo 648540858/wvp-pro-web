@@ -11,6 +11,7 @@ enum Api {
   ADD = '/api/push/add',
   UPDATE = '/api/push/update',
   BATCH_DELETE = '/api/push/batchDelete',
+  PREDICT_STREAM = '/api/push/predict',
 }
 
 export const queryPushListApi = (param: PushListParams) =>
@@ -83,6 +84,15 @@ export const batchDeletePushApi = (streamPushIds: number[]) =>
     params: {
       streamPushIds: streamPushIds,
     },
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const predictStreamUrlApi = (pushModel: PushModel) =>
+  defHttp.post<StreamInfo>({
+    url: Api.PREDICT_STREAM,
+    params: pushModel,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

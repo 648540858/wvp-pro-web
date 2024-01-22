@@ -19,10 +19,20 @@
         <a-input v-model:value="pushModel.name" style="width: 16rem" />
       </a-form-item>
       <a-form-item label="应用名" name="app">
-        <a-input v-model:value="pushModel.app" style="width: 16rem" :disabled="edit" />
+        <a-input
+          v-model:value="pushModel.app"
+          @change="predictStreamUrl"
+          style="width: 16rem"
+          :disabled="edit"
+        />
       </a-form-item>
       <a-form-item label="流id" name="stream">
-        <a-input v-model:value="pushModel.stream" style="width: 16rem" :disabled="edit" />
+        <a-input
+          v-model:value="pushModel.stream"
+          @change="predictStreamUrl"
+          style="width: 16rem"
+          :disabled="edit"
+        />
       </a-form-item>
       <a-form-item label="国标ID" name="gbId">
         <a-input-group compact style="width: 16rem">
@@ -44,6 +54,18 @@
       <a-form-item label="状态" name="status">
         <a-switch v-model:checked="pushModel.status" />
       </a-form-item>
+      <a-form-item label="RTSP示例" v-if="!edit">
+        <a-button v-if="rtspUrl" type="link" size="small" @click="copy(rtspUrl)">
+          <Icon icon="tabler:copy" />
+        </a-button>
+        <span>{{ rtspUrl }}</span>
+      </a-form-item>
+      <a-form-item label="RTMP示例" v-if="!edit">
+        <a-button v-if="rtmpUrl" type="link" size="small" @click="copy(rtspUrl)">
+          <Icon icon="tabler:copy" />
+        </a-button>
+        <span>{{ rtmpUrl }}</span>
+      </a-form-item>
     </a-form>
   </a-modal>
   <ChannelCode ref="channelCodeRef" @end="getChannelCodeEnd" />
@@ -54,15 +76,18 @@
     Modal as AModal,
     Form as AForm,
     FormItem as AFormItem,
-    Switch as ASwitch,
-  } from 'ant-design-vue'
+    Switch as ASwitch, message
+  } from 'ant-design-vue';
   import { PushModel } from '/@/api/resource/model/pushModel'
   import ChannelCode from '/@/views/common/ChannelCode/index.vue'
-  import { addPushApi, updatePushApi } from '/@/api/resource/push'
+  import { addPushApi, predictStreamUrlApi, updatePushApi } from '/@/api/resource/push'
+  import Icon from '/@/components/Icon/src/Icon.vue';
 
   const open = ref<boolean>(false)
   const edit = ref<boolean>(false)
   const title = ref<string>('')
+  const rtspUrl = ref<string>('')
+  const rtmpUrl = ref<string>('')
   const channelCodeRef = ref()
   const pushInitModel: PushModel = {
     //  名称
@@ -86,10 +111,13 @@
   const openModel = (pushModelParam: PushModel, endFn: Function) => {
     open.value = true
     endFnCallback = endFn
+    rtspUrl.value = ''
+    rtmpUrl.value = ''
     if (pushModelParam && pushModelParam.id) {
       title.value = '编辑推流'
       edit.value = true
       pushModel.value = pushModelParam
+      predictStreamUrl()
     } else {
       title.value = '添加推流'
       edit.value = false
@@ -134,6 +162,24 @@
           endFnCallback(pushModel.value)
         })
     }
+  }
+  // 生成一个预估流地址
+  const predictStreamUrl = () => {
+    if (pushModel.value.app && pushModel.value.stream) {
+      predictStreamUrlApi(pushModel.value)
+        .then((result) => {
+          rtspUrl.value = result.rtsp
+          rtmpUrl.value = result.rtmp
+        })
+        .catch((exception) => {
+          console.error(exception)
+        })
+    }
+  }
+  function copy(content: string): void {
+    navigator.clipboard.writeText(content).then(() => {
+      message.info('复制成功')
+    })
   }
   defineExpose({ openModel })
 </script>
