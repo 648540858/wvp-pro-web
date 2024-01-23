@@ -12,6 +12,7 @@ enum Api {
   SERVER_CONFIG = '/api/platform/server_config',
   ADD = '/api/platform/add',
   EDIT = '/api/platform/save',
+  DELETE = '/api/platform/delete/{serverGBId}',
 }
 
 export const queryPlatformListApi = (params: PlatformModelListParams) =>
@@ -33,7 +34,7 @@ export const queryServerConfigApi = () =>
     },
   })
 export const addPlatformApi = (platformModel: PlatformModel) =>
-  defHttp.get<void>({
+  defHttp.post<void>({
     url: Api.ADD,
     headers: {
       // @ts-ignore
@@ -42,11 +43,19 @@ export const addPlatformApi = (platformModel: PlatformModel) =>
     params: platformModel,
   })
 export const editPlatformApi = (platformModel: PlatformModel) =>
-  defHttp.get<void>({
+  defHttp.post<void>({
     url: Api.EDIT,
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,
     },
     params: platformModel,
+  })
+export const deletePlatformApi = (serverGBId: string) =>
+  defHttp.delete<void>({
+    url: Api.DELETE.replace('{serverGBId}', serverGBId),
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
   })

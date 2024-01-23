@@ -21,18 +21,6 @@
                   >
                     添加
                   </a-button>
-                  <a-button
-                    preIcon="ant-design:reload-outlined"
-                    size="small"
-                    @click="importChannel"
-                  >
-                    通道导入
-                  </a-button>
-                  <a-button preIcon="ant-design:reload-outlined" size="small">
-                    <a href="/resource/file/推流通道导入.zip" download="推流通道导入.zip">
-                      下载模板
-                    </a>
-                  </a-button>
                 </a-space>
               </div>
               <div style="margin-left: auto; display: inline-flex; align-items: center">
@@ -43,6 +31,7 @@
                     v-model:value="searchSrt"
                     placeholder="请输入搜索内容"
                     @change="getPlatformList"
+                    clear
                   />
                 </div>
                 <div style="display: inline-flex; margin-left: 2rem; align-items: center">
@@ -77,23 +66,60 @@
             </div>
           </template>
           <template #bodyCell="{ column, record }">
-            <template v-if="column.dataIndex === 'position'">
-              <span v-if="record.longitude * record.latitude > 0">
-                {{ record.longitude }} , {{ record.latitude }}
-              </span>
-              <span v-if="record.longitude * record.latitude == 0">暂无位置</span>
-            </template>
-            <template v-if="column.dataIndex === 'pushIng'">
-              <a-tag color="processing" v-if="record.pushIng"> 正在推流 </a-tag>
-              <a-tag v-if="!record.pushIng">已停止</a-tag>
+            <template v-if="column.dataIndex === 'hostAddress'">
+              <span style="font-size: 14px">{{ record.serverIP }}:{{ record.serverPort }}</span>
             </template>
             <template v-if="column.dataIndex === 'status'">
               <a-tag color="processing" v-if="record.status"> 在线 </a-tag>
               <a-tag v-if="!record.status">离线</a-tag>
             </template>
+            <template v-if="column.dataIndex === 'subscribe'">
+              <a-space>
+                <Icon
+                  color="#0960bd"
+                  title="目录信息已订阅"
+                  v-if="record.catalogSubscribe"
+                  icon="tdesign:catalog"
+                />
+                <Icon
+                  color="#a5a5a5"
+                  title="目录信息未订阅"
+                  v-if="!record.catalogSubscribe"
+                  icon="tdesign:catalog"
+                />
+                <Icon
+                  color="#0960bd"
+                  title="报警信息已订阅"
+                  v-if="record.alarmSubscribe"
+                  icon="mdi:alarm-light"
+                />
+                <Icon
+                  color="#a5a5a5"
+                  title="报警信息未订阅"
+                  v-if="!record.alarmSubscribe"
+                  icon="mdi:alarm-light"
+                />
+                <Icon
+                  color="#0960bd"
+                  title="移动位置已订阅"
+                  v-if="record.mobilePositionSubscribe"
+                  icon="gis:position"
+                />
+                <Icon
+                  color="#a5a5a5"
+                  title="移动位置未订阅"
+                  v-if="!record.mobilePositionSubscribe"
+                  icon="gis:position"
+                />
+              </a-space>
+            </template>
             <template v-if="column.dataIndex === 'self'">
               <a-tag color="processing" v-if="record.self"> 是 </a-tag>
               <a-tag v-if="!record.self">否</a-tag>
+            </template>
+            <template v-if="column.dataIndex === 'enable'">
+              <a-tag color="processing" v-if="record.enable"> 已启用 </a-tag>
+              <a-tag v-if="!record.enable">已停用</a-tag>
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
@@ -110,7 +136,7 @@
         </a-table>
       </Transition>
     </PageWrapper>
-    <EditPlatform ref="editPlatformRef"/>
+    <EditPlatform ref="editPlatformRef" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -129,8 +155,9 @@
   } from 'ant-design-vue'
   import { platformColumns } from '/@/views/gbPlatform/columns'
   import { PlatformModel } from '/@/api/gbPlatform/model/platformModel'
-  import { queryPlatformListApi } from '/@/api/gbPlatform/gbPlatform'
+  import { deletePlatformApi, queryPlatformListApi } from '/@/api/gbPlatform/gbPlatform'
   import EditPlatform from '/@/views/common/editPlatform/index.vue'
+  import Icon from '/@/components/Icon/src/Icon.vue'
 
   /**
    * 定义变量
@@ -171,7 +198,6 @@
   function addPlatform(): void {
     editPlatformRef.value.openModel(null, getPlatformList)
   }
-  function importChannel(): void {}
   function getPlatformList(): void {
     dataSource.value = []
     loading.value = true
@@ -192,7 +218,16 @@
   function edit(platformModel: PlatformModel): void {
     editPlatformRef.value.openModel(platformModel, getPlatformList)
   }
-  function deleteItem(platformModel: PlatformModel): void {}
+  function deleteItem(platformModel: PlatformModel): void {
+    deletePlatformApi(platformModel.serverGBId)
+      .then(() => {
+        message.info('删除成功')
+        getPlatformList()
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
   // 初始化获取数据
   getPlatformList()
 </script>

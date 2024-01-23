@@ -23,6 +23,12 @@ export function platformColumns(): ColumnsType {
     {
       title: '地址',
       dataIndex: 'hostAddress',
+      width: 180,
+    },
+    {
+      title: '订阅状态',
+      dataIndex: 'subscribe',
+      width: 100,
     },
     {
       title: '注册周期',
@@ -42,9 +48,13 @@ export function platformColumns(): ColumnsType {
       dataIndex: 'status',
     },
     {
+      title: '启用',
+      dataIndex: 'enable',
+    },
+    {
       title: '创建时间',
       dataIndex: 'createTime',
-      width: 200,
+      width: 180,
     },
     {
       title: '操作',

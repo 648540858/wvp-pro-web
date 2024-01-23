@@ -15,31 +15,31 @@
             <a-form-item label="名称" name="name" :label-col="{ span: 6 }">
               <a-input v-model:value="platformModel.name" placeholder="名称" style="width: 16rem" />
             </a-form-item>
-            <a-form-item label="SIP服务国标编码" name="serverGBId" :label-col="{ span: 6 }">
+            <a-form-item label="服务国标编码" name="serverGBId" :label-col="{ span: 6 }">
               <a-input
                 v-model:value="platformModel.serverGBId"
-                placeholder="SIP服务国标编码"
+                placeholder="服务国标编码"
                 style="width: 16rem"
               />
             </a-form-item>
-            <a-form-item label="SIP服务国标域" name="serverGBDomain" :label-col="{ span: 6 }">
+            <a-form-item label="服务国标域" name="serverGBDomain" :label-col="{ span: 6 }">
               <a-input
                 v-model:value="platformModel.serverGBDomain"
-                placeholder="SIP服务国标域"
+                placeholder="服务国标域"
                 style="width: 16rem"
               />
             </a-form-item>
-            <a-form-item label="SIP服务IP" name="serverIP" :label-col="{ span: 6 }">
+            <a-form-item label="服务IP" name="serverIP" :label-col="{ span: 6 }">
               <a-input
                 v-model:value="platformModel.serverIP"
-                placeholder="SIP服务IP"
+                placeholder="服务IP"
                 style="width: 16rem"
               />
             </a-form-item>
-            <a-form-item label="SIP服务端口" name="serverPort" :label-col="{ span: 6 }">
+            <a-form-item label="服务端口" name="serverPort" :label-col="{ span: 6 }">
               <a-input
                 v-model:value="platformModel.serverPort"
-                placeholder="SIP服务端口"
+                placeholder="服务端口"
                 style="width: 16rem"
               />
             </a-form-item>
@@ -57,6 +57,13 @@
                 style="width: 16rem"
               />
             </a-form-item>
+            <a-form-item label="启用" name="enable" :label-col="{ span: 6 }">
+              <a-switch
+                v-model:checked="platformModel.enable"
+                checked-children="启用"
+                un-checked-children="停用"
+              />
+            </a-form-item>
           </div>
           <div style="width: 50%">
             <a-form-item label="设备国标编号" name="deviceGBId" :label-col="{ span: 6 }">
@@ -66,17 +73,17 @@
                 style="width: 16rem"
               />
             </a-form-item>
-            <a-form-item label="SIP认证用户名" name="username" :label-col="{ span: 6 }">
+            <a-form-item label="认证用户名" name="username" :label-col="{ span: 6 }">
               <a-input
                 v-model:value="platformModel.username"
-                placeholder="SIP认证用户名"
+                placeholder="认证用户名"
                 style="width: 16rem"
               />
             </a-form-item>
-            <a-form-item label="SIP认证密码" name="password" :label-col="{ span: 6 }">
+            <a-form-item label="认证密码" name="password" :label-col="{ span: 6 }">
               <a-input
                 v-model:value="platformModel.password"
-                placeholder="SIP认证密码"
+                placeholder="认证密码"
                 style="width: 16rem"
               />
             </a-form-item>
@@ -129,9 +136,8 @@
           </div>
         </div>
         <div style="width: 100%">
-          <a-form-item label="其他选项" >
+          <a-form-item label="其他选项" :label-col="{ span: 2 }">
             <a-checkbox v-model:checked="platformModel.ptz">云台控制</a-checkbox>
-            <a-checkbox v-model:checked="platformModel.rtcp">RTCP流保活</a-checkbox>
             <a-checkbox v-model:checked="platformModel.startOfflinePush">拉起推流</a-checkbox>
             <a-checkbox v-model:checked="platformModel.asMessageChannel">作为消息通道</a-checkbox>
             <a-checkbox v-model:checked="platformModel.autoPushChannel">自动推送通道</a-checkbox>
@@ -154,6 +160,7 @@
     Select as ASelect,
     SelectOption as ASelectOption,
     Checkbox as ACheckbox,
+    Switch as ASwitch,
     message,
   } from 'ant-design-vue'
   import ChannelCode from '/@/views/common/ChannelCode/index.vue'
@@ -172,7 +179,7 @@
   const platformInitModel: PlatformModel = {
     //  名称
     name: '',
-    enable: false,
+    enable: true,
     serverGBId: '',
     serverGBDomain: '',
     serverIP: '',
@@ -186,14 +193,14 @@
     transport: 'UDP',
     characterSet: 'GB2312',
     ptz: true,
-    rtcp: false,
+    rtcp: true,
     startOfflinePush: false,
     catalogGroup: 1,
     asMessageChannel: false,
     autoPushChannel: false,
     shareAllChannel: false,
-    shareGroup: false,
-    shareRegion: false,
+    shareGroup: true,
+    shareRegion: true,
     deviceGBId: '',
   }
   const platformModel = ref<PlatformModel>(platformInitModel)
@@ -213,6 +220,7 @@
       queryServerConfigApi().then((result) => {
         platformModel.value.deviceIp = result.deviceIp
         platformModel.value.devicePort = result.devicePort
+        platformModel.value.deviceGBId = result.username
         platformModel.value.username = result.username
         platformModel.value.password = result.password
       })
