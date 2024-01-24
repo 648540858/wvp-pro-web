@@ -102,6 +102,12 @@ export interface CommonGbChannel extends RcTableProps {
 
 export type ChannelListResultModel = BasicFetchResult<CommonGbChannel>
 
+export interface ShareChannelModel extends CommonGbChannel {
+  platformId: number
+}
+
+export type ShareChannelModelListResultModel = BasicFetchResult<ShareChannelModel>
+
 export interface ChannelListForGroupParams extends BasicPageParams {
   query?: string | null | undefined
   type?: string | null | undefined
@@ -111,6 +117,17 @@ export interface ChannelListForGroupParams extends BasicPageParams {
   regionDeviceId?: string | null | undefined
   ptzType?: string | null | undefined
   online?: string | null | undefined
+}
+export interface ShareChannelListParams extends BasicPageParams {
+  platformId: number
+  query?: string | null | undefined
+  type?: string | null | undefined
+  online?: string | null | undefined
+}
+
+export interface ShareCommonGbChannelParam {
+  channelIdList: number[]
+  platformId: number
 }
 
 export interface UpdateCommonChannelToGroup extends RcTableProps {

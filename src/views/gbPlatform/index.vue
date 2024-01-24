@@ -7,7 +7,6 @@
           :columns="columns"
           :loading="loading"
           :pagination="pagination"
-          rowKey="id"
         >
           <template #title>
             <div style="width: 100%; display: inline-flex">
@@ -123,6 +122,7 @@
             </template>
             <template v-if="column.dataIndex === 'operation'">
               <a-button type="link" size="small" @click="edit(record)">编辑</a-button>
+              <a-button type="link" size="small" @click="shareChannel(record)" :disabled="record.shareAllChannel">共享通道</a-button>
               <a-popconfirm
                 title="确定删除?"
                 ok-text="确定"
@@ -137,10 +137,11 @@
       </Transition>
     </PageWrapper>
     <EditPlatform ref="editPlatformRef" />
+    <ShareChannel ref="shareChannelRef" />
   </div>
 </template>
 <script lang="ts" setup>
-  import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue';
   import { PageWrapper } from '/@/components/Page'
   import {
     Table as ATable,
@@ -157,12 +158,14 @@
   import { PlatformModel } from '/@/api/gbPlatform/model/platformModel'
   import { deletePlatformApi, queryPlatformListApi } from '/@/api/gbPlatform/gbPlatform'
   import EditPlatform from '/@/views/common/editPlatform/index.vue'
+  import ShareChannel from '/@/views/common/shareChannel/index.vue'
   import Icon from '/@/components/Icon/src/Icon.vue'
 
   /**
    * 定义变量
    */
   let editPlatformRef = ref()
+  let shareChannelRef = ref()
   let loading = ref(false)
   const columns = platformColumns()
   let dataSource = ref<PlatformModel[]>([])
@@ -217,6 +220,9 @@
   }
   function edit(platformModel: PlatformModel): void {
     editPlatformRef.value.openModel(platformModel, getPlatformList)
+  }
+  function shareChannel(platformModel: PlatformModel): void {
+    shareChannelRef.value.openModel(platformModel, getPlatformList)
   }
   function deleteItem(platformModel: PlatformModel): void {
     deletePlatformApi(platformModel.serverGBId)

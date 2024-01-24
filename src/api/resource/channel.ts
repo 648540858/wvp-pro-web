@@ -3,6 +3,9 @@ import {
   ChannelListForGroupParams,
   ChannelListResultModel,
   CommonGbChannel,
+  ShareChannelListParams,
+  ShareChannelModelListResultModel,
+  ShareCommonGbChannelParam,
   UpdateCommonChannelToGroup,
   UpdateCommonChannelToRegion,
 } from '/@/api/resource/model/channelModel'
@@ -37,6 +40,12 @@ enum Api {
   REMOVE_FROM_REGION = '/api/channel/region/remove',
   // 播放
   PLAY = '/api/channel/play',
+  // 通道共享列表
+  SHARE_LIST = '/api/channel/share/list',
+  // 添加通道共享
+  SHARE_ADD = '/api/channel/share/add',
+  // 移除通道共享
+  SHARE_REMOVE = '/api/channel/share/remove',
 }
 
 export const queryChannelList = (params: ChannelListForGroupParams) =>
@@ -148,6 +157,36 @@ export const updateToRegion = (params: UpdateCommonChannelToRegion) =>
 export const removeFromRegion = (params: UpdateCommonChannelToRegion) =>
   defHttp.post<void>({
     url: Api.REMOVE_FROM_REGION,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const queryShareChannelList = (params: ShareChannelListParams) =>
+  defHttp.get<ShareChannelModelListResultModel>({
+    url: Api.SHARE_LIST,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const addShareChannelList = (params: ShareCommonGbChannelParam) =>
+  defHttp.post<void>({
+    url: Api.SHARE_ADD,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+
+export const removeShareChannelList = (params: ShareCommonGbChannelParam) =>
+  defHttp.delete<void>({
+    url: Api.SHARE_REMOVE,
     params: params,
     headers: {
       // @ts-ignore

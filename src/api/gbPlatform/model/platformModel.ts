@@ -2,6 +2,8 @@ import { BasicPageParams, BasicFetchResult } from '/@/api/model/baseModel'
 import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
 
 export interface PlatformModel extends RcTableProps {
+  //  ID
+  commonGbId: number
   //  名称
   name: string
   //  是否启用
