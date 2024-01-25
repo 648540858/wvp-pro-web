@@ -119,43 +119,6 @@
     onShowSizeChange: pageSizeChange,
     onChange: pageChange,
   }))
-  const onSelectChange = (selectedRowKeysParam: number[]) => {
-    if (!platformModel.value.id) {
-      return
-    }
-    if (selectedRowKeys.value.length > selectedRowKeysParam.length) {
-      // 移除
-      const diff: number[] = []
-      for (let i = 0; i < selectedRowKeys.value.length; i++) {
-        const item = selectedRowKeys[i]
-        if (!selectedRowKeysParam.includes(item)) {
-          diff.push(item)
-        }
-      }
-      removeShareChannelList({
-        channelIdList: diff,
-        platformId: parseInt(platformModel.value.id),
-      }).catch((exception) => {
-        console.error(exception)
-      })
-    } else if (selectedRowKeys.value.length < selectedRowKeysParam.length) {
-      // 增加
-      const diff: number[] = []
-      for (let i = 0; i < selectedRowKeysParam.length; i++) {
-        const item = selectedRowKeysParam[i]
-        if (!selectedRowKeys.value.includes(item)) {
-          diff.push(item)
-        }
-      }
-      addShareChannelList({
-        channelIdList: diff,
-        platformId: parseInt(platformModel.value.id),
-      }).catch((exception) => {
-        console.error(exception)
-      })
-    }
-    selectedRowKeys.value = selectedRowKeysParam
-  }
   let searchSrt = ref<string>('')
   let resourceType = ref<string>('')
   const platformInitModel: PlatformModel = {
@@ -206,6 +169,46 @@
     console.log('pageChange')
     getCommonGbChannelList()
   }
+  const onSelectChange = (selectedRowKeysParam: number[]) => {
+    if (!platformModel.value.id) {
+      return
+    }
+    console.log(selectedRowKeysParam)
+    console.log(selectedRowKeys.value)
+    if (selectedRowKeys.value.length > selectedRowKeysParam.length) {
+      // 移除
+      const diff: number[] = []
+      for (let i = 0; i < selectedRowKeys.value.length; i++) {
+        const item = selectedRowKeys.value[i]
+        if (!selectedRowKeysParam.includes(item)) {
+          diff.push(item)
+        }
+      }
+      console.log(diff)
+      removeShareChannelList({
+        channelIdList: diff,
+        platformId: parseInt(platformModel.value.id),
+      }).catch((exception) => {
+        console.error(exception)
+      })
+    } else if (selectedRowKeys.value.length < selectedRowKeysParam.length) {
+      // 增加
+      const diff: number[] = []
+      for (let i = 0; i < selectedRowKeysParam.length; i++) {
+        const item = selectedRowKeysParam[i]
+        if (!selectedRowKeys.value.includes(item)) {
+          diff.push(item)
+        }
+      }
+      addShareChannelList({
+        channelIdList: diff,
+        platformId: parseInt(platformModel.value.id),
+      }).catch((exception) => {
+        console.error(exception)
+      })
+    }
+    selectedRowKeys.value = selectedRowKeysParam
+  }
   function getCommonGbChannelList(): void {
     if (!platformModel.value.id) {
       return
@@ -229,7 +232,6 @@
             selectedRowKeys.value.push(result.list[i].commonGbId)
           }
         }
-        console.log(state.selectedRowKeys)
       })
       .catch((exception) => {
         console.error(exception)
