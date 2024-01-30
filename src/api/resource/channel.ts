@@ -2,13 +2,13 @@ import { defHttp } from '/@/utils/http/axios'
 import {
   ChannelListForGroupParams,
   ChannelListResultModel,
-  CommonGbChannel,
+  CommonGbChannel, PtzControlParam,
   ShareChannelListParams,
   ShareChannelModelListResultModel,
   ShareCommonGbChannelParam,
   UpdateCommonChannelToGroup,
-  UpdateCommonChannelToRegion,
-} from '/@/api/resource/model/channelModel'
+  UpdateCommonChannelToRegion
+} from '/@/api/resource/model/channelModel';
 import { IndustryCodeType } from '/@/api/resource/model/industryCodeType'
 import { DeviceType } from '/@/api/resource/model/deviceTypeModel'
 import { NetworkIdentificationType } from '/@/api/resource/model/networkIdentificationTypeModel'
@@ -46,6 +46,8 @@ enum Api {
   SHARE_ADD = '/api/channel/share/add',
   // 移除通道共享
   SHARE_REMOVE = '/api/channel/share/remove',
+  // PTZ控制
+  PTZ = '/api/channel/ptz',
 }
 
 export const queryChannelList = (params: ChannelListForGroupParams) =>
@@ -187,6 +189,15 @@ export const addShareChannelList = (params: ShareCommonGbChannelParam) =>
 export const removeShareChannelList = (params: ShareCommonGbChannelParam) =>
   defHttp.delete<void>({
     url: Api.SHARE_REMOVE,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
+export const channelPtz = (params: PtzControlParam) =>
+  defHttp.get<void>({
+    url: Api.PTZ,
     params: params,
     headers: {
       // @ts-ignore

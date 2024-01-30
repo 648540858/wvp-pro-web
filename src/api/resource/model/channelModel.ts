@@ -129,6 +129,13 @@ export interface ShareCommonGbChannelParam {
   channelIdList: number[]
   platformId: number
 }
+export interface PtzControlParam {
+  channelDeviceId: string
+  command: string
+  horizonSpeed?: number
+  verticalSpeed?: number
+  zoomSpeed?: number
+}
 
 export interface UpdateCommonChannelToGroup extends RcTableProps {
   // 数据库自增ID

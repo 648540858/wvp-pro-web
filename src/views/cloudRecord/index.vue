@@ -216,10 +216,16 @@
   }
   function formatTime(time: number): string {
     const h = parseInt(time / 3600 / 1000)
-    const minute = parseInt((time - h * 60) / 60 / 1000)
-    const second = Math.ceil((time - h * 3600 * 1000 - minute * 60 * 1000) / 1000)
-
-    return (h > 0 ? h + `小时` : '') + (minute > 0 ? minute + '分' : '') + second + '秒'
+    const minute = parseInt((time - h * 3600 * 1000) / 60 / 1000)
+    let second = Math.ceil((time - h * 3600 * 1000 - minute * 60 * 1000) / 1000)
+    if (second < 0) {
+      second = 0
+    }
+    return (
+      (h > 0 ? h + `小时` : '') +
+      (minute > 0 ? minute + '分' : '') +
+      (second > 0 ? second + '秒' : '')
+    )
   }
   // 初始化获取数据
   getCloudRecordList()

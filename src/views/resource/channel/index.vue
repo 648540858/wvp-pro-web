@@ -173,7 +173,7 @@
   import EditChannel from '/@/views/common/editChannel/index.vue'
   import { commonChannelColumns } from '/@/views/resource/channel/columns'
   import { CommonGbChannel } from '/@/api/resource/model/channelModel'
-  import { playChannelApi, queryChannelList } from '/@/api/resource/channel'
+  import { channelPtz, playChannelApi, queryChannelList } from '/@/api/resource/channel'
 
   const playRef = ref()
   const editChannelRef = ref()
@@ -262,7 +262,19 @@
   function editChannel(channel: CommonGbChannel): void {
     editChannelRef.value.openModel(channel, getCommonGbChannelList)
   }
-  function ptzCamera(comond: string, speed: number): void {}
+  function ptzCamera(comond: string, speed: number): void {
+    console.log('ptz===> ' + comond)
+    console.log('ptz===> ' + speed)
+    channelPtz({
+      channelDeviceId: playChannel.commonGbDeviceID,
+      command: comond,
+      horizonSpeed: speed,
+      verticalSpeed: speed,
+      zoomSpeed: 15,
+    }).catch((e) => {
+      message.error(e)
+    })
+  }
 
   // 初始化获取数据
   getCommonGbChannelList()
