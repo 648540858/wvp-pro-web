@@ -254,7 +254,23 @@
   }
   function stop(channel: CommonGbChannel): void {}
 
-  function queryDeviceRecords(channel: CommonGbChannel): void {}
+  function queryDeviceRecords(channel: CommonGbChannel): void {
+    if (channel.type != '28181') {
+      return
+    }
+    // 查询通用通道对应的国标设备和国标通道
+    queryGbChannelApi(channel.commonGbId)
+      .then((streamInfo) => {
+        console.log(streamInfo)
+        playRef.value.play(streamInfo, channel.commonGbName, channel.type != '28181')
+      })
+      .catch((error) => {
+        message.error('播放失败： ' + error)
+      })
+      .finally(() => {
+        loading.value = false
+      })
+  }
   function queryCloudRecords(channel: CommonGbChannel): void {}
   function addChannel(): void {
     editChannelRef.value.openModel(null, getCommonGbChannelList)

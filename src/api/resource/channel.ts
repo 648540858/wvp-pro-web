@@ -204,3 +204,12 @@ export const channelPtz = (params: PtzControlParam) =>
       ignoreCancelToken: true,
     },
   })
+export const queryGbChannelApi = (id: number) =>
+  defHttp.get<void>({
+    url: Api.PTZ,
+    params: params,
+    headers: {
+      // @ts-ignore
+      ignoreCancelToken: true,
+    },
+  })
