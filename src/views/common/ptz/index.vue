@@ -2,9 +2,9 @@
   <div class="ptz-box">
     <div class="ptz-item-box ptz-item-box-zoom-in">
       <Icon
-        icon="ic:twotone-add"
+        icon="fluent:add-24-filled"
         class="control-btn"
-        :size="20"
+        :size="ptzIconSize"
         @mousedown="ptzCamera('zoomin')"
         @mouseup="ptzCamera('stop')"
       />
@@ -12,7 +12,7 @@
     <div class="ptz-item-box"></div>
     <div class="ptz-item-box ptz-item-box-center">
       <Icon
-        icon="fa6-solid:chevron-up"
+        icon="ph:triangle-fill"
         class="control-btn"
         :size="ptzIconSize"
         @mousedown="ptzCamera('up')"
@@ -23,7 +23,7 @@
     <div class="ptz-item-box"></div>
     <div class="ptz-item-box ptz-item-box-center">
       <Icon
-        icon="fa6-solid:chevron-left"
+        icon="ic:outline-chevron-left"
         class="control-btn"
         :size="ptzIconSize"
         @mousedown="ptzCamera('left')"
@@ -33,7 +33,7 @@
     <div class="ptz-item-box"></div>
     <div class="ptz-item-box ptz-item-box-center">
       <Icon
-        icon="fa6-solid:chevron-right"
+        icon="fluent:triangle-right-20-filled"
         class="control-btn"
         :size="ptzIconSize"
         @mousedown="ptzCamera('right')"
@@ -42,9 +42,9 @@
     </div>
     <div class="ptz-item-box ptz-item-box-top-right">
       <Icon
-        icon="ic:twotone-horizontal-rule"
+        icon="fluent:subtract-24-filled"
         class="control-btn"
-        :size="20"
+        :size="ptzIconSize"
         @mousedown="ptzCamera('zoomout')"
         @mouseup="ptzCamera('stop')"
       />
@@ -52,7 +52,7 @@
     <div class="ptz-item-box"></div>
     <div class="ptz-item-box ptz-item-box-center">
       <Icon
-        icon="fa6-solid:chevron-down"
+        icon="fluent:triangle-down-20-filled"
         class="control-btn"
         :size="ptzIconSize"
         @mousedown="ptzCamera('down')"
@@ -72,7 +72,7 @@
 
   const emit = defineEmits(['ptzCamera'])
   const speed = ref<number>(30)
-  const ptzIconSize = ref<number>(18)
+  const ptzIconSize = ref<number>(26)
   const ptzCamera = (comond) => {
     emit('ptzCamera', comond, speed.value)
   }
