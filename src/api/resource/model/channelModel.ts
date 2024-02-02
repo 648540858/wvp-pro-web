@@ -1,5 +1,8 @@
 import { BasicFetchResult, BasicPageParams } from '/@/api/model/baseModel'
 import { TableProps as RcTableProps } from 'ant-design-vue/lib/vc-table/Table'
+import { ProxyModel } from '/@/api/resource/model/proxyModel';
+import { PushModel } from '/@/api/resource/model/pushModel';
+import { DeviceChannel } from '/@/api/resource/model/gbResourceModel';
 
 export interface CommonGbChannel extends RcTableProps {
   // 数据库自增ID
@@ -135,6 +138,11 @@ export interface PtzControlParam {
   horizonSpeed?: number
   verticalSpeed?: number
   zoomSpeed?: number
+}
+export interface ResourceResult {
+  28181: DeviceChannel
+  push: PushModel
+  proxy: ProxyModel
 }
 
 export interface UpdateCommonChannelToGroup extends RcTableProps {

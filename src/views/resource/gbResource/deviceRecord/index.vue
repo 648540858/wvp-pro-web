@@ -37,8 +37,9 @@
               ref="timeLineRef"
               :initTime="initTime"
               @dragTimeChange="timeChange"
+              @click_timeline="chooseTimeLine"
               :timeSegments="timeSegments"
-              :showHoverTime="false"
+              :showHoverTime="true"
               initZoomIndex="5"
               backgroundColor="rgb(0, 12, 23)"
             />
@@ -120,6 +121,7 @@
   const emit = defineEmits(['close'])
   const recordDownloadRef = ref()
   const timeLineRef = ref()
+
   const recordDate = ref<Dayjs>(dayjs())
   const recordList = ref<RecordItem[]>()
   const playUrl = ref<string>()
@@ -136,6 +138,12 @@
     let startTime = dayItem.format('YYYY-MM-DD HH:mm:ss')
     let stopTime = dayItem.add(1, 'day').format('YYYY-MM-DD HH:mm:ss')
     play(startTime, stopTime)
+  }
+  const chooseTimeLine = (time: string, date: string) => {
+    let dayItem = dayjs(date)
+    timeLineRef.value.setTime(time)
+    let stopTime = dayItem.add(1, 'day').format('YYYY-MM-DD HH:mm:ss')
+    play(date, stopTime)
   }
   const recordListStyle = ref({
     height: '600px',

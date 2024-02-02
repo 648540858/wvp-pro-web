@@ -2,7 +2,7 @@ import { defHttp } from '/@/utils/http/axios'
 import {
   ChannelListForGroupParams,
   ChannelListResultModel,
-  CommonGbChannel, PtzControlParam,
+  CommonGbChannel, PtzControlParam, ResourceResult,
   ShareChannelListParams,
   ShareChannelModelListResultModel,
   ShareCommonGbChannelParam,
@@ -48,6 +48,8 @@ enum Api {
   SHARE_REMOVE = '/api/channel/share/remove',
   // PTZ控制
   PTZ = '/api/channel/ptz',
+  // 获取通用通道对应的原始资源信息
+  RESOURCE = '/api/channel/resource',
 }
 
 export const queryChannelList = (params: ChannelListForGroupParams) =>
@@ -205,9 +207,11 @@ export const channelPtz = (params: PtzControlParam) =>
     },
   })
 export const queryGbChannelApi = (id: number) =>
-  defHttp.get<void>({
-    url: Api.PTZ,
-    params: params,
+  defHttp.get<ResourceResult>({
+    url: Api.RESOURCE,
+    params: {
+      id: id,
+    },
     headers: {
       // @ts-ignore
       ignoreCancelToken: true,

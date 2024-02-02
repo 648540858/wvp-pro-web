@@ -1,6 +1,6 @@
 <template>
-  <div id="channelList">
-    <PageWrapper>
+  <div id="channelList" style='height: 100%'>
+    <PageWrapper v-if="recordDeviceId == ''">
       <Transition>
         <a-table
           :dataSource="dataSource"
@@ -155,6 +155,12 @@
     </PageWrapper>
     <Player ref="playRef" @ptzCamera="ptzCamera" />
     <EditChannel ref="editChannelRef" />
+    <DeviceRecord
+      v-if="recordDeviceId != ''"
+      :deviceId="recordDeviceId"
+      :channelId="recordChannelId"
+      @close="closeDeviceRecord"
+    />
   </div>
 </template>
 <script lang="ts" setup>
@@ -172,8 +178,14 @@
   import Player from '/@/views/common/player/index.vue'
   import EditChannel from '/@/views/common/editChannel/index.vue'
   import { commonChannelColumns } from '/@/views/resource/channel/columns'
-  import { CommonGbChannel } from '/@/api/resource/model/channelModel'
-  import { channelPtz, playChannelApi, queryChannelList } from '/@/api/resource/channel'
+  import { CommonGbChannel } from '/@/api/resource/model/channelModel';
+  import {
+    channelPtz,
+    playChannelApi,
+    queryChannelList,
+    queryGbChannelApi,
+  } from '/@/api/resource/channel'
+  import DeviceRecord from '/@/views/resource/gbResource/deviceRecord/index.vue';
 
   const playRef = ref()
   const editChannelRef = ref()
@@ -203,6 +215,8 @@
   let resourceType = ref<string>('')
   let ptzType = ref<string>('')
   let online = ref<string>('')
+  let recordDeviceId = ref<string>('')
+  let recordChannelId = ref<string>('')
   function pageSizeChange(oldPageSize: number, pageSize: number): void {
     tablePageSize.value = pageSize
     console.log('pageSizeChange')
@@ -260,9 +274,10 @@
     }
     // 查询通用通道对应的国标设备和国标通道
     queryGbChannelApi(channel.commonGbId)
-      .then((streamInfo) => {
-        console.log(streamInfo)
-        playRef.value.play(streamInfo, channel.commonGbName, channel.type != '28181')
+      .then((resourceResult) => {
+        console.log(resourceResult)
+        recordDeviceId.value = resourceResult['28181'].deviceId
+        recordChannelId.value = resourceResult['28181'].channelId
       })
       .catch((error) => {
         message.error('播放失败： ' + error)
@@ -270,6 +285,10 @@
       .finally(() => {
         loading.value = false
       })
+  }
+  const closeDeviceRecord = () => {
+    recordDeviceId.value = ''
+    recordChannelId.value = ''
   }
   function queryCloudRecords(channel: CommonGbChannel): void {}
   function addChannel(): void {
