@@ -1,68 +1,64 @@
 <template>
-  <div class="ptz-box">
-    <div class="ptz-item-box ptz-item-box-zoom-in">
-      <Icon
-        icon="fluent:add-24-filled"
-        class="control-btn"
-        :size="ptzIconSize"
-        @mousedown="ptzCamera('zoomin')"
-        @mouseup="ptzCamera('stop')"
-      />
+  <div>
+    <div class="ptz-box">
+      <div class="ptz-item-box"></div>
+      <div class="ptz-item-box ptz-item-box-center">
+        <Icon
+          icon="ant-design:up-square-outlined"
+          class="control-btn"
+          :size="ptzIconSize"
+          @mousedown="ptzCamera('up')"
+          @mouseup="ptzCamera('stop')"
+        />
+      </div>
+      <div class="ptz-item-box"></div>
+      <div class="ptz-item-box ptz-item-box-center">
+        <Icon
+          icon="ant-design:left-square-outlined"
+          class="control-btn"
+          :size="ptzIconSize"
+          @mousedown="ptzCamera('left')"
+          @mouseup="ptzCamera('stop')"
+        />
+      </div>
+      <div class="ptz-item-box ptz-item-box-center">
+        <Icon
+          icon="ant-design:home-outlined"
+          class="control-btn"
+          :size="ptzIconSize"
+          @mousedown="ptzCamera('left')"
+          @mouseup="ptzCamera('stop')"
+        />
+      </div>
+      <div class="ptz-item-box ptz-item-box-center">
+        <Icon
+          icon="ant-design:right-square-outlined"
+          class="control-btn"
+          :size="ptzIconSize"
+          @mousedown="ptzCamera('right')"
+          @mouseup="ptzCamera('stop')"
+        />
+      </div>
+      <div class="ptz-item-box"></div>
+      <div class="ptz-item-box ptz-item-box-center">
+        <Icon
+          icon="ant-design:down-square-outlined"
+          class="control-btn"
+          :size="ptzIconSize"
+          @mousedown="ptzCamera('down')"
+          @mouseup="ptzCamera('stop')"
+        />
+      </div>
+      <div class="ptz-item-box"></div>
+      <!--    <div class="ptz-item-box ptz-item-box-11">-->
+      <!--      <a-slider id="test" v-model:value="speed" :min="0" :max="255" vertical />-->
+      <!--    </div>-->
     </div>
-    <div class="ptz-item-box"></div>
-    <div class="ptz-item-box ptz-item-box-center">
-      <Icon
-        icon="ph:triangle-fill"
-        class="control-btn"
-        :size="ptzIconSize"
-        @mousedown="ptzCamera('up')"
-        @mouseup="ptzCamera('stop')"
-      />
+    <div class="focus-box">
+
     </div>
-    <div class="ptz-item-box"></div>
-    <div class="ptz-item-box"></div>
-    <div class="ptz-item-box ptz-item-box-center">
-      <Icon
-        icon="ic:outline-chevron-left"
-        class="control-btn"
-        :size="ptzIconSize"
-        @mousedown="ptzCamera('left')"
-        @mouseup="ptzCamera('stop')"
-      />
-    </div>
-    <div class="ptz-item-box"></div>
-    <div class="ptz-item-box ptz-item-box-center">
-      <Icon
-        icon="fluent:triangle-right-20-filled"
-        class="control-btn"
-        :size="ptzIconSize"
-        @mousedown="ptzCamera('right')"
-        @mouseup="ptzCamera('stop')"
-      />
-    </div>
-    <div class="ptz-item-box ptz-item-box-top-right">
-      <Icon
-        icon="fluent:subtract-24-filled"
-        class="control-btn"
-        :size="ptzIconSize"
-        @mousedown="ptzCamera('zoomout')"
-        @mouseup="ptzCamera('stop')"
-      />
-    </div>
-    <div class="ptz-item-box"></div>
-    <div class="ptz-item-box ptz-item-box-center">
-      <Icon
-        icon="fluent:triangle-down-20-filled"
-        class="control-btn"
-        :size="ptzIconSize"
-        @mousedown="ptzCamera('down')"
-        @mouseup="ptzCamera('stop')"
-      />
-    </div>
-    <div class="ptz-item-box"></div>
-    <div class="ptz-item-box ptz-item-box-11">
-      <a-slider id="test" v-model:value="speed" :min="0" :max="255" vertical />
-    </div>
+    <div class="zoom-box"></div>
+    <div class="iris-box"></div>
   </div>
 </template>
 <script lang="ts" setup>
@@ -162,8 +158,11 @@
     cursor: pointer;
   }
   .ptz-box {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 10px;
   }
@@ -175,10 +174,10 @@
     justify-content: start;
     align-items: end;
   }
-  .ptz-item-box-zoom-in {
+  .ptz-item-box-top-left {
     display: grid;
-    justify-content: end;
-    align-items: end;
+    justify-content: start;
+    align-items: start;
   }
   .ptz-item-box-top-right {
     display: grid;

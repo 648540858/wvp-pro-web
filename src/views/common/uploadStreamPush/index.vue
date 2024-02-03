@@ -7,7 +7,13 @@
     :footer="null"
   >
     <div style="padding: 1rem">
-      <a-upload-dragger name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="fileChange">
+      <a-upload-dragger
+        name="file"
+        :multiple="false"
+        :action="actionUrl"
+        :headers="headers"
+        @change="fileChange"
+      >
         <p class="ant-upload-drag-icon">
           <Icon icon="material-symbols:upload" size="48" />
         </p>

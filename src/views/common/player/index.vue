@@ -3,7 +3,7 @@
     ref="playerRef"
     v-model:visible="open"
     :title="title"
-    width="70vw"
+    width="67vw"
     :wrap-style="{ overflow: 'hidden' }"
     @cancel="closeModel"
     :footer="null"
@@ -33,16 +33,14 @@
           </div>
         </div>
       </a-col>
-      <a-col style="width: 16vw; height: 32vw; overflow: auto">
+      <a-col style="width: 13vw; height: 32vw; overflow: auto">
         <a-tabs style="width: 100%" size="small" type="card">
           <a-tab-pane key="1" tab="控制" v-if="!hideControlTab">
-            <ptz @ptz-camera="ptzCamera" style="width: 15vw; height: 9vw; padding: 0 1rem 0 1rem" />
-            <div style="height: 23vw; padding: 0 1rem">
-              <a-select
-                ref="select"
-                v-model:value="ptzControlType"
-                class="ptz-space"
-              >
+            <ptz @ptz-camera="ptzCamera" style="width: 100%" />
+          </a-tab-pane>
+          <a-tab-pane key="2" tab="设置" v-if="!hideControlTab">
+            <div style="height: 32vw; padding: 0 1rem">
+              <a-select ref="select" v-model:value="ptzControlType" class="ptz-space">
                 <a-select-option value="1">预置位</a-select-option>
                 <a-select-option value="2">巡航组</a-select-option>
                 <a-select-option value="3">水平扫描</a-select-option>
@@ -196,11 +194,7 @@
                 </a-button-group>
               </div>
               <div v-if="ptzControlType == 6">
-                <a-button
-                  @click="startForceKeyframe()"
-                  title="发送强制关键帧"
-                  >发送</a-button
-                >
+                <a-button @click="startForceKeyframe()" title="发送强制关键帧">发送</a-button>
               </div>
               <div v-if="ptzControlType == 7">
                 <a-input-number
@@ -228,7 +222,7 @@
               </div>
             </div>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="信息" style="padding: 0 1rem 0 1rem">
+          <a-tab-pane key="3" tab="信息" style="padding: 0 1rem 0 1rem">
             <a-descriptions :column="1" title="资源地址" :labelStyle="{ fontsize: '12px' }">
               <a-descriptions-item>{{ playUrl }}</a-descriptions-item>
               <a-descriptions-item>
@@ -347,7 +341,7 @@
   let audioTrack = ref<Track>()
   let title = ref<String>()
   let timer = 0
-  let streamInfo = ref<StreamInfo | null>(null)
+  let streamInfo = ref<StreamInfo>()
   const jessibuca = ref()
   const rtcPlayer = ref()
   let presetLoading = ref<boolean>(true)

@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 4415035 */
+  src: url('iconfont.woff2?t=1706952156457') format('woff2'),
+       url('iconfont.woff?t=1706952156457') format('woff'),
+       url('iconfont.ttf?t=1706952156457') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zoomin:before {
+  content: "\e898";
+}
+
+.icon-zoom-in:before {
+  content: "\e683";
+}
+
+.icon-ic_aperture_1:before {
+  content: "\e7b8";
+}
+
+.icon-ic_aperture_2:before {
+  content: "\e7b9";
+}
+
+.icon-bianjiao-suoxiao:before {
+  content: "\e8c8";
+}
+
+.icon-bianjiao-fangda:before {
+  content: "\e8c9";
+}
+
+.icon-a-5Gjingling:before {
+  content: "\e671";
+}
+
+.icon-a-5Hzhenling:before {
+  content: "\e67b";
+}
+
+.icon-a-6Ijinggaobaojing:before {
+  content: "\e67c";
+}
+
+.icon-a-8Gtouping2:before {
+  content: "\e67d";
+}
+
+.icon-a-11Cfenzuzuzhishu:before {
+  content: "\e67e";
+}
+
+.icon-a-7Jyijiaqifenping:before {
+  content: "\e67f";
+}
+
+.icon-a-18Jshexiangtoujiankong:before {
+  content: "\e680";
+}
+
+.icon-a-18Hshexiangtou:before {
+  content: "\e681";
+}
+
+.icon-a-24Iyuntai:before {
+  content: "\e687";
+}
+
+.icon-PTZ_jiantou_zhaoshang:before {
+  content: "\e6b0";
+}
+
+.icon-PTZ_jiantou_xia:before {
+  content: "\e6b1";
+}
+
+.icon-PTZ_jiantou_you:before {
+  content: "\e6b2";
+}
+
+.icon-PTZ_jiantou_zuo:before {
+  content: "\e6b3";
+}
+
+.icon-a-7Ayifenping:before {
+  content: "\e672";
+}
+
+.icon-a-7Dsifenping:before {
+  content: "\e673";
+}
+
+.icon-a-8Bshiliufenping:before {
+  content: "\e674";
+}
+
+.icon-a-7Iyijiawufenping:before {
+  content: "\e675";
+}
+
+.icon-a-7Fliufenping:before {
+  content: "\e676";
+}
+
+.icon-a-8Ayijiajiufenping:before {
+  content: "\e677";
+}
+
+.icon-a-7Hshierfenping:before {
+  content: "\e678";
+}
+
+.icon-a-7Gjiufenping:before {
+  content: "\e679";
+}
+
+.icon-a-8Cershiwufenping:before {
+  content: "\e67a";
+}
+

@@ -149,7 +149,7 @@
   import EditStreamPush from '/@/views/common/editStreamPush/index.vue'
   import UploadStreamPush from '/@/views/common/uploadStreamPush/index.vue'
   import MediaServerSelect from '/@/views/common/mediaServerSelect/index.vue'
-  import CloudRecordDetail from "/@/views/cloudRecord/cloudRecordDetail/index.vue";
+  import CloudRecordDetail from '/@/views/cloudRecord/cloudRecordDetail/index.vue'
 
   const playRef = ref()
   const editStreamPushRef = ref()
