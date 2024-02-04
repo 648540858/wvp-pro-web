@@ -54,17 +54,32 @@
       <!--      <a-slider id="test" v-model:value="speed" :min="0" :max="255" vertical />-->
       <!--    </div>-->
     </div>
-    <div class="focus-box">
-
+    <div class="camera-control-box zoom-box">
+      <i
+        class="camera-control-btn icon iconfont icon-zoom-out"
+        @mousedown="ptzCamera('zoomin')"
+        @mouseup="ptzCamera('stop')"
+      ></i>
+      <i
+        class="camera-control-btn icon iconfont icon-zoom-in"
+        @mousedown="ptzCamera('zoomout')"
+        @mouseup="ptzCamera('stop')"
+      ></i>
     </div>
-    <div class="zoom-box"></div>
-    <div class="iris-box"></div>
+    <div class="camera-control-box focus-box">
+      <i class="camera-control-btn icon iconfont icon-bianjiao-fangda"></i>
+      <i class="camera-control-btn icon iconfont icon-bianjiao-suoxiao"></i>
+    </div>
+    <div class="camera-control-box iris-box">
+      <i class="camera-control-btn icon iconfont icon-ic_aperture_1"></i>
+      <i class="camera-control-btn icon iconfont icon-ic_aperture_2"></i>
+    </div>
   </div>
 </template>
 <script lang="ts" setup>
   import Icon from '/@/components/Icon/src/Icon.vue'
   import { ref } from 'vue'
-  import { Slider as ASlider } from 'ant-design-vue'
+  import { Space as ASpace } from 'ant-design-vue'
 
   const emit = defineEmits(['ptzCamera'])
   const speed = ref<number>(30)
@@ -193,5 +208,16 @@
     grid-row: 1/4;
     align-items: start;
     padding: 60% 0;
+  }
+  .camera-control-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 10px;
+  }
+  .camera-control-btn {
+    font-size: 24px;
+    text-align: center;
+    cursor: pointer;
   }
 </style>
