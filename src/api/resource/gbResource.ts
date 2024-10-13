@@ -13,7 +13,7 @@ import {
 import { StreamInfo } from '/@/api/model/baseModel'
 
 enum Api {
-  DEVICE_LIST = '/api/device/query/device/list',
+  DEVICE_LIST = '/api/device/query/devices',
   DEVICE_DELETE = '/api/device/query/devices/{deviceId}/delete',
   DEVICE_UPDATE = '/api/device/query/device/update',
   DEVICE_ADD = '/api/device/query/device/add',

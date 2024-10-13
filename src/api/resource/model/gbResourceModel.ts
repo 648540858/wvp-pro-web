@@ -5,7 +5,7 @@ import { TableProps } from 'ant-design-vue/lib/vc-table/Table'
  */
 export interface DeviceListParams extends BasicPageParams {
   query: string | null | undefined
-  online: string | null | undefined
+  status: string | null | undefined
 }
 
 // 此处报错是因为TableProps里定义ID字段且类型为string
